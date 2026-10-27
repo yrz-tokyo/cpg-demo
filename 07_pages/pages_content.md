@@ -161,6 +161,7 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 純売上1,274.7億円の一部を投影したものに過ぎない。比較は**伸び率・指数**で行う。
 sell-in と sell-out の乖離を見る目的（棚の消化不足・過剰出荷の検知）に使う。
 
+**Related assets**: `rongzi_catalog_dev.sales_mart.mart_sales_performance`
 **Sources**: `rongzi_catalog_dev.sales_core.pos_transaction`
 
 ---
@@ -236,6 +237,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 売上に対しては `ar_invoice` の `deduction_amount` としてマイナス方向に反映される。
 精算額を売上に足すと**二重計上**になる。
 
+**Related assets**: `rongzi_catalog_dev.trade_mart.trade_settlement`, `rongzi_catalog_dev.trade_mart.mart_trade_spend_flow`
 **Sources**: `rongzi_catalog_dev.trade_core.settlement`
 
 ---
@@ -252,6 +254,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 `ar_invoice.deduction_amount` に反映され、純売上を押し下げる。
 係争中（`dispute_flag`）のものは回収交渉の対象。
 
+**Related assets**: `rongzi_catalog_dev.trade_mart.mart_trade_spend_flow`, `rongzi_catalog_dev.finance_mart.finance_ar_invoice`
 **Sources**: `rongzi_catalog_dev.trade_core.deduction`
 
 ---
@@ -268,6 +271,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 原価率の算出（発注 ÷ 純売上 = 約47%）に使う。
 `finance_mart.finance_ap_invoice`（買掛・532.3億円）も同様に売上ではない。
 
+**Related assets**: `rongzi_catalog_dev.procure_mart.procurement_purchase_order`, `rongzi_catalog_dev.finance_mart.finance_ap_invoice`
 **Sources**: `rongzi_catalog_dev.procure_core.purchase_order`, `rongzi_catalog_dev.finance_core.ap_invoice`
 
 ---
@@ -287,6 +291,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 **Business use**
 受注・純売上・販促費の構成比を見る標準軸。`order.channel` と `pos_transaction.store_format` も同じ区分。
 
+**Related assets**: `rongzi_catalog_dev.sales_mart.customer_account_overview`, `rongzi_catalog_dev.xdept_mart.mart_customer_360`
 **Sources**: `rongzi_catalog_dev.sales_core.account`
 
 ---
