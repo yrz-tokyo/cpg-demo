@@ -1,8 +1,32 @@
 # ワークスペース命令（コピペ用）
 
-## どこに貼るか
+## どこに貼るか — UI の設定画面は無い。**ワークスペースのファイル**として置く
 
-Genie One → 右上の歯車 / **Settings** → **Workspace instructions** → 貼って保存。
+```
+/Workspace/.genie_workspace_instructions.md
+```
+
+**設定ペインを探しても見つからない。** Genie One の「カスタマイズ」は外観
+（色・ロゴ・ウェルカム文・ピン留め）だけで、命令の欄は無い。
+命令は上のパスに Markdown ファイルを置くだけで、**追加設定は不要**（Chat が自動で読む）。
+
+docs（`genie-one/chat`）の記述:
+> Workspace admins can add custom instructions that apply to every chat conversation in the workspace.
+> Instructions must be under 20,000 characters.
+> Instructions apply to chat only and do not affect Genie Agents or Genie Code.
+
+**投入済み**（2026-10-27・1,650文字）。CLI で置いた:
+
+```bash
+databricks workspace import "/Workspace/.genie_workspace_instructions.md" \
+  --file <ローカルのファイル> --format RAW --overwrite
+```
+
+### 紛らわしい別物に注意
+
+`.assistant_workspace_instructions.md`（`.genie_` ではなく `.assistant_`）という
+**よく似た名前のファイルがあるが、これは Genie Code 用**で Genie One の Chat には効かない。
+一度こちらに置いてしまい、消して置き直した。
 
 このワークスペース（`fevm-serverless-rongzi-cpg-general`）にしか効かない。
 Page はアカウント共有で他FEの Page と競合するが、**ワークスペース命令は他者に漏れない**ので、
@@ -10,9 +34,18 @@ Page はアカウント共有で他FEの Page と競合するが、**ワーク�
 
 **Genie Agent には効かない。** Agent 側は `06_genie/apply_instructions.py` が別に入れている。
 
+## 注意: Agent への誘導は効かないかもしれない
+
+文面に「部門ごとの Agent を使ってください」と書いてあるが、**これは未検証**。
+2026-10-26 の実機では Genie One は **Agent に自動ルーティングしなかった**
+（オントロジー検索とテーブル検索で完結し、Agent を一度も使わなかった）。
+効けば得・効かなくても害はないので残しているが、
+**デモでは Agent を自分で選ぶ前提にすること。**
+「言えば Agent に行く」を筋書きに組み込むと本番で外れる。
+
 ---
 
-## 貼る文面（ここから下をそのまま全部）
+## 置いた文面（ファイルの中身）
 
 ```
 このワークスペースは Brickshouse Food and Beverage（ビール類・清涼飲料・健康食品の
