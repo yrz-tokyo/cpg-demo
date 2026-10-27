@@ -76,16 +76,44 @@ def status() -> None:
               f"scale_to_zero={e.get('scale_to_zero_enabled')}")
 
 
+# 学習時の列順と完全に一致させる必要がある（train_conflict_ranker.py の FEATURES）。
+# 列が足りない・順序が違うと serving が "Failed to enforce schema" で拒否する。
+FEATURES = ["n_objects", "n_departments", "n_schemas", "log_max_over_min",
+            "cross_layer", "n_currencies", "currency_mixed", "in_metric_view",
+            "certified_count", "name_has_amount", "name_has_rate",
+            "name_has_count", "name_has_usd", "comment_jaccard_avg",
+            "comment_missing"]
+WAREHOUSE = "2e13820648d1b0bf"
+CATALOG = "rongzi_catalog_dev"
+
+
 def query() -> None:
-    """features.json の先頭1件を投げて疎通を見る。"""
-    feats = json.loads(open("12_ml/features.json", encoding="utf-8").read())
-    rows = feats if isinstance(feats, list) else feats.get("rows", [])
-    cols = [c for c in rows[0] if isinstance(rows[0][c], (int, float))]
-    rec = {c: rows[0][c] for c in cols}
-    body = {"dataframe_records": [rec]}
-    out = cli("serving-endpoints", "query", ENDPOINT, body=body)
-    print(f"入力: {json.dumps(rec, ensure_ascii=False)}")
-    print(f"出力: {json.dumps(out.get('predictions'), ensure_ascii=False)}")
+    """特徴量テーブルから3件引いて推論させ、疎通とスコアの妥当さを見る。"""
+    stmt = f"""
+        SELECT measure_name, n_objects, n_departments, n_schemas,
+               log10(greatest(max_over_min, 1.0)) AS log_max_over_min,
+               cross_layer, n_currencies, currency_mixed, in_metric_view,
+               certified_count, name_has_amount, name_has_rate,
+               name_has_count, name_has_usd,
+               coalesce(comment_jaccard_avg, 0.0) AS comment_jaccard_avg,
+               CASE WHEN comment_jaccard_avg IS NULL THEN 1 ELSE 0 END AS comment_missing
+        FROM {CATALOG}.semantics_ops.conflict_feature
+        WHERE measure_name IN ('total_net_amount', 'dollar_sales', 'avg_roi_index')
+        ORDER BY measure_name"""
+    res = cli("api", "post", "/api/2.0/sql/statements",
+              body={"statement": stmt, "warehouse_id": WAREHOUSE,
+                    "wait_timeout": "30s"})
+    cols = [c["name"] for c in res["manifest"]["schema"]["columns"]]
+    rows = res["result"]["data_array"]
+    recs, names = [], []
+    for row in rows:
+        d = dict(zip(cols, row))
+        names.append(d["measure_name"])
+        recs.append({k: float(d[k]) for k in FEATURES})
+    out = cli("serving-endpoints", "query", ENDPOINT,
+              body={"dataframe_records": recs})
+    for name, score in zip(names, out["predictions"]):
+        print(f"  {name:20s} 衝突スコア {score:.4f}")
 
 
 def delete() -> None:

@@ -686,3 +686,38 @@ Genie がエラーを返したときの戻り値に `score_type` が無く `KeyE
 1問だけ測り直して積み増すのも、揺れを含む88%を成果として掲げるのも筋が通らないため、
 **報告値は 84% に据え置く**。この完走 run は `evidence/eval_after3.txt` と
 `evidence/10_variance.md` にばらつきの3回目として記録した。
+
+## ハマりどころ（28〜31）— serving と資産タグ
+
+### 28. serverless で学習したモデルは、依存を明示しないと serving のコンテナが建たない
+`mlflow.sklearn.log_model` が依存を自動推論し、学習環境の `pandas==1.5.3` を書いた。
+serving のコンテナは Python 3.12 で **1.5.3 に cp312 の wheel が無い**ため
+ソースビルドに落ち、`ModuleNotFoundError: No module named 'pkg_resources'`
+（setuptools 81 で削除）で `Container build failed. Cause: ambiguous_other` になる。
+→ `pip_requirements` を明示する（`pandas==2.2.3`）。学習ジョブ側も同じ版に固定。
+
+### 29. `serving-endpoints create` は既定で READY まで待ち、20分で諦める
+`Error: timed out: current status: IN_PROGRESS` が出るが**失敗ではない**。
+→ `--no-wait` を付けて status でポーリングする。
+
+### 30. `--profile` を省くと別のワークスペースに建つ（気づきにくい）
+この Mac の `~/.databrickscfg` は `[DEFAULT]` が別ワークスペースを指している。
+endpoint を `--profile` 無しで作ったら**そちらに建った**。
+UC のモデルは同じメタストアにあるので**動いてしまい、エラーが出ない**。
+ダッシュボードを一覧して「作ったはずの3本が無い」と気づいた。
+→ CLI を呼ぶスクリプトは例外なく `--profile` を渡す。
+
+### 31. UC ドメインは `--draft` で作ると消える（らしい）
+10/25 に `--draft` で作った親ドメインとサブドメインが、10/27 には
+アカウントの一覧（985件）から消えていた。**tag policy は4本とも残っていた**ので、
+消えたのは domain だけ。アカウントがドメイン上限に張り付いていたため、
+枠を空けたい誰かが下書きを掃除した可能性が高い。
+→ `--draft` を付けずに作る。作った後は一覧で存在を確認する。
+枠が空いていたので（985/1000）**マーケティングもサブドメインにできた**。
+
+### おまけ: ワークスペース資産の認定は別 API
+テーブル・ビューは `ALTER ... SET TAGS` だが、dashboards / geniespaces / apps は
+`workspace-entity-tag-assignments`。CLI のヘルプは tag_key に `.` を使えないと
+書いているが `system.certification_status` は通る。
+`update-tag-assignment` は UPDATE_MASK を4つめの**位置引数**で要求する。
+→ `tools/certify_entities.py`
