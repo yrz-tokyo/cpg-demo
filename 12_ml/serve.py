@@ -13,13 +13,17 @@ import json
 import subprocess
 import sys
 
+# --profile を必ず渡す。この Mac の ~/.databrickscfg は [DEFAULT] が別のワークスペース
+# （fevm-rongzi-serverless）を指しているため、省略すると**別のワークスペースに**
+# endpoint が建つ。モデルは同じメタストアにあるので動いてしまい、気づきにくい。
+PROFILE = "fe-vm-serverless-rongzi-cpg-general"
 ENDPOINT = "brickshouse-conflict-ranker"
 MODEL = "rongzi_catalog_dev.semantics_ops.conflict_ranker"
 VERSION = "3"
 
 
 def cli(*args: str, body: dict | None = None) -> dict:
-    cmd = ["databricks", *args]
+    cmd = ["databricks", *args, "--profile", PROFILE]
     if body is not None:
         cmd += ["--json", json.dumps(body)]
     r = subprocess.run(cmd, capture_output=True, text=True)

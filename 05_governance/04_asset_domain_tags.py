@@ -123,7 +123,8 @@ def main():
         GROUP BY 1, 2 ORDER BY 1, 2""")
     print("\n付与結果:")
     for r in chk:
-        print(f"  {r['tag_name']:44s} = {r['tag_value']:16s} {r['n']:3d} 件")
+        # count(*) は文字列で返ってくる（SQL Statement API の JSON）。int に直す。
+        print(f"  {r['tag_name']:44s} = {r['tag_value']:16s} {int(r['n']):3d} 件")
     return 0
 
 

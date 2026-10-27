@@ -1,8 +1,20 @@
 # Brickshouse Food and Beverage — 業務用語集（Page の原稿）
 
-すべて UC ドメイン **`Brickshouse Food and Beverage`** に置く。
-アカウントのドメイン枠が上限（1000/1000）で subdomain を作れないため、**部門はタイトルと同義語で識別**する。
-これは妥協ではなく retrieval 上有利 — 部門名が固有名詞として効き、同業55件の他社ドメインの Page に勝ちやすい。
+置き場所は UC ドメイン **`Brickshouse Food and Beverage`** とそのサブドメイン3本。
+**4本とも作成済みで draft ではない**（2026-10-27 に作り直した）。
+
+| タイトルの末尾 | 置くドメイン |
+|---|---|
+| `（Brickshouse 営業）` `（Brickshouse 販促）` | `Brickshouse Food and Beverage/営業` |
+| `（Brickshouse 財務）` | `Brickshouse Food and Beverage/財務` |
+| `（Brickshouse マーケ）` | `Brickshouse Food and Beverage/マーケティング` |
+| `（Brickshouse 全社定義）` `（Brickshouse 調達）` | `Brickshouse Food and Beverage`（親） |
+
+部門はドメインだけでなく**タイトルと同義語でも識別**する。部門名が固有名詞として効き、
+同業55件の他社ドメインの Page に勝ちやすい。
+
+`Related assets` と `Sources` のテーブル名は `rongzi_catalog_dev` から始まる3段で書いてある。
+Page の `Sources` 欄は URL しか受け付けないので、**欄は空にして本文末尾の「## Sources」見出しに**書く。
 
 書き方の規約
 - 全社語（部門間で衝突する語）: `<語>（Brickshouse 全社定義）` / 同義語に**各部門の呼び方を全部**入れる
