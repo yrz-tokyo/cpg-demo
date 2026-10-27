@@ -1,0 +1,767 @@
+{
+ "meta": {
+  "company": "Brickshouse Food and Beverage",
+  "fiscal_year": 2026,
+  "data_through": "2026-10-24",
+  "note": "conflict=true の質問は、どの metric view を選ぶかで答えが変わる。統治前/後の差が出るのはここ。部門は 営業(販促を含む) / 財務 / マーケ / 横断。function 列に営業内の機能(営業・販促)を残している。衝突は4組: 売上の定義 / マーケ投下額と調査費 / 通貨(USD vs JPY) / dollar_sales の universe(自社 vs 市場全体)。",
+  "catalog": "rongzi_catalog_dev",
+  "conflicts": [
+   {
+    "name": "売上の定義",
+    "same_measure": "total_net_amount",
+    "sources": [
+     "sales.order",
+     "finance.ar_invoice",
+     "finance.ap_invoice",
+     "procurement.purchase_order",
+     "trade.settlement"
+    ],
+    "authoritative": "finance.ar_invoice"
+   },
+   {
+    "name": "マーケ投下額と調査費",
+    "same_measure": "total_actual_spend_usd",
+    "sources": [
+     "marketing.campaign",
+     "marketing.consumer_insight"
+    ],
+    "authoritative": "marketing.campaign"
+   },
+   {
+    "name": "通貨",
+    "same_measure": "(金額一般)",
+    "sources": [
+     "marketing.* は USD",
+     "sales/finance/trade は JPY"
+    ],
+    "authoritative": "xdept_mart.mart_brand_investment_return（換算レートを明示）"
+   },
+   {
+    "name": "dollar_sales の universe",
+    "same_measure": "dollar_sales",
+    "sources": [
+     "sales.pos_transaction（自社・JPY・パネル投影）",
+     "marketing.syndicated_market_data（市場全体・USD・競合込み）"
+    ],
+    "authoritative": "用途で選ぶ。自社実売は pos_transaction"
+   }
+  ]
+ },
+ "questions": [
+  {
+   "id": "SA-M-01",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": true,
+   "q": "Brickshouse の2026年の売上はいくらですか？",
+   "authoritative": "finance_mart.finance_ar_invoice (net_amount) ＝ 純売上",
+   "trap": [
+    "sales_mart.sales_order.total_net_amount（受注・約1.25倍）",
+    "procure_mart.procurement_purchase_order.total_net_amount（発注・売上でない）",
+    "finance_mart.finance_ap_invoice.total_net_amount（買掛・売上でない）"
+   ],
+   "truth_sql": "SELECT SUM(net_amount) AS v FROM rongzi_catalog_dev.finance_core.ar_invoice WHERE year(invoice_date)=2026",
+   "score_type": "scalar",
+   "function": "営業"
+  },
+  {
+   "id": "SA-M-02",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": false,
+   "q": "2026年の受注金額が大きい得意先トップ5はどこですか？",
+   "authoritative": "sales_mart.mart_sales_performance",
+   "trap": [],
+   "truth_sql": "SELECT a.account_name, SUM(o.total_net_amount) AS v FROM rongzi_catalog_dev.sales_core.order o JOIN rongzi_catalog_dev.sales_core.account a ON o.account_id=a.account_id WHERE year(o.placed_timestamp)=2026 GROUP BY 1 ORDER BY v DESC LIMIT 5",
+   "score_type": "ranking",
+   "function": "営業"
+  },
+  {
+   "id": "SA-M-03",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": false,
+   "q": "チャネル別（SM / CVS / DgS / 卸 / EC）の2026年受注構成比を教えてください。",
+   "authoritative": "sales_mart.mart_sales_performance",
+   "trap": [],
+   "truth_sql": "SELECT channel, SUM(total_net_amount) AS v, ROUND(SUM(total_net_amount)/SUM(SUM(total_net_amount)) OVER (),4) AS share FROM rongzi_catalog_dev.sales_core.order WHERE year(placed_timestamp)=2026 GROUP BY 1 ORDER BY v DESC",
+   "score_type": "ranking",
+   "function": "営業"
+  },
+  {
+   "id": "SA-M-04",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": true,
+   "q": "受注した金額のうち、実際に売上として計上できたのは何パーセントですか？",
+   "authoritative": "xdept_mart.mart_revenue_definitions (revenue_to_order_ratio)",
+   "trap": [
+    "受注と請求を同じものとして扱い100%と答える"
+   ],
+   "truth_sql": "SELECT ROUND((SELECT SUM(net_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice)/(SELECT SUM(total_net_amount) FROM rongzi_catalog_dev.sales_core.order),4) AS v",
+   "score_type": "scalar",
+   "function": "営業"
+  },
+  {
+   "id": "SA-M-05",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": false,
+   "q": "商品ライン別（ビール類 / 清涼飲料 / 健康食品）の店頭実売はそれぞれいくらですか？",
+   "authoritative": "sales_core.pos_transaction × master_core.sku（受注はヘッダ粒度で商品軸を持たない）",
+   "trap": [],
+   "truth_sql": "SELECT s.product_line, SUM(p.dollar_sales) AS v FROM rongzi_catalog_dev.sales_core.pos_transaction p JOIN rongzi_catalog_dev.master_core.sku s ON p.sku_id=s.sku_id GROUP BY 1 ORDER BY v DESC",
+   "score_type": "ranking",
+   "function": "営業"
+  },
+  {
+   "id": "SA-F-01",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "フレッシュストア 関東支社の2026年8月から10月の受注推移を見せてください。",
+   "authoritative": "sales_core.order を得意先名で絞って月次集計（sales_mart.mart_sales_performance でも同値）",
+   "trap": [],
+   "truth_sql": "SELECT date_trunc('month', o.placed_timestamp) AS mo, SUM(o.total_net_amount) AS v, COUNT(*) AS c FROM rongzi_catalog_dev.sales_core.`order` o JOIN rongzi_catalog_dev.sales_core.account a ON o.account_id=a.account_id WHERE a.account_name='フレッシュストア 関東支社' AND o.placed_timestamp >= TIMESTAMP'2026-08-01' AND o.placed_timestamp < TIMESTAMP'2026-11-01' GROUP BY 1 ORDER BY 1",
+   "score_type": "ranking",
+   "function": "営業"
+  },
+  {
+   "id": "SA-F-02",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "いま未出荷のまま残っている受注で、金額が大きいものを10件出してください。",
+   "authoritative": "sales_core.order (order_status='open')",
+   "trap": [],
+   "truth_sql": "SELECT order_number, account_id, total_net_amount FROM rongzi_catalog_dev.sales_core.order WHERE order_status='open' ORDER BY total_net_amount DESC LIMIT 10",
+   "score_type": "ranking",
+   "function": "営業"
+  },
+  {
+   "id": "SA-F-03",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "取り寄せ（backorder）になっている受注の件数と比率を教えてください。",
+   "authoritative": "sales_core.order (is_backorder)",
+   "trap": [],
+   "truth_sql": "SELECT SUM(CASE WHEN is_backorder THEN 1 ELSE 0 END) AS backorders, COUNT(*) AS total, ROUND(SUM(CASE WHEN is_backorder THEN 1 ELSE 0 END)/COUNT(*),4) AS ratio FROM rongzi_catalog_dev.sales_core.order",
+   "score_type": "scalar",
+   "function": "営業"
+  },
+  {
+   "id": "SA-F-04",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": true,
+   "q": "担当しているCVSチャネルで、店頭の売れ行きと当社の出荷が商品別に食い違っている商品はありますか？",
+   "authoritative": "商品別には比較できない。sales_core.order は受注ヘッダ粒度で sku_id を持たないため、出荷側に商品軸が無い。店頭側は pos_transaction で商品別に見える。商品軸の比較は pos_transaction と distribution_point / promotion_line で行う",
+   "trap": [
+    "pos_transaction.dollar_sales を当社売上として絶対額で引き算する"
+   ],
+   "truth_sql": "SELECT COUNT(*) AS order_cols_with_sku FROM rongzi_catalog_dev.information_schema.columns WHERE table_schema='sales_core' AND table_name='order' AND column_name='sku_id'",
+   "score_type": "explanation",
+   "function": "営業",
+   "expect_concepts": [
+    [
+     "粒度",
+     "ヘッダ",
+     "grain",
+     "明細"
+    ],
+    [
+     "sku_id",
+     "商品軸",
+     "商品別",
+     "SKU"
+    ],
+    [
+     "pos_transaction",
+     "店頭実売",
+     "配下",
+     "distribution_point",
+     "promotion_line"
+    ]
+   ],
+   "min_keywords": 2
+  },
+  {
+   "id": "SA-F-05",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "得意先ごとの配下率（ACV加重）の前期比変化を平均して、下がっている順に5社教えてください。",
+   "authoritative": "sales_mart.mart_account_coverage",
+   "trap": [],
+   "truth_sql": "SELECT a.account_name, AVG(d.acv_change_pct) AS avg_change FROM rongzi_catalog_dev.sales_core.distribution_point d JOIN rongzi_catalog_dev.sales_core.account a ON d.account_id=a.account_id GROUP BY 1 ORDER BY avg_change ASC LIMIT 5",
+   "score_type": "ranking",
+   "function": "営業"
+  },
+  {
+   "id": "FI-M-01",
+   "dept": "財務",
+   "persona": "部長",
+   "conflict": true,
+   "q": "2026年の純売上と、受注との差はいくらですか？差の内訳も教えてください。",
+   "authoritative": "xdept_mart.mart_revenue_definitions / finance_mart.mart_revenue_reconciliation",
+   "trap": [
+    "受注金額を純売上として答える"
+   ],
+   "truth_sql": "SELECT (SELECT SUM(total_net_amount) FROM rongzi_catalog_dev.sales_core.order) AS order_net, (SELECT SUM(net_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice) AS revenue_net, (SELECT SUM(trade_discount_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice) AS trade_disc, (SELECT SUM(deduction_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice) AS deduction",
+   "score_type": "scalar",
+   "function": "財務"
+  },
+  {
+   "id": "FI-M-02",
+   "dept": "財務",
+   "persona": "部長",
+   "conflict": false,
+   "q": "2026年の原価率はいくらですか？",
+   "authoritative": "procure_mart.procurement_purchase_order ÷ finance_mart.finance_ar_invoice",
+   "trap": [],
+   "truth_sql": "SELECT ROUND((SELECT SUM(net_amount) FROM rongzi_catalog_dev.procure_core.purchase_order)/(SELECT SUM(net_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice),4) AS v",
+   "score_type": "scalar",
+   "function": "財務"
+  },
+  {
+   "id": "FI-M-03",
+   "dept": "財務",
+   "persona": "部長",
+   "conflict": false,
+   "q": "未回収の売掛金残高はいくらで、得意先別の上位5社はどこですか？",
+   "authoritative": "finance_mart.mart_revenue_reconciliation (open_receivable_amount)",
+   "trap": [],
+   "truth_sql": "SELECT a.account_name, SUM(ar.open_amount) AS open_amt FROM rongzi_catalog_dev.finance_core.ar_invoice ar JOIN rongzi_catalog_dev.sales_core.account a ON ar.account_id=a.account_id GROUP BY 1 ORDER BY open_amt DESC LIMIT 5",
+   "score_type": "ranking",
+   "function": "財務"
+  },
+  {
+   "id": "FI-M-04",
+   "dept": "財務",
+   "persona": "部長",
+   "conflict": true,
+   "q": "販促によって売上から失われている金額（レベニューリーケージ）はいくらですか？",
+   "authoritative": "finance_core.ar_invoice の trade_discount_amount + deduction_amount",
+   "trap": [
+    "trade_core.settlement.net_amount（販促精算の支払額）をリーケージとして答える"
+   ],
+   "truth_sql": "SELECT SUM(trade_discount_amount + deduction_amount) AS leakage, SUM(net_amount) AS revenue_net, ROUND(SUM(trade_discount_amount+deduction_amount)/SUM(net_amount),4) AS ratio FROM rongzi_catalog_dev.finance_core.ar_invoice",
+   "score_type": "scalar",
+   "function": "財務"
+  },
+  {
+   "id": "FI-M-05",
+   "dept": "財務",
+   "persona": "部長",
+   "conflict": true,
+   "q": "製品側と財務側で単位原価が1円以上食い違っている商品は何件ありますか？",
+   "authoritative": "finance_mart.mart_standard_cost_compare",
+   "trap": [
+    "master_mart.product_standard_cost だけを見て食い違いに気づかない"
+   ],
+   "truth_sql": "SELECT COUNT(*) AS mismatched FROM rongzi_catalog_dev.master_core.product_standard_cost p JOIN rongzi_catalog_dev.finance_core.finance_standard_cost f ON p.product_standard_cost_id=f.finance_standard_cost_id WHERE ABS(p.total_standard_cost_per_unit - f.standard_price_per_unit) > 1",
+   "score_type": "scalar",
+   "function": "財務"
+  },
+  {
+   "id": "FI-F-01",
+   "dept": "財務",
+   "persona": "現場",
+   "conflict": false,
+   "q": "支払期日を過ぎている売掛請求で金額が大きいものを10件教えてください。",
+   "authoritative": "finance_core.ar_invoice",
+   "trap": [],
+   "truth_sql": "SELECT billing_document_number, account_id, open_amount, due_date FROM rongzi_catalog_dev.finance_core.ar_invoice WHERE due_date < DATE'2026-10-24' AND open_amount > 0 ORDER BY open_amount DESC LIMIT 10",
+   "score_type": "ranking",
+   "function": "財務"
+  },
+  {
+   "id": "FI-F-02",
+   "dept": "財務",
+   "persona": "現場",
+   "conflict": false,
+   "q": "係争中（dispute）になっている売掛請求の件数と金額を教えてください。",
+   "authoritative": "finance_core.ar_invoice の dispute_status = 'open'（none / open / resolved の3値）",
+   "trap": [],
+   "truth_sql": "SELECT COUNT(*) AS cnt, SUM(net_amount) AS amount FROM rongzi_catalog_dev.finance_core.ar_invoice WHERE dispute_status = 'open'",
+   "score_type": "scalar",
+   "function": "財務"
+  },
+  {
+   "id": "FI-F-03",
+   "dept": "財務",
+   "persona": "現場",
+   "conflict": false,
+   "q": "三者照合（match）が合っていない買掛請求はどれですか？",
+   "authoritative": "finance_core.ap_invoice の match_status <> 'matched'（price_variance / qty_variance）",
+   "trap": [],
+   "truth_sql": "SELECT COUNT(*) AS cnt, SUM(net_amount) AS amount FROM rongzi_catalog_dev.finance_core.ap_invoice WHERE match_status <> 'matched'",
+   "score_type": "scalar",
+   "function": "財務"
+  },
+  {
+   "id": "FI-F-04",
+   "dept": "財務",
+   "persona": "現場",
+   "conflict": true,
+   "q": "仕入先への買掛金額は、会社の売上の中に含まれていますか？「含まれています」か「含まれていません」のどちらかで始めて答えてください。",
+   "authoritative": "含まれない。finance_core.ap_invoice は仕入（買掛）。同名の total_net_amount measure を持つが売上ではない",
+   "trap": [
+    "finance_mart.finance_ap_invoice.total_net_amount を売上として扱う"
+   ],
+   "truth_sql": "SELECT 'no' AS answer, SUM(net_amount) AS payable_net FROM rongzi_catalog_dev.finance_core.ap_invoice",
+   "score_type": "boolean",
+   "expect_answer": false,
+   "function": "財務"
+  },
+  {
+   "id": "FI-F-05",
+   "dept": "財務",
+   "persona": "現場",
+   "conflict": false,
+   "q": "月次の純売上と入金の推移を並べてください。",
+   "authoritative": "finance_mart.mart_revenue_reconciliation",
+   "trap": [],
+   "truth_sql": "SELECT date_trunc('month', invoice_date) mo, SUM(net_amount) revenue_net, SUM(payment_amount) paid FROM rongzi_catalog_dev.finance_core.ar_invoice GROUP BY 1 ORDER BY 1",
+   "score_type": "ranking",
+   "function": "財務"
+  },
+  {
+   "id": "TR-M-01",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": false,
+   "q": "2026年の販促費はいくらで、純売上に対する比率は何パーセントですか？",
+   "authoritative": "trade_mart.trade_promotion_event (promotional_spend_net) ÷ 純売上",
+   "trap": [],
+   "truth_sql": "SELECT (SELECT SUM(promotional_spend_net) FROM rongzi_catalog_dev.trade_core.promotion_event) AS spend, (SELECT SUM(net_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice) AS revenue_net, ROUND((SELECT SUM(promotional_spend_net) FROM rongzi_catalog_dev.trade_core.promotion_event)/(SELECT SUM(net_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice),4) AS ratio",
+   "score_type": "scalar",
+   "function": "販促"
+  },
+  {
+   "id": "TR-M-02",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": false,
+   "q": "ROIが低い販促イベントのタイプはどれですか？",
+   "authoritative": "trade_mart.mart_promotion_roi",
+   "trap": [],
+   "truth_sql": "SELECT promotion_type, ROUND(AVG((actual_revenue - promotional_spend_net)/NULLIF(promotional_spend_net,0)),4) AS avg_roi, COUNT(*) c FROM rongzi_catalog_dev.trade_core.promotion_event GROUP BY 1 ORDER BY avg_roi ASC",
+   "score_type": "ranking",
+   "function": "販促"
+  },
+  {
+   "id": "TR-M-03",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": true,
+   "q": "販促イベントが生んだ売上の合計はいくらですか？",
+   "authoritative": "trade_core.promotion_event.actual_revenue は販促システムの自己申告値。財務の純売上とは一致しない。両方を示して差を説明するのが正解",
+   "trap": [
+    "actual_revenue を会社の売上として扱う",
+    "trade_settlement.total_net_amount を売上として扱う"
+   ],
+   "truth_sql": "SELECT (SELECT SUM(actual_revenue) FROM rongzi_catalog_dev.trade_core.promotion_event) AS promo_claimed_revenue, (SELECT SUM(net_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice) AS finance_revenue_net",
+   "score_type": "ranking",
+   "function": "販促"
+  },
+  {
+   "id": "TR-M-04",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": false,
+   "q": "引当した販促費のうち、実際に精算されたのは何パーセントですか？",
+   "authoritative": "trade_mart.mart_trade_spend_flow (settlement_rate)",
+   "trap": [],
+   "truth_sql": "SELECT (SELECT SUM(amount) FROM rongzi_catalog_dev.trade_core.accrual) AS accrued, (SELECT SUM(net_amount) FROM rongzi_catalog_dev.trade_core.settlement) AS settled, ROUND((SELECT SUM(net_amount) FROM rongzi_catalog_dev.trade_core.settlement)/(SELECT SUM(amount) FROM rongzi_catalog_dev.trade_core.accrual),4) AS rate",
+   "score_type": "scalar",
+   "function": "販促"
+  },
+  {
+   "id": "TR-M-05",
+   "dept": "営業",
+   "persona": "部長",
+   "conflict": false,
+   "q": "計画した売上に届かなかった販促イベントの数と、その得意先を教えてください。",
+   "authoritative": "trade_mart.mart_promotion_roi (revenue_attainment)",
+   "trap": [],
+   "truth_sql": "SELECT a.account_name, COUNT(*) c FROM rongzi_catalog_dev.trade_core.promotion_event pe JOIN rongzi_catalog_dev.sales_core.account a ON pe.account_id=a.account_id WHERE pe.actual_revenue < pe.target_revenue GROUP BY 1 ORDER BY c DESC LIMIT 10",
+   "score_type": "ranking",
+   "function": "販促"
+  },
+  {
+   "id": "TR-F-01",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "係争中の控除（deduction）はいくらありますか？",
+   "authoritative": "trade_core.deduction の deduction_status = 'disputed'（dispute_flag も同じ行で true）",
+   "trap": [],
+   "truth_sql": "SELECT SUM(net_amount) AS amount, COUNT(*) AS cnt FROM rongzi_catalog_dev.trade_core.deduction WHERE deduction_status = 'disputed'",
+   "score_type": "scalar",
+   "function": "販促"
+  },
+  {
+   "id": "TR-F-02",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "控除の理由別の内訳を教えてください。",
+   "authoritative": "trade_core.deduction (deduction_type)",
+   "trap": [],
+   "truth_sql": "SELECT deduction_type, COUNT(*) c, SUM(net_amount) v FROM rongzi_catalog_dev.trade_core.deduction GROUP BY 1 ORDER BY v DESC",
+   "score_type": "ranking",
+   "function": "販促"
+  },
+  {
+   "id": "TR-F-03",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "いま精算待ち（pending）の販促精算を金額順に出してください。",
+   "authoritative": "trade_core.settlement (settlement_status)",
+   "trap": [],
+   "truth_sql": "SELECT settlement_number, account_id, net_amount FROM rongzi_catalog_dev.trade_core.settlement WHERE settlement_status='pending' ORDER BY net_amount DESC LIMIT 10",
+   "score_type": "ranking",
+   "function": "販促"
+  },
+  {
+   "id": "TR-F-04",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": false,
+   "q": "来月（2026年11月）に開始予定の販促イベントは何件で、販促費の合計はいくらですか？",
+   "authoritative": "trade_core.promotion_event の planned_start_date が2026年11月",
+   "trap": [],
+   "truth_sql": "SELECT COUNT(*) AS cnt, SUM(promotional_spend_net) AS spend FROM rongzi_catalog_dev.trade_core.promotion_event WHERE planned_start_date >= DATE'2026-11-01' AND planned_start_date < DATE'2026-12-01'",
+   "score_type": "scalar",
+   "function": "販促"
+  },
+  {
+   "id": "TR-F-05",
+   "dept": "営業",
+   "persona": "現場",
+   "conflict": true,
+   "q": "フレッシュストア 関東支社に支払った販促精算の金額は、同社の売上(純売上)の金額の中に含まれていますか？「含まれています」か「含まれていません」のどちらかで始めて答えてください。",
+   "authoritative": "入っていない。settlement は得意先への支払いで、売上のマイナス要素（ar_invoice の控除として反映）",
+   "trap": [
+    "trade_settlement.total_net_amount を売上として合算する"
+   ],
+   "truth_sql": "SELECT 'no' AS answer, (SELECT SUM(net_amount) FROM rongzi_catalog_dev.trade_core.settlement) AS settlement_paid, (SELECT SUM(deduction_amount) FROM rongzi_catalog_dev.finance_core.ar_invoice) AS reflected_as_deduction",
+   "score_type": "boolean",
+   "expect_answer": false,
+   "function": "販促"
+  },
+  {
+   "id": "XD-01",
+   "dept": "横断",
+   "persona": "部長",
+   "conflict": true,
+   "q": "「売上」という言葉で、社内にいくつの違う数字がありますか？それぞれいくらですか？",
+   "authoritative": "xdept_mart.mart_revenue_definitions",
+   "trap": [
+    "1つの数字だけを答える"
+   ],
+   "truth_sql": "SELECT SUM(sales_order_net_amount) AS order_net, SUM(invoiced_gross_amount) AS invoiced_gross, SUM(revenue_net_amount) AS revenue_net, SUM(promo_settlement_net_amount) AS promo_settlement, SUM(payable_net_amount) AS payable, SUM(purchase_order_net_amount) AS purchase_order, SUM(panel_sellout_amount) AS panel_sellout FROM rongzi_catalog_dev.xdept_mart.mart_revenue_definitions",
+   "score_type": "scalar"
+  },
+  {
+   "id": "XD-02",
+   "dept": "横断",
+   "persona": "部長",
+   "conflict": true,
+   "q": "営業が言う売上と財務が言う売上が違うのはなぜですか？",
+   "authoritative": "受注(sales_order) → 一部出荷 → 請求総額 → 販促値引・控除 → 純売上(ar_invoice) の連鎖",
+   "trap": [
+    "どちらかが間違っていると答える"
+   ],
+   "truth_sql": "SELECT SUM(sales_order_net_amount) AS order_net, SUM(invoiced_gross_amount) AS invoiced_gross, SUM(trade_discount_amount) AS trade_disc, SUM(deduction_amount) AS deduction, SUM(revenue_net_amount) AS revenue_net FROM rongzi_catalog_dev.xdept_mart.mart_revenue_definitions",
+   "score_type": "explanation",
+   "min_keywords": 3,
+   "expect_concepts": [
+    [
+     "受注",
+     "オーダー",
+     "order",
+     "受注高"
+    ],
+    [
+     "請求",
+     "invoice",
+     "計上",
+     "インボイス"
+    ],
+    [
+     "値引",
+     "ディスカウント",
+     "割引",
+     "販促値引",
+     "リベート"
+    ],
+    [
+     "控除",
+     "deduction",
+     "差引",
+     "ディダクション"
+    ],
+    [
+     "出荷",
+     "一部出荷",
+     "未出荷",
+     "shipment"
+    ]
+   ]
+  },
+  {
+   "id": "XD-03",
+   "dept": "横断",
+   "persona": "部長",
+   "conflict": false,
+   "q": "受注金額が上位10社の中で、純売上への転換率が最も低い得意先はどこで、その転換率はいくらですか？",
+   "authoritative": "xdept_mart.mart_customer_360 (revenue_to_order_ratio)",
+   "trap": [],
+   "truth_sql": "WITH t AS (SELECT account_name, order_net_amount, revenue_net_amount, revenue_to_order_ratio FROM rongzi_catalog_dev.xdept_mart.mart_customer_360 WHERE order_net_amount IS NOT NULL ORDER BY order_net_amount DESC LIMIT 10) SELECT account_name, revenue_to_order_ratio FROM t ORDER BY revenue_to_order_ratio ASC LIMIT 1",
+   "score_type": "ranking"
+  },
+  {
+   "id": "XD-04",
+   "dept": "横断",
+   "persona": "部長",
+   "conflict": true,
+   "q": "得意先ごとの販促費が純売上に占める比率が高い上位5社を教えてください。",
+   "authoritative": "xdept_mart.mart_customer_360 で promo_spend_net_amount と revenue_net_amount を突合",
+   "trap": [
+    "promotion_event.actual_revenue（自己申告）で評価する"
+   ],
+   "truth_sql": "SELECT account_name, promo_spend_ratio FROM rongzi_catalog_dev.xdept_mart.mart_customer_360 WHERE promo_spend_net_amount IS NOT NULL AND revenue_net_amount > 0 ORDER BY promo_spend_ratio DESC LIMIT 5",
+   "score_type": "ranking"
+  },
+  {
+   "id": "XD-05",
+   "dept": "横断",
+   "persona": "現場",
+   "conflict": true,
+   "q": "レベニューリーケージが大きい得意先の上位5社と、その原因を教えてください。",
+   "authoritative": "xdept_mart.mart_customer_360 (revenue_leakage_amount, leakage_ratio) ＋ trade_core.deduction の理由別",
+   "trap": [
+    "売掛の未回収（open_receivable）をリーケージと混同する"
+   ],
+   "truth_sql": "SELECT account_name, revenue_leakage_amount, leakage_ratio, open_receivable_amount FROM rongzi_catalog_dev.xdept_mart.mart_customer_360 WHERE revenue_leakage_amount IS NOT NULL ORDER BY revenue_leakage_amount DESC LIMIT 5",
+   "score_type": "ranking"
+  },
+  {
+   "id": "MK-M-01",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "部長",
+   "conflict": true,
+   "q": "Brickshouse の2026年のマーケティング投下額はいくらですか？",
+   "authoritative": "marketing_mart.marketing_campaign_performance (actual_spend_usd) ＝ キャンペーン投下額・USD建て",
+   "trap": [
+    "marketing_mart.marketing_consumer_insight.total_actual_spend_usd（消費者調査の費用・完全同名・約18分の1）",
+    "marketing_mart.marketing_media_spend.total_actual_spend_amount（媒体費・投下額の一部で全部ではない）",
+    "marketing_core.brand.annual_marketing_budget（年間予算・実績ではない）"
+   ],
+   "truth_sql": "SELECT SUM(actual_spend_usd) AS v FROM rongzi_catalog_dev.marketing_core.campaign WHERE year(start_date)=2026",
+   "score_type": "scalar"
+  },
+  {
+   "id": "MK-M-02",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "部長",
+   "conflict": true,
+   "q": "2026年のマーケ投下額と販促費を合わせた、マーケティング総投資額はいくらですか？",
+   "authoritative": "xdept_mart.mart_brand_investment_return.total_investment_jpy ＝ USD建てのマーケ投下を1USD=150JPYで換算してJPYの販促費と合算した額",
+   "trap": [
+    "marketing_core.campaign.actual_spend_usd と trade_core.promotion_line.total_funding_amount を換算せずに足す（USD と JPY の混在・150倍ずれる）"
+   ],
+   "truth_sql": "SELECT SUM(total_investment_jpy) AS v FROM rongzi_catalog_dev.xdept_mart.mart_brand_investment_return",
+   "score_type": "scalar"
+  },
+  {
+   "id": "MK-M-03",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "部長",
+   "conflict": true,
+   "q": "ブランド別の投資対効果（ROI）が高い順に教えてください。",
+   "authoritative": "xdept_mart.mart_brand_investment_return.return_on_investment ＝ 店頭実売(JPY) ÷ (マーケ投下USD×150 + 販促費JPY)",
+   "trap": [
+    "marketing_mart.marketing_media_spend.avg_roi_index（媒体のROI指数。投資回収率ではない）",
+    "trade_mart.mart_promotion_roi.roi（販促イベント単位のROI。ブランド単位ではない）"
+   ],
+   "truth_sql": "SELECT brand_name AS k, return_on_investment AS v FROM rongzi_catalog_dev.xdept_mart.mart_brand_investment_return ORDER BY v DESC",
+   "score_type": "ranking"
+  },
+  {
+   "id": "MK-M-04",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "部長",
+   "conflict": false,
+   "q": "ブランド別の市場シェアが高い順に教えてください。",
+   "authoritative": "marketing_mart.mart_brand_market_position.own_dollar_share_pct（Nielsen syndicated の金額シェア）",
+   "trap": [],
+   "truth_sql": "SELECT brand_name AS k, ROUND(AVG(own_dollar_share_pct),2) AS v FROM rongzi_catalog_dev.marketing_mart.mart_brand_market_position GROUP BY 1 ORDER BY v DESC",
+   "score_type": "ranking"
+  },
+  {
+   "id": "MK-M-05",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "部長",
+   "conflict": true,
+   "q": "当社の店頭での売れ行きは2026年いくらですか？",
+   "authoritative": "sales_core.pos_transaction.dollar_sales ＝ 自社の店頭実売・JPY建て・Nielsenパネルの約15%ACV投影値",
+   "trap": [
+    "marketing_core.syndicated_market_data.dollar_sales（完全同名だが市場全体・競合込み・USD建て。約348倍）"
+   ],
+   "truth_sql": "SELECT SUM(dollar_sales) AS v FROM rongzi_catalog_dev.sales_core.pos_transaction WHERE year(transaction_date)=2026",
+   "score_type": "scalar"
+  },
+  {
+   "id": "MK-M-06",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "部長",
+   "conflict": true,
+   "q": "消費者調査の費用は、マーケティング投下額に含まれますか？",
+   "authoritative": "含まれない。marketing_core.consumer_insight は調査プロジェクトの費用で、キャンペーンや媒体への投下ではない",
+   "trap": [
+    "ECM の metric view が campaign と consumer_insight の両方に total_actual_spend_usd という同名の measure を持つため、合算してしまう"
+   ],
+   "truth_sql": "SELECT SUM(actual_spend_usd) AS insight, (SELECT SUM(actual_spend_usd) FROM rongzi_catalog_dev.marketing_core.campaign) AS campaign FROM rongzi_catalog_dev.marketing_core.consumer_insight",
+   "score_type": "boolean",
+   "expect_answer": false
+  },
+  {
+   "id": "MK-F-01",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "現場",
+   "conflict": false,
+   "q": "2026年9月に終了したキャンペーン執行のうち、計画の70%も使えていないものを、未消化額が大きい順に5件教えてください。",
+   "authoritative": "marketing_core.campaign_execution の planned_spend_amount と actual_spend_amount の差（USD建て）",
+   "trap": [],
+   "truth_sql": "SELECT execution_number AS k, ROUND(planned_spend_amount - actual_spend_amount, 2) AS v FROM rongzi_catalog_dev.marketing_core.campaign_execution WHERE year(flight_end_date)=2026 AND month(flight_end_date)=9 AND actual_spend_amount < planned_spend_amount * 0.7 ORDER BY v DESC LIMIT 5",
+   "score_type": "ranking"
+  },
+  {
+   "id": "MK-F-02",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "現場",
+   "conflict": false,
+   "q": "2026年の媒体チャネル別のCPMを、安い順に教えてください。",
+   "authoritative": "marketing_mart.mart_media_efficiency.cpm_usd（USD建て）",
+   "trap": [],
+   "truth_sql": "SELECT media_channel AS k, ROUND(1000.0*SUM(actual_spend_amount)/NULLIF(SUM(impressions),0),2) AS v FROM rongzi_catalog_dev.marketing_core.media_spend WHERE year(spend_date)=2026 GROUP BY 1 ORDER BY v ASC",
+   "score_type": "ranking"
+  },
+  {
+   "id": "MK-F-03",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "現場",
+   "conflict": false,
+   "q": "費用は発生しているのに配信実績（インプレッション）がゼロになっている執行は何件ありますか？",
+   "authoritative": "marketing_core.campaign_execution の delivery_when_spent 違反件数",
+   "trap": [],
+   "truth_sql": "SELECT COUNT(*) AS v FROM rongzi_catalog_dev.marketing_core.campaign_execution WHERE actual_spend_amount > 0 AND impressions_delivered = 0",
+   "score_type": "scalar"
+  },
+  {
+   "id": "MK-F-04",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "現場",
+   "conflict": true,
+   "q": "媒体費の明細で、通貨が記録されていない行は何件ありますか？",
+   "authoritative": "marketing_core.media_spend の currency_declared 違反件数。通貨が無い行をJPYだと思って集計すると150倍ずれる",
+   "trap": [
+    "通貨が無い行を黙って集計に含める"
+   ],
+   "truth_sql": "SELECT COUNT(*) AS v FROM rongzi_catalog_dev.marketing_core.media_spend WHERE currency_code IS NULL OR currency_code = ''",
+   "score_type": "scalar"
+  },
+  {
+   "id": "MK-F-05",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "現場",
+   "conflict": false,
+   "q": "2026年の媒体費が多いブランドを上位5つ教えてください。",
+   "authoritative": "marketing_core.media_spend.actual_spend_amount をブランド別に集計（USD建て）",
+   "trap": [],
+   "truth_sql": "SELECT b.brand_name AS k, SUM(m.actual_spend_amount) AS v FROM rongzi_catalog_dev.marketing_core.media_spend m JOIN rongzi_catalog_dev.marketing_core.brand b ON m.brand_id=b.brand_id WHERE year(m.spend_date)=2026 GROUP BY 1 ORDER BY v DESC LIMIT 5",
+   "score_type": "ranking"
+  },
+  {
+   "id": "MK-F-06",
+   "dept": "マーケ",
+   "function": "マーケ",
+   "persona": "現場",
+   "conflict": false,
+   "q": "認知率が低いブランドを下位5つ教えてください。",
+   "authoritative": "marketing_core.brand.awareness_pct",
+   "trap": [],
+   "truth_sql": "SELECT brand_name AS k, awareness_pct AS v FROM rongzi_catalog_dev.marketing_core.brand ORDER BY awareness_pct ASC LIMIT 5",
+   "score_type": "ranking"
+  },
+  {
+   "id": "XD-06",
+   "dept": "横断",
+   "function": "横断",
+   "persona": "部長",
+   "conflict": true,
+   "q": "マーケ投下額と販促費を足して「マーケティング総投資額」と呼んでよいですか？足す前に注意すべきことを教えてください。",
+   "authoritative": "そのままは足せない。マーケ(marketing_core)はUSD建て、販促(trade_core)はJPY建てなので、換算レートを決めてから足す必要がある",
+   "trap": [
+    "通貨の違いに触れずに合計を出す"
+   ],
+   "truth_sql": "SELECT (SELECT MAX(currency_code) FROM rongzi_catalog_dev.marketing_core.campaign) AS mkt_ccy, (SELECT MAX(currency_code) FROM rongzi_catalog_dev.trade_core.promotion_line) AS trade_ccy",
+   "score_type": "explanation",
+   "min_keywords": 3,
+   "expect_concepts": [
+    [
+     "USD",
+     "ドル",
+     "米ドル"
+    ],
+    [
+     "JPY",
+     "円",
+     "日本円"
+    ],
+    [
+     "通貨",
+     "建値",
+     "currency"
+    ],
+    [
+     "換算",
+     "為替",
+     "レート",
+     "変換"
+    ]
+   ]
+  },
+  {
+   "id": "XD-07",
+   "dept": "横断",
+   "function": "横断",
+   "persona": "部長",
+   "conflict": true,
+   "q": "syndicated_market_data の dollar_sales は、当社の売上ですか？",
+   "authoritative": "違う。market_type='category_total' の市場全体の売上で競合を含む。自社分は dollar_share_pct を掛けた値。単位もUSD",
+   "trap": [
+    "自社の売上として読む（pos_transaction.dollar_sales と完全同名のため）"
+   ],
+   "truth_sql": "SELECT SUM(dollar_sales) AS market_usd, (SELECT SUM(dollar_sales) FROM rongzi_catalog_dev.sales_core.pos_transaction) AS own_jpy FROM rongzi_catalog_dev.marketing_core.syndicated_market_data",
+   "score_type": "boolean",
+   "expect_answer": false
+  }
+ ]
+}

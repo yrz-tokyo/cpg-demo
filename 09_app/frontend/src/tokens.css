@@ -1,0 +1,84 @@
+/* Brickshouse データ統治コックピット — 表示層。
+ *
+ * トークンと基本リセットは venture-loop-demo の設計をそのまま使う。
+ * 16:9 の投影前提。1画面に主張は1つ、図は大きく、アクセントは1色だけ。
+ *
+ * 破ってはいけない2つ:
+ *   状態は色だけで区別しない。必ず文字でも書く。
+ *   動きは実際のイベントで起きる。タイマーで完了させない。
+ */
+
+:root {
+  /* brand */
+  --ink-900: #0b2026;
+  --ink-800: #112b33;
+  --ink-700: #16353e;
+  --ink-600: #1d4350;
+  --ink-500: #2b5a69;
+  --lava: #ff3621;
+  --lava-soft: #ff5f46;
+  --paper: #f9f7f4;
+  --white: #ffffff;
+
+  /* semantic */
+  --surface: var(--white);
+  --surface-sunken: #f4f2ef;
+  --surface-deep: var(--ink-900);
+  --text: #11252c;
+  --text-soft: #4d6670;
+  --text-invert: #eef4f5;
+  --text-invert-soft: #8fa9b3;
+  --line: #e2ddd6;
+  --line-strong: #cfc8be;
+  --line-deep: #26485469;
+  --active: #1f93c7;
+  --success: #12795a;
+  --warning: #9a5b00;
+  --danger: #c3362b;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+  --gap: 16px;
+
+  /* One shadow ramp, used everywhere. Mixing depths is what looks unfinished. */
+  --lift-1: 0 1px 2px rgb(11 32 38 / 5%), 0 2px 8px rgb(11 32 38 / 4%);
+  --lift-2: 0 2px 6px rgb(11 32 38 / 6%), 0 10px 26px rgb(11 32 38 / 7%);
+  --lift-dark: 0 18px 50px rgb(11 32 38 / 26%);
+
+  --sans: "DM Sans", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", system-ui, sans-serif;
+  --mono: "SFMono-Regular", ui-monospace, Menlo, monospace;
+
+  /* Type scale. --room scales everything for a large venue. */
+  --room: 1;
+  --t-hero: calc(29px * var(--room));
+  --t-lead: calc(21px * var(--room));
+  --t-body: calc(17px * var(--room));
+  --t-small: calc(14.5px * var(--room));
+  --t-micro: calc(12.5px * var(--room));
+  --t-figure: calc(46px * var(--room));
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--sans);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "palt" 1;
+}
+
+button { font: inherit; cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+
+:focus-visible {
+  outline: 2px solid var(--lava);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+h1, h2, h3, h4 { font-weight: 700; letter-spacing: 0.01em; }
+

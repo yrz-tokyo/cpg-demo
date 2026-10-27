@@ -1,0 +1,212 @@
+[
+  {
+    "table": "finance_core.gl_account",
+    "rows": 60,
+    "cols": 43,
+    "bytes": 6756,
+    "dirty_rows": 0
+  },
+  {
+    "table": "finance_core.profit_center",
+    "rows": 20,
+    "cols": 42,
+    "bytes": 3403,
+    "dirty_rows": 0
+  },
+  {
+    "table": "marketing_core.brand",
+    "rows": 12,
+    "cols": 43,
+    "bytes": 2541,
+    "dirty_rows": 0
+  },
+  {
+    "table": "procure_core.supplier",
+    "rows": 80,
+    "cols": 48,
+    "bytes": 10491,
+    "dirty_rows": 0
+  },
+  {
+    "table": "master_core.sku",
+    "rows": 300,
+    "cols": 55,
+    "bytes": 42620,
+    "dirty_rows": 5
+  },
+  {
+    "table": "master_core.category",
+    "rows": 24,
+    "cols": 20,
+    "bytes": 1958,
+    "dirty_rows": 0
+  },
+  {
+    "table": "finance_core.cost_center",
+    "rows": 40,
+    "cols": 44,
+    "bytes": 6857,
+    "dirty_rows": 0
+  },
+  {
+    "table": "master_core.product_standard_cost",
+    "rows": 300,
+    "cols": 33,
+    "bytes": 25995,
+    "dirty_rows": 2
+  },
+  {
+    "table": "sales_core.rep",
+    "rows": 60,
+    "cols": 33,
+    "bytes": 6140,
+    "dirty_rows": 0
+  },
+  {
+    "table": "sales_core.territory",
+    "rows": 12,
+    "cols": 25,
+    "bytes": 1474,
+    "dirty_rows": 0
+  },
+  {
+    "table": "sales_core.account",
+    "rows": 150,
+    "cols": 36,
+    "bytes": 13615,
+    "dirty_rows": 2
+  },
+  {
+    "table": "marketing_core.campaign",
+    "rows": 240,
+    "cols": 43,
+    "bytes": 24524,
+    "dirty_rows": 3
+  },
+  {
+    "table": "trade_core.promotion_event",
+    "rows": 400,
+    "cols": 46,
+    "bytes": 57301,
+    "dirty_rows": 0
+  },
+  {
+    "table": "sales_core.order",
+    "rows": 24000,
+    "cols": 47,
+    "bytes": 2763568,
+    "dirty_rows": 720
+  },
+  {
+    "table": "procure_core.purchase_order",
+    "rows": 8000,
+    "cols": 50,
+    "bytes": 1020552,
+    "dirty_rows": 168
+  },
+  {
+    "table": "sales_core.invoice",
+    "rows": 22000,
+    "cols": 45,
+    "bytes": 2736380,
+    "dirty_rows": 0
+  },
+  {
+    "table": "sales_core.pos_transaction",
+    "rows": 80000,
+    "cols": 35,
+    "bytes": 5529991,
+    "dirty_rows": 960
+  },
+  {
+    "table": "sales_core.distribution_point",
+    "rows": 2400,
+    "cols": 28,
+    "bytes": 156604,
+    "dirty_rows": 0
+  },
+  {
+    "table": "finance_core.ar_invoice",
+    "rows": 22000,
+    "cols": 44,
+    "bytes": 2759183,
+    "dirty_rows": 946
+  },
+  {
+    "table": "finance_core.ap_invoice",
+    "rows": 8000,
+    "cols": 44,
+    "bytes": 877821,
+    "dirty_rows": 112
+  },
+  {
+    "table": "finance_core.finance_standard_cost",
+    "rows": 300,
+    "cols": 42,
+    "bytes": 34583,
+    "dirty_rows": 2
+  },
+  {
+    "table": "trade_core.promotion_line",
+    "rows": 4000,
+    "cols": 40,
+    "bytes": 460554,
+    "dirty_rows": 0
+  },
+  {
+    "table": "trade_core.settlement",
+    "rows": 1800,
+    "cols": 31,
+    "bytes": 156407,
+    "dirty_rows": 18
+  },
+  {
+    "table": "trade_core.fund",
+    "rows": 30,
+    "cols": 27,
+    "bytes": 3253,
+    "dirty_rows": 0
+  },
+  {
+    "table": "trade_core.accrual",
+    "rows": 4000,
+    "cols": 24,
+    "bytes": 265323,
+    "dirty_rows": 0
+  },
+  {
+    "table": "trade_core.deduction",
+    "rows": 5000,
+    "cols": 44,
+    "bytes": 629979,
+    "dirty_rows": 35
+  },
+  {
+    "table": "marketing_core.media_spend",
+    "rows": 9000,
+    "cols": 44,
+    "bytes": 830716,
+    "dirty_rows": 216
+  },
+  {
+    "table": "marketing_core.consumer_insight",
+    "rows": 600,
+    "cols": 44,
+    "bytes": 55088,
+    "dirty_rows": 8
+  },
+  {
+    "table": "marketing_core.campaign_execution",
+    "rows": 6000,
+    "cols": 47,
+    "bytes": 620843,
+    "dirty_rows": 96
+  },
+  {
+    "table": "marketing_core.syndicated_market_data",
+    "rows": 7200,
+    "cols": 43,
+    "bytes": 829758,
+    "dirty_rows": 86
+  }
+]

@@ -1,0 +1,1626 @@
+[
+  {
+    "id": "SA-M-01",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "xdept_mart.mart_revenue_definitions"
+    ],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[128613230122.32] / 一致=1件",
+    "truth_numbers": [
+      128613230122.32
+    ],
+    "genie_numbers": [
+      128613230122.32
+    ],
+    "question": "Brickshouse の2026年の売上はいくらですか？",
+    "authoritative": "finance_mart.finance_ar_invoice (net_amount) ＝ 純売上",
+    "genie_text": "Brickshouse の**2026年の売上**は、**128,613,230,122.32円**です。今回の結果では、2026年1月1日から2027年1月1日未満の期間で集計した売上が **128,613,230,122.32円** でした。",
+    "genie_sql": "SELECT SUM(`revenue_net_amount`) AS `revenue_net` FROM `rongzi_catalog_dev`.`xdept_mart`.`mart_revenue_definitions` WHERE `month_start` >= '2026-01-01' AND `month_start` < '2027-01-01'",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-M-02",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "sales_mart.mart_sales_performance"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=1,635,552,098 / 一致した列=1 / その列の上位=[1635552098, 1556614894, 1521747525, 1469170746, 1442437696] / 数値列数=3",
+    "truth_numbers": [
+      1635552098.17,
+      1556614894.4,
+      1521747524.74,
+      1469170746.45,
+      1442437696.5
+    ],
+    "genie_numbers": [
+      15.0,
+      1635552098.17,
+      1.0,
+      124.0,
+      1556614894.4,
+      2.0
+    ],
+    "question": "2026年の受注金額が大きい得意先トップ5はどこですか？",
+    "authoritative": "sales_mart.mart_sales_performance",
+    "genie_text": "2026年の受注金額が大きい得意先トップ5は以下の5社です。\n- **1位**: **ブリックス公式オンライン 北海道支社** — **1,635,552,098.17円**\n- **2位**: **みなとスーパー 九州支社** — **1,556,614,894.40円**\n- **3位**: **全日本酒類卸 中国支社** — **1,521,747,524.74円**\n- **4位**: **フードセンターいずみ 九州支社** — **1,469,170,746.45円**\n- **5位**: **ステップイン 関東支社** — **1,442,437,696.50円**\n上位5社はいずれも14億円超で、1位と5位の差は約1.93億円です。",
+    "genie_sql": "WITH `account_orders` AS (\n  SELECT\n    `account_id`,\n    `account_name`,\n    SUM(`order_net_amount`) AS `order_net_amount`\n  FROM `rongzi_catalog_dev`.`sales_mart`.`mart_sales_performance`\n  WHERE `month_start` >= TIMESTAMP '2026-01-01'\n    AND `month_start` < TIMESTAMP '2027-01-01'\n    AND `account_name` IS NOT NULL\n  GROUP BY `account_id`, `account_name`\n), `ranked_accounts` AS (\n  SELECT\n    `account_id`,\n    `account_name`,\n    `order_net_amount`,\n    RANK() OVER (ORDER BY `order_net_amount` DESC) AS `rank`\n  FROM `account_orders`\n)\nSELECT\n  `account_id`,\n  `account_name`,\n  `order_net_amount`,\n  `rank`\nFROM `ranked_accounts`\nWHERE `rank` <= 5\nORDER BY `rank` ASC, `order_net_amount` DESC, `account_id` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-M-03",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "sales_mart.mart_sales_performance"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=62,014,994,234 / 一致した列=0 / その列の上位=[62014994234, 29991803358, 31144651494, 21207587955, 11826297362] / 数値列数=2",
+    "truth_numbers": [
+      62014994233.98,
+      0.3944,
+      31144651494.47,
+      0.1981,
+      29991803358.16,
+      0.1907
+    ],
+    "genie_numbers": [
+      62014994233.98,
+      39.706,
+      29991803358.16,
+      19.2027,
+      31144651494.47,
+      19.9408
+    ],
+    "question": "チャネル別（SM / CVS / DgS / 卸 / EC）の2026年受注構成比を教えてください。",
+    "authoritative": "sales_mart.mart_sales_performance",
+    "genie_text": "2026年の**受注構成比**は、**SMが39.71%で最大**、次いで**DgSが19.94%**、**CVSが19.20%**、**卸が13.58%**、**ECが7.57%**です。\n\n- **SM**: **39.71%**\n- **DgS**: **19.94%**\n- **CVS**: **19.20%**\n- **卸**: **13.58%**\n- **EC**: **7.57%**\n\n5チャネルすべてを見ると、**SMだけで約4割**を占め、**ECが最小**でした。",
+    "genie_sql": "WITH `channel_orders` AS ( SELECT `channel`, SUM(`order_net_amount`) AS `order_net_amount` FROM `rongzi_catalog_dev`.`sales_mart`.`mart_sales_performance` WHERE `month_start` >= TIMESTAMP '2026-01-01 00:00:00' AND `month_start` < TIMESTAMP '2027-01-01 00:00:00' AND `channel` IN ('SM', 'CVS', 'DgS', '卸', 'EC') GROUP BY `channel` ) SELECT `channel`, `order_net_amount`, 100 * try_divide(`order_net_amount`, SUM(`order_net_amount`) OVER ()) AS `order_mix_pct` FROM `channel_orders` ORDER BY CASE `channel` WHEN 'SM' THEN 1 WHEN 'CVS' THEN 2 WHEN 'DgS' THEN 3 WHEN '卸' THEN 4 WHEN 'EC' THEN 5 ELSE 6 END",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-M-04",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "xdept_mart.mart_revenue_definitions"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[0.8179] / 一致=0件",
+    "truth_numbers": [
+      0.8179
+    ],
+    "genie_numbers": [
+      80.9651
+    ],
+    "question": "受注した金額のうち、実際に売上として計上できたのは何パーセントですか？",
+    "authoritative": "xdept_mart.mart_revenue_definitions (revenue_to_order_ratio)",
+    "genie_text": "受注金額に対して、実際に売上として計上された割合は **80.965100%** です。今回の集計では、売上計上額は受注額の約**81.0%**に相当します。",
+    "genie_sql": "SELECT 100 * (try_divide(SUM(`revenue_net_amount`),NULLIF(SUM(`sales_order_net_amount`), 0))) AS `revenue_recognition_pct`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_revenue_definitions`\nWHERE `revenue_net_amount` IS NOT NULL\n  AND `sales_order_net_amount` IS NOT NULL",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-M-05",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "master_core.sku",
+      "sales_core.pos_transaction"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=1,624,847,190 / 一致した列=0 / その列の上位=[1144649258, 1624847190, 522925508] / 数値列数=1",
+    "truth_numbers": [
+      1624847190.45,
+      1144649258.29,
+      522925507.66
+    ],
+    "genie_numbers": [
+      1144649258.29,
+      1624847190.45,
+      522925507.66
+    ],
+    "question": "商品ライン別（ビール類 / 清涼飲料 / 健康食品）の店頭実売はそれぞれいくらですか？",
+    "authoritative": "sales_core.pos_transaction × master_core.sku（受注はヘッダ粒度で商品軸を持たない）",
+    "genie_text": "商品ライン別の店頭実売は、**健康食品**が **1,624,847,190.45**、**ビール類**が **1,144,649,258.29**、**清涼飲料**が **522,925,507.66** です。3商品ラインの中では、**健康食品が最も大きく、清涼飲料が最も小さい**結果でした。",
+    "genie_sql": "SELECT\n  `sku_2`.`product_line` AS `product_line`,\n  SUM(`pos_transaction`.`dollar_sales`) AS `store_sellout_amount`\nFROM `rongzi_catalog_dev`.`sales_core`.`pos_transaction` AS `pos_transaction`\nINNER JOIN `rongzi_catalog_dev`.`master_core`.`sku` AS `sku_2`\n  ON `pos_transaction`.`sku_id` = `sku_2`.`sku_id`\nWHERE `sku_2`.`product_line` IS NOT NULL\n  AND (\n    `sku_2`.`product_line` ILIKE '%ビール類%'\n    OR `sku_2`.`product_line` ILIKE '%清涼飲料%'\n    OR `sku_2`.`product_line` ILIKE '%健康食品%'\n  )\nGROUP BY ALL\nORDER BY `product_line` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-F-01",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "sales_mart.mart_sales_performance"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=101,808,141 / 一致した列=None / その列の上位=[2, 1, 2, 2, 1] / 数値列数=7",
+    "truth_numbers": [
+      101808141.24,
+      18.0,
+      84952265.49,
+      16.0,
+      136350459.61,
+      13.0
+    ],
+    "genie_numbers": [
+      2.0,
+      38633.0,
+      13171753.26,
+      471621.77,
+      12700131.49,
+      0.0
+    ],
+    "question": "フレッシュストア 関東支社の2026年8月から10月の受注推移を見せてください。",
+    "authoritative": "sales_core.order を得意先名で絞って月次集計（sales_mart.mart_sales_performance でも同値）",
+    "genie_text": "フレッシュストア 関東支社の受注は、**9月**の受注金額が大きく、**10月**にも高い受注が見られます。代表的な受注データは次の通りです:\n- **2026年8月**: 受注金額 **22,477,155.03円**、受注数量 **18,784**、受注件数 **1件**\n- **2026年8月**: 受注金額 **21,913,113.64円**、受注数量 **52,300**、受注件数 **3件**\n- **2026年9月**: 受注金額 **48,481,411.30円**、受注数量 **94,535**、受注件数 **7件**\n- **2026年10月**: 受注金額 **23,537,226.33円**、受注数量 **9,042**、受注件数 **1件**\n- **2026年10月**: 受注金額 **16,925,186.36円**、受注数量 **36,789**、受注件数 **3件**",
+    "genie_sql": "SELECT\n  `month_start`,\n  `account_name`,\n  `order_count`,\n  `order_quantity`,\n  `order_gross_amount`,\n  `order_discount_amount`,\n  `order_net_amount`,\n  `backorder_count`,\n  `trade_allowance_order_amount`\nFROM `rongzi_catalog_dev`.`sales_mart`.`mart_sales_performance`\nWHERE `account_name` IS NOT NULL\n  AND `month_start` IS NOT NULL\n  AND `account_name` ILIKE '%フレッシュストア 関東支社%'\n  AND `month_start` >= TIMESTAMP('2026-08-01')\n  AND `month_start` < TIMESTAMP('2026-11-01')\nORDER BY `month_start` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-F-02",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "sales_core.order"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=131,228,205 / 一致した列=2 / その列の上位=[131228205, 122673134, 122551449, 115838671, 114361737] / 数値列数=3",
+    "truth_numbers": [
+      67.0,
+      131228205.16,
+      32.0,
+      122673133.54,
+      100.0,
+      122551448.53
+    ],
+    "genie_numbers": [
+      3254.0,
+      67.0,
+      131228205.16,
+      11886.0,
+      32.0,
+      122673133.54
+    ],
+    "question": "いま未出荷のまま残っている受注で、金額が大きいものを10件出してください。",
+    "authoritative": "sales_core.order (order_status='open')",
+    "genie_text": "未出荷のまま残っている**受注（order_status = open）**の高額案件は、以下の**10件**です。金額はすべて**JPY**で、今回の上位10件では**約8,848万円〜1億3,123万円**の範囲でした。\n\n- **SO-2026-103253**：**131,228,205.16円**（希望納品日 **2026-09-21**）\n- **SO-2026-111885**：**122,673,133.54円**（希望納品日 **2026-10-06**）\n- **SO-2026-100375**：**122,551,448.53円**（希望納品日 **2026-03-16**）\n- **SO-2026-111460**：**115,838,671.22円**（希望納品日 **2026-09-25**）\n- **SO-2026-104936**：**114,361,736.57円**（希望納品日 **2026-06-11**）",
+    "genie_sql": "SELECT\n  `order_id`,\n  `order_number`,\n  `account_id`,\n  `order_status`,\n  `placed_timestamp`,\n  `requested_delivery_date`,\n  `promised_delivery_date`,\n  `total_net_amount`,\n  `currency_code`\nFROM `rongzi_catalog_dev`.`sales_core`.`order`\nWHERE `order_status` = 'open'\n  AND `total_net_amount` IS NOT NULL\n  AND `order_number` IS NOT NULL\n  AND `account_id` IS NOT NULL\n  AND `requested_delivery_date` IS NOT NULL\nORDER BY `total_net_amount` DESC, `placed_timestamp` DESC\nLIMIT 10",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-F-03",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "sales_mart.sales_order"
+    ],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[1459.0, 23525.0, 0.062] / 一致=1件",
+    "truth_numbers": [
+      1459.0,
+      23525.0,
+      0.062
+    ],
+    "genie_numbers": [
+      1459.0,
+      6.2019
+    ],
+    "question": "取り寄せ（backorder）になっている受注の件数と比率を教えてください。",
+    "authoritative": "sales_core.order (is_backorder)",
+    "genie_text": "取り寄せ（backorder）になっている受注は**1,459件**で、受注全体に占める比率は**6.201912858660999%**です。今回の集計では、約**16件に1件**が取り寄せ受注にあたります。",
+    "genie_sql": "WITH `backorder_orders` AS (\n  SELECT\n    MEASURE(`order_count`) AS `backorder_count`\n  FROM `rongzi_catalog_dev`.`sales_mart`.`sales_order`\n  WHERE `is_backorder` = true\n  GROUP BY ALL\n),\n`all_orders` AS (\n  SELECT\n    MEASURE(`order_count`) AS `total_order_count`\n  FROM `rongzi_catalog_dev`.`sales_mart`.`sales_order`\n  GROUP BY ALL\n)\nSELECT\n  `backorder_count`,\n  100 * (try_divide(`backorder_count`,`total_order_count`)) AS `backorder_ratio_pct`\nFROM `backorder_orders`\nCROSS JOIN `all_orders`",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-F-04",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": true,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "explanation",
+    "detail": "概念 1/3 一致（必要 2）: ['sku_id']",
+    "truth_numbers": [
+      0.0
+    ],
+    "genie_numbers": [
+      1.0
+    ],
+    "question": "担当しているCVSチャネルで、店頭の売れ行きと当社の出荷が商品別に食い違っている商品はありますか？",
+    "authoritative": "商品別には比較できない。sales_core.order は受注ヘッダ粒度で sku_id を持たないため、出荷側に商品軸が無い。店頭側は pos_transaction で商品別に見える。商品軸の比較は pos_transaction と distribution_point / promotion_line で行う",
+    "genie_text": "この結果では、**確認が必要**であることを示す `needs_clarification = 1` の1件だけが返っており、CVSチャネルで商品別に店頭の売れ行きと当社の出荷が食い違っている商品名までは特定できません。今回のデータから直接言えるのは、商品別の判定に進む前に条件や対象の確認が必要という点です。",
+    "genie_sql": "SELECT 1 AS `needs_clarification`",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "SA-F-05",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "sales_mart.mart_account_coverage"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=-4 / 一致した列=1 / その列の上位=[-4, -4, -3, -3, -3] / 数値列数=2",
+    "truth_numbers": [
+      -3.9643,
+      -3.8692,
+      -3.4725,
+      -2.6193,
+      -2.5011
+    ],
+    "genie_numbers": [
+      44.0,
+      -3.9643,
+      84.0,
+      -3.8692,
+      48.0,
+      -3.4725
+    ],
+    "question": "得意先ごとの配下率（ACV加重）の前期比変化を平均して、下がっている順に5社教えてください。",
+    "authoritative": "sales_mart.mart_account_coverage",
+    "genie_text": "得意先ごとのACV加重の配下率の前期比変化を平均した結果、下がっている順の5社は以下の通りです。5社すべてで平均変化が**マイナス**で、最も下がったのは**中央食品卸 関東支社**（-3.96）、5位の**ブリックス公式オンライン 沖縄支社**でも-2.50でした。\n\n- **中央食品卸 関東支社**: **-3.96**\n- **ステップイン 関西支社**: **-3.87**\n- **さつき屋 北陸支社**: **-3.47**\n- **さつき屋 中国支社**: **-2.62**\n- **ブリックス公式オンライン 沖縄支社**: **-2.50**",
+    "genie_sql": "SELECT\n  `account_id`,\n  `account_name`,\n  AVG(`avg_acv_change_pct`) AS `avg_acv_change_pct`\nFROM `rongzi_catalog_dev`.`sales_mart`.`mart_account_coverage`\nWHERE `account_id` IS NOT NULL\n  AND `account_name` IS NOT NULL\n  AND `avg_acv_change_pct` IS NOT NULL\nGROUP BY `account_id`, `account_name`\nORDER BY `avg_acv_change_pct` ASC\nLIMIT 5",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-M-01",
+    "dept": "財務",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "xdept_mart.mart_revenue_definitions"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[157253032520.84, 128613230122.32, 4750995670.18] / 一致=3件",
+    "truth_numbers": [
+      157253032520.84,
+      128613230122.32,
+      4750995670.18,
+      2695339328.39
+    ],
+    "genie_numbers": [
+      128613230122.32,
+      157253032520.84,
+      28639802398.52,
+      20872606916.18,
+      4750995670.18,
+      2695339328.39
+    ],
+    "question": "2026年の純売上と、受注との差はいくらですか？差の内訳も教えてください。",
+    "authoritative": "xdept_mart.mart_revenue_definitions / finance_mart.mart_revenue_reconciliation",
+    "genie_text": "2026年の**純売上**は **128,613,230,122.32円**、**受注**は **157,253,032,520.84円**で、受注との差は **28,639,802,398.52円**です。差の内訳として、**未請求ギャップ**が **20,872,606,916.18円**、**販促値引**が **4,750,995,670.18円**、**控除**が **2,695,339,328.39円**で、内訳合計は **28,318,941,914.75円**です。内訳合計 **28,318,941,914.75円** は受注との差額 **28,639,802,398.52円** より **320,860,483.77円** 小さく、表示された内訳だけでは差額の全額までは一致していません。",
+    "genie_sql": "SELECT\n  SUM(`revenue_net_amount`) AS `revenue_net_amount_2026`,\n  SUM(`sales_order_net_amount`) AS `sales_order_net_amount_2026`,\n  SUM(`sales_order_net_amount`) - SUM(`revenue_net_amount`) AS `difference_vs_orders_2026`,\n  SUM(`sales_order_net_amount`) - SUM(`invoiced_gross_amount`) AS `uninvoiced_gap_2026`,\n  SUM(`trade_discount_amount`) AS `trade_discount_amount_2026`,\n  SUM(`deduction_amount`) AS `deduction_amount_2026`,\n  (SUM(`sales_order_net_amount`) - SUM(`invoiced_gross_amount`)) + SUM(`trade_discount_amount`) + SUM(`deduction_amount`) AS `breakdown_total_2026`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_revenue_definitions`\nWHERE `month_start` >= TIMESTAMP('2026-01-01')\n  AND `month_start` < TIMESTAMP('2027-01-01')",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-M-02",
+    "dept": "財務",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "xdept_mart.mart_revenue_definitions"
+    ],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[0.4652] / 一致=0件",
+    "truth_numbers": [
+      0.4652
+    ],
+    "genie_numbers": [
+      46.9931
+    ],
+    "question": "2026年の原価率はいくらですか？",
+    "authoritative": "procure_mart.procurement_purchase_order ÷ finance_mart.finance_ar_invoice",
+    "genie_text": "2026年の**原価率**は **46.9931%** です。2026年通年では、発注金額が純売上の約**47.0%**の水準でした。",
+    "genie_sql": "SELECT\n  100 * (try_divide(SUM(`mart_revenue_definitions`.`purchase_order_net_amount`),SUM(`mart_revenue_definitions`.`revenue_net_amount`))) AS `cost_rate_pct`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_revenue_definitions`\nWHERE `mart_revenue_definitions`.`month_start` >= '2026-01-01'\n  AND `mart_revenue_definitions`.`month_start` < '2027-01-01'\n  AND `mart_revenue_definitions`.`purchase_order_net_amount` IS NOT NULL\n  AND `mart_revenue_definitions`.`revenue_net_amount` IS NOT NULL",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-M-03",
+    "dept": "財務",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_mart.finance_ar_invoice",
+      "finance_mart.mart_revenue_reconciliation"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=401,302,703 / 一致した列=2 / その列の上位=[401302703, 357375877, 281933086, 259269311, 257334832] / 数値列数=4",
+    "truth_numbers": [
+      401302702.63,
+      357375876.75,
+      281933086.13,
+      259269310.66,
+      257334832.33
+    ],
+    "genie_numbers": [
+      16388673547.81,
+      15.0,
+      401302702.63,
+      1.0,
+      16388673547.81,
+      50.0
+    ],
+    "question": "未回収の売掛金残高はいくらで、得意先別の上位5社はどこですか？",
+    "authoritative": "finance_mart.mart_revenue_reconciliation (open_receivable_amount)",
+    "genie_text": "未回収の売掛金残高は **16,388,673,547.81円** です。得意先別の上位5社は以下の通りです。\n\n- **1位**: ブリックス公式オンライン 北海道支社 — **401,302,702.63円**\n- **2位**: 緑風マート 北陸支社 — **357,375,876.75円**\n- **3位**: みなとスーパー 九州支社 — **281,933,086.13円**\n- **4位**: ブリックス公式オンライン 九州支社 — **259,269,310.66円**\n- **5位**: 中央食品卸 東北支社 — **257,334,832.33円**\n\n上位5社では **ブリックス公式オンライン 北海道支社** が最大で、5位との差は **約1.44億円** あります。",
+    "genie_sql": "WITH `total_open` AS (\n  SELECT\n    MEASURE(`total_open_amount`) AS `total_open_amount`\n  FROM `rongzi_catalog_dev`.`finance_mart`.`finance_ar_invoice`\n  GROUP BY ALL\n),\n`open_by_account` AS (\n  SELECT\n    `account_id`,\n    SUM(`open_receivable_amount`) AS `open_receivable_amount`\n  FROM `rongzi_catalog_dev`.`finance_mart`.`mart_revenue_reconciliation`\n  WHERE `account_id` IS NOT NULL\n    AND `account_name` IS NOT NULL\n  GROUP BY ALL\n),\n`account_names` AS (\n  SELECT\n    `account_id`,\n    `account_name`\n  FROM `rongzi_catalog_dev`.`finance_mart`.`mart_revenue_reconciliation`\n  WHERE `account_id` IS NOT NULL\n    AND `account_name` IS NOT NULL\n  GROUP BY ALL\n),\n`ranked_accounts` AS (\n  SELECT\n    `open_by_account`.`account_id`,\n    `account_names`.`account_name`,\n    `open_by_account`.`open_receivable_amount`,\n    RANK() OVER (ORDER BY `open_by_account`.`open_receivable_amount` DESC) AS `rank`\n  FROM `open_by_account`\n  INNER JOIN `account_names`\n    ON `open_by_account`.`account_id` = `account_names`.`account_id`\n)\nSELECT\n  `total_open`.`total_open_amount`,\n  `ranked_accounts`.`account_id`,\n  `ranked_accounts`.`account_name`,\n  `ranked_accounts`.`open_receivable_amount`,\n  `ranked_accounts`.`rank`\nFROM `ranked_accounts`\nCROSS JOIN `total_open`\nWHERE `ranked_accounts`.`rank` <= 5\nORDER BY `ranked_accounts`.`rank` ASC, `ranked_accounts`.`account_id` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-M-04",
+    "dept": "財務",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_core.ar_invoice"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[7446334998.57, 128613230122.32, 0.0579] / 一致=1件",
+    "truth_numbers": [
+      7446334998.57,
+      128613230122.32,
+      0.0579
+    ],
+    "genie_numbers": [
+      4750995670.18,
+      2695339328.39,
+      7446334998.57
+    ],
+    "question": "販促によって売上から失われている金額（レベニューリーケージ）はいくらですか？",
+    "authoritative": "finance_core.ar_invoice の trade_discount_amount + deduction_amount",
+    "genie_text": "販促によって売上から失われている金額（レベニューリーケージ）は、**7,446,334,998.57円**です。内訳は、販促値引が **4,750,995,670.18円**、控除が **2,695,339,328.39円**で、今回の集計では販促値引のほうが大きくなっています。",
+    "genie_sql": "SELECT\n  SUM(COALESCE(`trade_discount_amount`, 0)) AS `trade_discount_amount`,\n  SUM(COALESCE(`deduction_amount`, 0)) AS `deduction_amount`,\n  SUM(COALESCE(`trade_discount_amount`, 0) + COALESCE(`deduction_amount`, 0)) AS `revenue_leakage_amount`\nFROM `rongzi_catalog_dev`.`finance_core`.`ar_invoice`",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-M-05",
+    "dept": "財務",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_mart.mart_standard_cost_compare"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[293.0] / 一致=1件",
+    "truth_numbers": [
+      293.0
+    ],
+    "genie_numbers": [
+      293.0
+    ],
+    "question": "製品側と財務側で単位原価が1円以上食い違っている商品は何件ありますか？",
+    "authoritative": "finance_mart.mart_standard_cost_compare",
+    "genie_text": "製品側と財務側で単位原価の差額が**1円以上**ある商品は、**293件**です。今回の結果では、比較対象として集計された商品のうち、`unit_cost_gap` が空ではなく **1円以上の差**が確認された件数が **293件**でした。",
+    "genie_sql": "SELECT COUNT(*) AS `product_count`\nFROM `rongzi_catalog_dev`.`finance_mart`.`mart_standard_cost_compare`\nWHERE `unit_cost_gap` IS NOT NULL\n  AND ABS(`unit_cost_gap`) >= 1",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-F-01",
+    "dept": "財務",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_core.ar_invoice"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=140,031,286 / 一致した列=3 / その列の上位=[153944269, 127560507, 139881101, 111129253, 92258714] / 数値列数=5",
+    "truth_numbers": [
+      50.0,
+      140031285.59,
+      15.0,
+      122003326.42,
+      15.0,
+      107379193.1
+    ],
+    "genie_numbers": [
+      11217.0,
+      50.0,
+      167043102.45,
+      153944269.22,
+      140031285.59,
+      7446.0
+    ],
+    "question": "支払期日を過ぎている売掛請求で金額が大きいものを10件教えてください。",
+    "authoritative": "finance_core.ar_invoice",
+    "genie_text": "支払期日を過ぎていて未回収残高がある売掛請求の**金額上位10件**はすべて**JPY**で、未回収残高は**69,231,378.18円〜140,031,285.59円**でした。主なものは以下の通りです:\n- **AR-2026-211216**：未回収残高 **140,031,285.59円**、支払期日 **2026-10-13**、状態 **partially_paid**\n- **AR-2026-207445**：未回収残高 **122,003,326.42円**、支払期日 **2026-03-27**、状態 **open**\n- **AR-2026-210052**：未回収残高 **107,379,193.10円**、支払期日 **2026-03-03**、状態 **overdue**\n- **AR-2026-202447**：未回収残高 **85,517,982.49円**、支払期日 **2026-10-22**、状態 **partially_paid**\n- **AR-2026-206359**：未回収残高 **81,878,398.96円**、支払期日 **2026-04-16**、状態 **partially_paid**\n\nこの10件はすべて**係争中ではなく**、最も大きい未回収残高は **AR-2026-211216** の **140,031,285.59円**です。",
+    "genie_sql": "SELECT\n  ar_invoice.ar_invoice_id,\n  ar_invoice.account_id,\n  ar_invoice.billing_document_number,\n  ar_invoice.invoice_date,\n  ar_invoice.due_date,\n  ar_invoice.invoice_status,\n  ar_invoice.dispute_status,\n  ar_invoice.currency_code,\n  ar_invoice.gross_amount,\n  ar_invoice.net_amount,\n  ar_invoice.open_amount\nFROM `rongzi_catalog_dev`.`finance_core`.`ar_invoice`\nWHERE ar_invoice.due_date IS NOT NULL\n  AND ar_invoice.open_amount IS NOT NULL\n  AND ar_invoice.due_date < CURRENT_DATE()\n  AND ar_invoice.open_amount > 0\nORDER BY ar_invoice.open_amount DESC, ar_invoice.due_date ASC, ar_invoice.ar_invoice_id ASC\nLIMIT 10",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-F-02",
+    "dept": "財務",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_core.ar_invoice"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[1593.0, 9100751641.12] / 一致=2件",
+    "truth_numbers": [
+      1593.0,
+      9100751641.12
+    ],
+    "genie_numbers": [
+      1593.0,
+      9100751641.12,
+      1289714902.52
+    ],
+    "question": "係争中（dispute）になっている売掛請求の件数と金額を教えてください。",
+    "authoritative": "finance_core.ar_invoice の dispute_status = 'open'（none / open / resolved の3値）",
+    "genie_text": "係争中の売掛請求は **1,593件** です。金額は、請求金額合計が **9,100,751,641.12円**、未回収金額合計が **1,289,714,902.52円** です。今回の集計では、係争中の売掛請求 **1,593件** に対して、未回収金額は請求金額合計を下回っています。",
+    "genie_sql": "SELECT COUNT(*) AS `disputed_invoice_count`, SUM(`net_amount`) AS `total_net_amount`, SUM(`open_amount`) AS `total_open_amount`\nFROM `rongzi_catalog_dev`.`finance_core`.`ar_invoice`\nWHERE `dispute_status` IS NOT NULL\n  AND `dispute_status` ILIKE '%open%'",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-F-03",
+    "dept": "財務",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_core.ap_invoice"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[1549.0, 10584703602.38] / 一致=0件",
+    "truth_numbers": [
+      1549.0,
+      10584703602.38
+    ],
+    "genie_numbers": [
+      7501.0,
+      13.0,
+      1090.0,
+      252.0,
+      9013737.72,
+      8898159.55
+    ],
+    "question": "三者照合（match）が合っていない買掛請求はどれですか？",
+    "authoritative": "finance_core.ap_invoice の match_status <> 'matched'（price_variance / qty_variance）",
+    "genie_text": "三者照合が合っていない買掛請求には、**price_variance** と **qty_variance** があります。代表例は次のとおりです:\n- **ap_invoice_id 7501**：**price_variance**、請求日 **2026-10-24**、請求ステータス **blocked**\n- **ap_invoice_id 6664**：**price_variance**、請求日 **2026-10-24**、請求ステータス **paid**\n- **ap_invoice_id 1858**：**qty_variance**、請求日 **2026-10-24**、請求ステータス **paid**\n- **ap_invoice_id 1018**：**price_variance**、請求日 **2026-10-24**、請求ステータス **posted**\n- **ap_invoice_id 4873**：**price_variance**、請求日 **2026-10-23**、請求ステータス **paid**",
+    "genie_sql": "SELECT\n  `ap_invoice_id`,\n  `vendor_invoice_number`,\n  `sap_document_number`,\n  `supplier_id`,\n  `purchase_order_id`,\n  `goods_receipt_id`,\n  `invoice_date`,\n  `due_date`,\n  `currency_code`,\n  `gross_amount`,\n  `net_amount`,\n  `tax_amount`,\n  `match_status`,\n  `blocking_reason`,\n  `invoice_status`,\n  `clearing_status`,\n  `payment_date`\nFROM `rongzi_catalog_dev`.`finance_core`.`ap_invoice`\nWHERE `match_status` IS NOT NULL\n  AND `invoice_date` IS NOT NULL\n  AND `ap_invoice_id` IS NOT NULL\n  AND `match_status` <> 'matched'\nORDER BY `invoice_date` DESC, `ap_invoice_id` DESC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "FI-F-04",
+    "dept": "財務",
+    "persona": "現場",
+    "conflict": true,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "boolean",
+    "detail": "否定=True 肯定=False / 期待=いいえ",
+    "truth_numbers": [
+      53008284375.74
+    ],
+    "genie_numbers": [],
+    "question": "仕入先への買掛金額は、会社の売上の中に含まれていますか？「含まれています」か「含まれていません」のどちらかで始めて答えてください。",
+    "authoritative": "含まれない。finance_core.ap_invoice は仕入（買掛）。同名の total_net_amount measure を持つが売上ではない",
+    "genie_text": "含まれていません。財務の「売上」は売掛請求の純売上で、仕入先への買掛金額は買掛請求であり別指標です。",
+    "genie_sql": "",
+    "genie_status": "COMPLETED",
+    "error": null,
+    "rescored": "boolean-v2"
+  },
+  {
+    "id": "FI-F-05",
+    "dept": "財務",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_mart.mart_revenue_reconciliation"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=8,691,996,489 / 一致した列=None / その列の上位=[8276029, 2364212, 3725172, 1925900, 296337] / 数値列数=2",
+    "truth_numbers": [
+      8691996488.99,
+      7489889059.81,
+      12187103591.9,
+      10216928935.41,
+      10415752327.88,
+      9112305492.89
+    ],
+    "genie_numbers": [
+      8276029.16,
+      4540715.94,
+      2364211.65,
+      587590.38,
+      3725172.44,
+      1972986.11
+    ],
+    "question": "月次の純売上と入金の推移を並べてください。",
+    "authoritative": "finance_mart.mart_revenue_reconciliation",
+    "genie_text": "表示されている範囲では、**2026年1月**の純売上と入金が並んでおり、同額の組み合わせも複数見られます。例として、**272,944,883.20 / 272,944,883.20**、**212,778,966.94 / 212,778,966.94**、**169,112,636.03 / 169,112,636.03**、**123,029,393.92 / 44,840,351.85**、**117,815,432.62 / 55,092,481.20** です。",
+    "genie_sql": "SELECT\n  `month_start`,\n  `revenue_net_amount`,\n  `payment_amount`\nFROM `rongzi_catalog_dev`.`finance_mart`.`mart_revenue_reconciliation`\nWHERE `month_start` IS NOT NULL\nORDER BY `month_start` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-M-01",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "xdept_mart.mart_revenue_definitions"
+    ],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[13982553134.86, 128613230122.32, 0.1087] / 一致=1件",
+    "truth_numbers": [
+      13982553134.86,
+      128613230122.32,
+      0.1087
+    ],
+    "genie_numbers": [
+      10645420612.49,
+      128613230122.32,
+      8.2771
+    ],
+    "question": "2026年の販促費はいくらで、純売上に対する比率は何パーセントですか？",
+    "authoritative": "trade_mart.trade_promotion_event (promotional_spend_net) ÷ 純売上",
+    "genie_text": "2026年の**販促費**は **10,645,420,612.49円**、**純売上**は **128,613,230,122.32円**で、純売上に対する比率は **8.277081%** です。今回の集計では、2026年の販促費は純売上の約**8.28%**に当たります。",
+    "genie_sql": "SELECT\n  SUM(`promo_settlement_net_amount`) AS `promo_spend_jpy`,\n  SUM(`revenue_net_amount`) AS `revenue_net_jpy`,\n  try_divide(100 * SUM(`promo_settlement_net_amount`),SUM(`revenue_net_amount`)) AS `promo_spend_ratio_pct`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_revenue_definitions`\nWHERE `month_start` >= TIMESTAMP('2026-01-01')\n  AND `month_start` < TIMESTAMP('2027-01-01')",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-M-02",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_mart.mart_promotion_roi"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=6 / 一致した列=1 / その列の上位=[6, 6, 6, 6, 6] / 数値列数=2",
+    "truth_numbers": [
+      5.6484,
+      74.0,
+      5.7944,
+      76.0,
+      5.8328,
+      80.0
+    ],
+    "genie_numbers": [
+      74.0,
+      5.6484,
+      76.0,
+      5.7944,
+      80.0,
+      5.8328
+    ],
+    "question": "ROIが低い販促イベントのタイプはどれですか？",
+    "authoritative": "trade_mart.mart_promotion_roi",
+    "genie_text": "ROIが低い販促イベントタイプは、平均ROIが最も低い**bonus_pack**です。低い順では次の5タイプが確認できます。\n\n- **bonus_pack**：平均ROI **5.65**、イベント数 **74件**\n- **price_discount**：平均ROI **5.79**、イベント数 **76件**\n- **end_aisle**：平均ROI **5.83**、イベント数 **80件**\n- **feature_display**：平均ROI **6.28**、イベント数 **85件**\n- **coupon**：平均ROI **6.35**、イベント数 **85件**\n\nこの結果では、**bonus_packからcouponにかけて平均ROIが上がっており**、低ROI帯でもタイプ間の差は約**0.70**です。",
+    "genie_sql": "SELECT\n  `promotion_type`,\n  COUNT(*) AS `event_count`,\n  AVG(`roi`) AS `average_roi`\nFROM `rongzi_catalog_dev`.`trade_mart`.`mart_promotion_roi`\nWHERE `promotion_type` IS NOT NULL\n  AND `roi` IS NOT NULL\nGROUP BY `promotion_type`\nORDER BY `average_roi` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-M-03",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_mart.trade_promotion_event"
+    ],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=96,036,381,606 / 一致した列=0 / その列の上位=[96036381606] / 数値列数=1",
+    "truth_numbers": [
+      96036381605.83,
+      128613230122.32
+    ],
+    "genie_numbers": [
+      96036381605.8299
+    ],
+    "question": "販促イベントが生んだ売上の合計はいくらですか？",
+    "authoritative": "trade_core.promotion_event.actual_revenue は販促システムの自己申告値。財務の純売上とは一致しない。両方を示して差を説明するのが正解",
+    "genie_text": "販促イベントの実績売上合計は **96,036,381,605.82988** です。今回の結果は `trade_promotion_event` の `total_actual_revenue` を集計した1件で、販促イベント起点の売上規模としては **96,036,381,605.82988** が確認できます。",
+    "genie_sql": "SELECT MEASURE(`total_actual_revenue`) AS `total_actual_revenue`\nFROM `rongzi_catalog_dev`.`trade_mart`.`trade_promotion_event`\nGROUP BY ALL",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-M-04",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_mart.mart_trade_spend_flow"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[15234681399.85, 10645420612.49, 0.6988] / 一致=2件",
+    "truth_numbers": [
+      15234681399.85,
+      10645420612.49,
+      0.6988
+    ],
+    "genie_numbers": [
+      69.8762,
+      15234681399.85,
+      10645420612.49
+    ],
+    "question": "引当した販促費のうち、実際に精算されたのは何パーセントですか？",
+    "authoritative": "trade_mart.mart_trade_spend_flow (settlement_rate)",
+    "genie_text": "引当した販促費のうち、実際に精算された割合は **69.88%** です。引当額の合計は **15,234,681,399.85円**、精算額の合計は **10,645,420,612.49円** でした。",
+    "genie_sql": "SELECT\n  try_divide(100 * SUM(`settled_amount`),NULLIF(SUM(`accrual_amount`), 0)) AS `settled_pct_of_accrual`,\n  SUM(`accrual_amount`) AS `total_accrual_amount`,\n  SUM(`settled_amount`) AS `total_settled_amount`\nFROM `rongzi_catalog_dev`.`trade_mart`.`mart_trade_spend_flow`\nWHERE `accrual_amount` IS NOT NULL",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-M-05",
+    "dept": "営業",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_mart.mart_promotion_roi"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=6 / 一致した列=1 / その列の上位=[6, 5, 4, 4, 4] / 数値列数=3",
+    "truth_numbers": [
+      6.0,
+      5.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0
+    ],
+    "genie_numbers": [
+      122.0,
+      6.0,
+      234.0,
+      80.0,
+      5.0,
+      234.0
+    ],
+    "question": "計画した売上に届かなかった販促イベントの数と、その得意先を教えてください。",
+    "authoritative": "trade_mart.mart_promotion_roi (revenue_attainment)",
+    "genie_text": "計画売上に届かなかった販促イベントは**合計234件**です。代表的な得意先は次のとおりです。\n\n- **マルシェ興産 九州支社**：**6件**\n- **緑風マート 関西支社**：**5件**\n- **くすりのミドリ 関東支社**：**4件**\n- **さくら薬品 四国支社**：**4件**\n- **クイックマート 北海道支社**：**4件**",
+    "genie_sql": "WITH `under_target_by_account` AS (\n  SELECT\n    `account_id`,\n    `account_name`,\n    COUNT(DISTINCT `promotion_event_id`) AS `under_target_event_count`\n  FROM `rongzi_catalog_dev`.`trade_mart`.`mart_promotion_roi`\n  WHERE `account_id` IS NOT NULL\n    AND `account_name` IS NOT NULL\n    AND `actual_revenue` IS NOT NULL\n    AND `target_revenue` IS NOT NULL\n    AND `actual_revenue` < `target_revenue`\n  GROUP BY `account_id`, `account_name`\n)\nSELECT\n  `account_id`,\n  `account_name`,\n  `under_target_event_count`,\n  SUM(`under_target_event_count`) OVER () AS `total_under_target_event_count`\nFROM `under_target_by_account`\nORDER BY `under_target_event_count` DESC, `account_name` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-F-01",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_core.deduction"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[900067723.3, 627.0] / 一致=2件",
+    "truth_numbers": [
+      900067723.3,
+      627.0
+    ],
+    "genie_numbers": [
+      900067723.3,
+      627.0
+    ],
+    "question": "係争中の控除（deduction）はいくらありますか？",
+    "authoritative": "trade_core.deduction の deduction_status = 'disputed'（dispute_flag も同じ行で true）",
+    "genie_text": "係争中の控除は、**900,067,723.30**で、件数は**627件**です。今回の結果では、係争中の控除1件あたりの金額は平均で約**1,435,514**です。",
+    "genie_sql": "SELECT\n  SUM(`net_amount`) AS `disputed_deduction_amount`,\n  COUNT(*) AS `disputed_deduction_count`\nFROM `rongzi_catalog_dev`.`trade_core`.`deduction`\nWHERE `deduction_status` ILIKE '%disputed%'",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-F-02",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_core.deduction"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=1,489,157,307 / 一致した列=0 / その列の上位=[1489157307, 1444811378, 1431392521, 1414587460, 1389426159] / 数値列数=2",
+    "truth_numbers": [
+      1024.0,
+      1489157307.45,
+      1000.0,
+      1444811378.16,
+      976.0,
+      1431392521.34
+    ],
+    "genie_numbers": [
+      1489157307.45,
+      1024.0,
+      1444811378.16,
+      1000.0,
+      1431392521.34,
+      976.0
+    ],
+    "question": "控除の理由別の内訳を教えてください。",
+    "authoritative": "trade_core.deduction (deduction_type)",
+    "genie_text": "控除の理由別内訳は、表示されている **5種類** では **return** が最も大きく、合計 **1,489,157,307.45**、**1,024件** です。続いて **pricing** が **1,444,811,378.16**（**1,000件**）、**damage** が **1,431,392,521.34**（**976件**）、**shortage** が **1,414,587,460.12**（**981件**）、**promotion** が **1,389,426,158.78**（**984件**）でした。\n\n金額は **return** が最大、**promotion** が最小で、件数も **976〜1,024件** と理由ごとの差は比較的小さいです。",
+    "genie_sql": "SELECT\n  `deduction_type`,\n  SUM(`net_amount`) AS `total_net_amount`,\n  COUNT(*) AS `deduction_count`\nFROM `rongzi_catalog_dev`.`trade_core`.`deduction`\nWHERE `deduction_type` IS NOT NULL\nGROUP BY `deduction_type`\nORDER BY `total_net_amount` DESC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-F-03",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_core.settlement"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=11,803,725 / 一致した列=3 / その列の上位=[11803725, 11724397, 11596793, 11587502, 11492459] / 数値列数=4",
+    "truth_numbers": [
+      43.0,
+      11803724.76,
+      120.0,
+      11724396.9,
+      112.0,
+      11596793.23
+    ],
+    "genie_numbers": [
+      1381.0,
+      354.0,
+      11333777.17,
+      11803724.76,
+      1589.0,
+      354.0
+    ],
+    "question": "いま精算待ち（pending）の販促精算を金額順に出してください。",
+    "authoritative": "trade_core.settlement (settlement_status)",
+    "genie_text": "精算待ちの販促精算を金額順に見ると、上位は次のとおりです。\n\n- **settlement_id 1381**：**11,803,724.76**（promotion_claim_id **354**、gross_amount **11,333,777.17**）\n- **settlement_id 1589**：**11,724,396.90**（promotion_claim_id **354**、gross_amount **11,433,050.68**）\n- **settlement_id 426**：**11,596,793.23**（promotion_claim_id **58**、gross_amount **11,079,739.19**）\n- **settlement_id 1169**：**11,587,502.49**（promotion_claim_id **371**、gross_amount **11,338,024.16**）\n- **settlement_id 603**：**11,492,458.57**（promotion_claim_id **131**、gross_amount **11,099,891.86**）",
+    "genie_sql": "SELECT\n  `settlement_id`,\n  `promotion_claim_id`,\n  `gross_amount`,\n  `net_amount`\nFROM `rongzi_catalog_dev`.`trade_core`.`settlement`\nWHERE `settlement_status` ILIKE '%pending%'\n  AND `net_amount` IS NOT NULL\nORDER BY `net_amount` DESC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-F-04",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "trade_core.promotion_event"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[34.0, 1182826439.06] / 一致=0件",
+    "truth_numbers": [
+      34.0,
+      1182826439.06
+    ],
+    "genie_numbers": [
+      7.0,
+      221228250.15
+    ],
+    "question": "来月（2026年11月）に開始予定の販促イベントは何件で、販促費の合計はいくらですか？",
+    "authoritative": "trade_core.promotion_event の planned_start_date が2026年11月",
+    "genie_text": "2026年11月に開始予定で、ステータスに planned を含み、通貨コードが **JPY** の販促イベントは **7件**、販促費合計は **221,228,250.15 JPY** です。今回の結果は **JPY の1行のみ**で、表示された範囲では11月開始予定の販促費は **すべて JPY 建て**です。",
+    "genie_sql": "SELECT\n  `currency_code`,\n  COUNT(*) AS `promotion_event_count`,\n  SUM(COALESCE(`promotional_spend_net`, 0)) AS `total_promotional_spend_net`\nFROM `rongzi_catalog_dev`.`trade_core`.`promotion_event`\nWHERE `planned_start_date` IS NOT NULL\n  AND `currency_code` IS NOT NULL\n  AND `promotion_event_status` ILIKE '%planned%'\n  AND `planned_start_date` >= DATE '2026-11-01'\n  AND `planned_start_date` < DATE '2026-12-01'\nGROUP BY `currency_code`",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "TR-F-05",
+    "dept": "営業",
+    "persona": "現場",
+    "conflict": true,
+    "space": "01f1d10db91f1a0f8058c509f70f077a",
+    "refs": [
+      "sales_core.account",
+      "xdept_mart.mart_customer_360"
+    ],
+    "source_ok": null,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "boolean",
+    "detail": "否定=True 肯定=False / 期待=いいえ",
+    "truth_numbers": [
+      10645420612.49,
+      2695339328.39
+    ],
+    "genie_numbers": [
+      31.0,
+      725525440.65,
+      44973068.42,
+      47859928.88
+    ],
+    "question": "フレッシュストア 関東支社に支払った販促精算の金額は、同社の売上(純売上)の金額の中に含まれていますか？「含まれています」か「含まれていません」のどちらかで始めて答えてください。",
+    "authoritative": "入っていない。settlement は得意先への支払いで、売上のマイナス要素（ar_invoice の控除として反映）",
+    "genie_text": "**含まれていません**。フレッシュストア 関東支社（account_id 31）の純売上は **725,525,440.65円**、販促精算は **44,973,068.42円**で、表示されている値は別項目として分かれています。",
+    "genie_sql": "WITH `acct_metrics` AS (\n  SELECT\n    `a`.`account_id`,\n    `a`.`account_name`,\n    `m`.`revenue_net_amount`,\n    `m`.`promo_settlement_net_amount`,\n    `m`.`deduction_net_amount`\n  FROM `rongzi_catalog_dev`.`sales_core`.`account` AS `a`\n  INNER JOIN `rongzi_catalog_dev`.`xdept_mart`.`mart_customer_360` AS `m`\n    ON `a`.`account_id` = `m`.`account_id`\n  WHERE `a`.`account_name` IS NOT NULL\n    AND `a`.`account_name` ILIKE '%フレッシュストア 関東支社%'\n)\nSELECT\n  `account_id`,\n  `account_name`,\n  `revenue_net_amount`,\n  `promo_settlement_net_amount`,\n  `deduction_net_amount`\nFROM `acct_metrics`",
+    "genie_status": "COMPLETED",
+    "error": null,
+    "rescored": "boolean-v2"
+  },
+  {
+    "id": "XD-01",
+    "dept": "横断",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbbd51e24985da13d0ba87c5a",
+    "refs": [
+      "xdept_mart.mart_revenue_definitions"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[157253032520.84, 136380425604.66, 128613230122.32] / 一致=3件",
+    "truth_numbers": [
+      157253032520.84,
+      136380425604.66,
+      128613230122.32,
+      10645420612.49,
+      53008284375.74,
+      59831718576.37
+    ],
+    "genie_numbers": [
+      5.0,
+      157253032520.84,
+      136380425604.66,
+      4750995670.18,
+      2695339328.39,
+      128613230122.32
+    ],
+    "question": "「売上」という言葉で、社内にいくつの違う数字がありますか？それぞれいくらですか？",
+    "authoritative": "xdept_mart.mart_revenue_definitions",
+    "genie_text": "社内で「売上」として並ぶ数字は **5種類** です。金額は、**受注** 157,253,032,520.84円、**請求総額** 136,380,425,604.66円、**販促値引** 4,750,995,670.18円、**控除** 2,695,339,328.39円、**純売上** 128,613,230,122.32円です。今回の集計では、**純売上 128,613,230,122.32円** が請求総額から販促値引と控除を差し引いた水準になっています。",
+    "genie_sql": "SELECT\n  5 AS `revenue_definition_count`,\n  SUM(`sales_order_net_amount`) AS `sales_order_net_amount`,\n  SUM(`invoiced_gross_amount`) AS `invoiced_gross_amount`,\n  SUM(`trade_discount_amount`) AS `trade_discount_amount`,\n  SUM(`deduction_amount`) AS `deduction_amount`,\n  SUM(`revenue_net_amount`) AS `revenue_net_amount`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_revenue_definitions`",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "XD-02",
+    "dept": "横断",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbbd51e24985da13d0ba87c5a",
+    "refs": [
+      "xdept_mart.mart_revenue_definitions"
+    ],
+    "source_ok": null,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "explanation",
+    "detail": "概念 4/5 一致（必要 3）: ['受注', '請求', '値引', '控除']",
+    "truth_numbers": [
+      157253032520.84,
+      136380425604.66,
+      4750995670.18,
+      2695339328.39,
+      128613230122.32
+    ],
+    "genie_numbers": [
+      16024566409.4,
+      9199248090.86,
+      307192248.98,
+      191160972.01,
+      8691996488.99,
+      0.5424
+    ],
+    "question": "営業が言う売上と財務が言う売上が違うのはなぜですか？",
+    "authoritative": "受注(sales_order) → 一部出荷 → 請求総額 → 販促値引・控除 → 純売上(ar_invoice) の連鎖",
+    "genie_text": "営業の売上と財務の売上が違う主因は、営業側の数字が**受注額**、財務側の数字が**請求総額から販促値引と控除を差し引いた純売上**だからです。実際に2026年の各月を見ると、たとえば**1月**は営業 160.25億円に対して財務 86.92億円、**6月**は 168.75億円に対して 138.59億円、**10月**は営業 118.12億円に対して財務 137.23億円で、月によって差の出方が異なります。補足すると、財務売上の受注比率は**0.5424〜1.1618**と月ごとの振れ幅が大きく、受注と純売上は同じ基準の数字ではないことが確認できます。",
+    "genie_sql": "SELECT `month_start`, `sales_order_net_amount`, `invoiced_gross_amount`, `trade_discount_amount`, `deduction_amount`, `revenue_net_amount`, `revenue_to_order_ratio`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_revenue_definitions`\nWHERE `month_start` IS NOT NULL\nORDER BY `month_start` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "XD-03",
+    "dept": "横断",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10dbbd51e24985da13d0ba87c5a",
+    "refs": [
+      "xdept_mart.mart_customer_360"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=0 / 一致した列=1 / その列の上位=[0] / 数値列数=2",
+    "truth_numbers": [
+      0.4218
+    ],
+    "genie_numbers": [
+      90.0,
+      0.4218
+    ],
+    "question": "受注金額が上位10社の中で、純売上への転換率が最も低い得意先はどこで、その転換率はいくらですか？",
+    "authoritative": "xdept_mart.mart_customer_360 (revenue_to_order_ratio)",
+    "genie_text": "受注金額が上位10社の中で、純売上への転換率が最も低い得意先は**account_id 90**で、転換率は**0.4218**です。今回の結果では該当は1件で、**account_id 90**が上位10社の中で最も低い転換率でした。",
+    "genie_sql": "WITH `ranked_accounts` AS (\n  SELECT\n    `mart_customer_360`.`account_id`,\n    `mart_customer_360`.`order_net_amount`,\n    `mart_customer_360`.`revenue_to_order_ratio`,\n    RANK() OVER (ORDER BY `mart_customer_360`.`order_net_amount` DESC) AS `order_rank`\n  FROM `rongzi_catalog_dev`.`xdept_mart`.`mart_customer_360` AS `mart_customer_360`\n  WHERE `mart_customer_360`.`order_net_amount` IS NOT NULL\n    AND `mart_customer_360`.`revenue_to_order_ratio` IS NOT NULL\n),\n`top_10_accounts` AS (\n  SELECT\n    `ranked_accounts`.`account_id`,\n    `ranked_accounts`.`order_net_amount`,\n    `ranked_accounts`.`revenue_to_order_ratio`\n  FROM `ranked_accounts`\n  WHERE `ranked_accounts`.`order_rank` <= 10\n),\n`lowest_conversion` AS (\n  SELECT\n    `top_10_accounts`.`account_id`,\n    `top_10_accounts`.`order_net_amount`,\n    `top_10_accounts`.`revenue_to_order_ratio`,\n    RANK() OVER (ORDER BY `top_10_accounts`.`revenue_to_order_ratio` ASC) AS `conversion_rank`\n  FROM `top_10_accounts`\n)\nSELECT\n  `lowest_conversion`.`account_id`,\n  `lowest_conversion`.`revenue_to_order_ratio`\nFROM `lowest_conversion`\nWHERE `lowest_conversion`.`conversion_rank` = 1\nORDER BY `lowest_conversion`.`account_id` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "XD-04",
+    "dept": "横断",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbbd51e24985da13d0ba87c5a",
+    "refs": [
+      "xdept_mart.mart_customer_360"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": false,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=0 / 一致した列=None / その列の上位=[101, 141, 41, 122, 74] / 数値列数=4",
+    "truth_numbers": [
+      0.4495,
+      0.4064,
+      0.4003,
+      0.3956,
+      0.3445
+    ],
+    "genie_numbers": [
+      101.0,
+      184931058.9,
+      411423545.24,
+      44.9491,
+      141.0,
+      265368717.48
+    ],
+    "question": "得意先ごとの販促費が純売上に占める比率が高い上位5社を教えてください。",
+    "authoritative": "xdept_mart.mart_customer_360 で promo_spend_net_amount と revenue_net_amount を突合",
+    "genie_text": "販促費が純売上に占める比率が高い上位5社は以下の5社です。\n- **account_id 101**: **44.95%**（販促費 **184,931,058.90円** / 純売上 **411,423,545.24円**）\n- **account_id 141**: **40.64%**（販促費 **265,368,717.48円** / 純売上 **652,937,953.79円**）\n- **account_id 41**: **40.03%**（販促費 **191,054,792.46円** / 純売上 **477,319,923.51円**）\n- **account_id 122**: **39.56%**（販促費 **414,887,127.89円** / 純売上 **1,048,626,685.59円**）\n- **account_id 74**: **34.45%**（販促費 **202,439,061.92円** / 純売上 **587,635,998.31円**）\nこの5社では、販促費比率は **34.45%〜44.95%** の範囲で、最上位の account_id 101 が最も高くなっています。",
+    "genie_sql": "SELECT\n  `mart_customer_360`.`account_id`,\n  `mart_customer_360`.`promo_spend_net_amount`,\n  `mart_customer_360`.`revenue_net_amount`,\n  100 * try_divide(`mart_customer_360`.`promo_spend_net_amount`, `mart_customer_360`.`revenue_net_amount`) AS `promo_spend_ratio_pct`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_customer_360`\nWHERE `mart_customer_360`.`promo_spend_net_amount` IS NOT NULL\n  AND `mart_customer_360`.`revenue_net_amount` IS NOT NULL\n  AND `mart_customer_360`.`revenue_net_amount` <> 0\n  AND `mart_customer_360`.`promo_spend_ratio` IS NOT NULL\nORDER BY `mart_customer_360`.`promo_spend_ratio` DESC\nLIMIT 5",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "XD-05",
+    "dept": "横断",
+    "persona": "現場",
+    "conflict": true,
+    "space": "01f1d10dbbd51e24985da13d0ba87c5a",
+    "refs": [
+      "xdept_mart.mart_customer_360"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=109,012,598 / 一致した列=1 / その列の上位=[109012598, 87739046, 82501500, 79639276, 79626011] / 数値列数=4",
+    "truth_numbers": [
+      109012597.65,
+      0.0511,
+      281933086.13,
+      87739046.28,
+      0.0562,
+      187641053.82
+    ],
+    "genie_numbers": [
+      124.0,
+      109012597.65,
+      52681532.18,
+      56331065.47,
+      103.0,
+      87739046.28
+    ],
+    "question": "レベニューリーケージが大きい得意先の上位5社と、その原因を教えてください。",
+    "authoritative": "xdept_mart.mart_customer_360 (revenue_leakage_amount, leakage_ratio) ＋ trade_core.deduction の理由別",
+    "genie_text": "レベニューリーケージが大きい得意先の**上位5社**は以下の通りで、主因は値引または控除のどちらが大きいかで判定されています。全5社のうち**控除が主因は3社、値引が主因は2社**でした。\n\n- **みなとスーパー 九州支社**：レベニューリーケージ **109,012,597.65円**、主因は **trade_discount_amount**\n- **全日本酒類卸 中国支社**：レベニューリーケージ **87,739,046.28円**、主因は **deduction_amount**\n- **ブリックス公式オンライン 北海道支社**：レベニューリーケージ **82,501,499.68円**、主因は **deduction_amount**\n- **ヘルスベース 関西支社**：レベニューリーケージ **79,639,275.75円**、主因は **deduction_amount**\n- **マルシェ興産 中部支社**：レベニューリーケージ **79,626,010.74円**、主因は **trade_discount_amount**",
+    "genie_sql": "WITH `ranked_accounts` AS (\n  SELECT\n    `mart_customer_360`.`account_id`,\n    `mart_customer_360`.`account_name`,\n    `mart_customer_360`.`channel`,\n    `mart_customer_360`.`region`,\n    `mart_customer_360`.`revenue_leakage_amount`,\n    `mart_customer_360`.`deduction_net_amount`,\n    (`mart_customer_360`.`revenue_leakage_amount` - `mart_customer_360`.`deduction_net_amount`) AS `trade_discount_amount_estimated`,\n    CASE\n      WHEN `mart_customer_360`.`deduction_net_amount` > (`mart_customer_360`.`revenue_leakage_amount` - `mart_customer_360`.`deduction_net_amount`) THEN 'deduction_amount が主因'\n      WHEN `mart_customer_360`.`deduction_net_amount` < (`mart_customer_360`.`revenue_leakage_amount` - `mart_customer_360`.`deduction_net_amount`) THEN 'trade_discount_amount が主因'\n      WHEN `mart_customer_360`.`deduction_net_amount` = (`mart_customer_360`.`revenue_leakage_amount` - `mart_customer_360`.`deduction_net_amount`) THEN 'trade_discount_amount と deduction_amount が同程度'\n      ELSE '判定不可'\n    END AS `cause`,\n    RANK() OVER (ORDER BY `mart_customer_360`.`revenue_leakage_amount` DESC) AS `rank`\n  FROM `rongzi_catalog_dev`.`xdept_mart`.`mart_customer_360`\n  WHERE `mart_customer_360`.`account_name` IS NOT NULL\n    AND `mart_customer_360`.`revenue_leakage_amount` IS NOT NULL\n)\nSELECT\n  `ranked_accounts`.`account_id`,\n  `ranked_accounts`.`account_name`,\n  `ranked_accounts`.`channel`,\n  `ranked_accounts`.`region`,\n  `ranked_accounts`.`revenue_leakage_amount`,\n  `ranked_accounts`.`deduction_net_amount`,\n  `ranked_accounts`.`trade_discount_amount_estimated`,\n  `ranked_accounts`.`cause`\nFROM `ranked_accounts`\nWHERE `ranked_accounts`.`rank` <= 5\nORDER BY `ranked_accounts`.`revenue_leakage_amount` DESC, `ranked_accounts`.`account_name` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-M-01",
+    "dept": "マーケ",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_mart.marketing_campaign_performance"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[53695170.66] / 一致=1件",
+    "truth_numbers": [
+      53695170.66
+    ],
+    "genie_numbers": [
+      53695170.66
+    ],
+    "question": "Brickshouse の2026年のマーケティング投下額はいくらですか？",
+    "authoritative": "marketing_mart.marketing_campaign_performance (actual_spend_usd) ＝ キャンペーン投下額・USD建て",
+    "genie_text": "Brickshouse の**2026年のマーケティング投下額**は、**53,695,170.66 USD**です。今回の結果は1行で、2026年の開始日のキャンペーン実績を合計した金額として **53,695,170.66 USD** が確認できます。",
+    "genie_sql": "SELECT MEASURE(`total_actual_spend_usd`) AS `marketing_investment_usd`\nFROM `rongzi_catalog_dev`.`marketing_mart`.`marketing_campaign_performance`\nWHERE `start_date` >= DATE '2026-01-01' AND `start_date` < DATE '2027-01-01'\nGROUP BY ALL",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-M-02",
+    "dept": "マーケ",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "xdept_mart.mart_brand_investment_return"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[9856055539.21] / 一致=1件",
+    "truth_numbers": [
+      9856055539.21
+    ],
+    "genie_numbers": [
+      8054275599.0,
+      1801779940.21,
+      9856055539.21,
+      150.0
+    ],
+    "question": "2026年のマーケ投下額と販促費を合わせた、マーケティング総投資額はいくらですか？",
+    "authoritative": "xdept_mart.mart_brand_investment_return.total_investment_jpy ＝ USD建てのマーケ投下を1USD=150JPYで換算してJPYの販促費と合算した額",
+    "genie_text": "2026年のマーケティング総投資額は **9,856,055,539.21円** です。内訳は、マーケ投下額が **8,054,275,599.00円**、販促費が **1,801,779,940.21円** で、換算レートは **150.0**、換算根拠は **「USD->JPY 固定 150.0（デモ用。実務では期中平均レートを使う）」** です。",
+    "genie_sql": "SELECT SUM(`campaign_actual_jpy`) AS `marketing_jpy`, SUM(`trade_funding_jpy`) AS `trade_jpy`, SUM(`total_investment_jpy`) AS `total_jpy`, MAX(`marketing_spend_fx_rate`) AS `fx_rate`, MAX(`fx_basis`) AS `fx_basis` FROM `rongzi_catalog_dev`.`xdept_mart`.`mart_brand_investment_return`",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-M-03",
+    "dept": "マーケ",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "xdept_mart.mart_brand_investment_return"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=53 / 一致した列=1 / その列の上位=[53, 33, 23, 19, 18] / 数値列数=2",
+    "truth_numbers": [
+      53.449,
+      32.7379,
+      22.532,
+      18.8199,
+      18.4442,
+      17.9749
+    ],
+    "genie_numbers": [
+      1.0,
+      53.449,
+      2.0,
+      32.7379,
+      10.0,
+      22.532
+    ],
+    "question": "ブランド別の投資対効果（ROI）が高い順に教えてください。",
+    "authoritative": "xdept_mart.mart_brand_investment_return.return_on_investment ＝ 店頭実売(JPY) ÷ (マーケ投下USD×150 + 販促費JPY)",
+    "genie_text": "ブランド別ROIの高い順では、**ブリックス ラガー**が**53.4490**で最も高く、次いで**ブリックス プレミアム**が**32.7379**、**ブリックス 乳酸菌ガード**が**22.5320**でした。例として上位は以下の通りです:\n- **ブリックス ラガー**（酒類事業本部／ビール類）：**53.4490**\n- **ブリックス プレミアム**（酒類事業本部／ビール類）：**32.7379**\n- **ブリックス 乳酸菌ガード**（ヘルスサイエンス事業本部／健康食品）：**22.5320**\n- **ブリックス 微炭酸**（飲料事業本部／清涼飲料）：**18.8199**\n- **ブリックス 零**（酒類事業本部／ビール類）：**18.4442**\n全12ブランドでは、最高の**53.4490**から最低の**7.2418**まで幅があり、上位2ブランドが他ブランドより大きく高い水準です。",
+    "genie_sql": "SELECT\n  `brand_id`,\n  `brand_name`,\n  `brand_category`,\n  `owner_division`,\n  `return_on_investment`\nFROM `rongzi_catalog_dev`.`xdept_mart`.`mart_brand_investment_return`\nWHERE `brand_name` IS NOT NULL\n  AND `return_on_investment` IS NOT NULL\nORDER BY `return_on_investment` DESC, `brand_name` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-M-04",
+    "dept": "マーケ",
+    "persona": "部長",
+    "conflict": false,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_mart.mart_brand_market_position"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=24 / 一致した列=1 / その列の上位=[24, 18, 17, 13, 11] / 数値列数=2",
+    "truth_numbers": [
+      24.1,
+      18.05,
+      16.88,
+      13.03,
+      10.97,
+      8.94
+    ],
+    "genie_numbers": [
+      10.0,
+      24.1048,
+      1.0,
+      18.0529,
+      11.0,
+      16.8822
+    ],
+    "question": "ブランド別の市場シェアが高い順に教えてください。",
+    "authoritative": "marketing_mart.mart_brand_market_position.own_dollar_share_pct（Nielsen syndicated の金額シェア）",
+    "genie_text": "ブランド別の市場シェアを高い順に見ると、**最も高い**のは**ブリックス 乳酸菌ガード**の**24.10%**です。代表的な上位ブランドは以下の通りです:\n- **ブリックス 乳酸菌ガード**: **24.10%**\n- **ブリックス ラガー**: **18.05%**\n- **ブリックス コラーゲン**: **16.88%**\n- **ブリックス 血糖ケア**: **13.03%**\n- **ブリックス プレミアム**: **10.97%**\n全12ブランドの中で、1位は2位を約**6.05ポイント**上回っています。",
+    "genie_sql": "SELECT\n  `brand_id`,\n  `brand_name`,\n  AVG(`own_dollar_share_pct`) AS `market_share_pct`\nFROM `rongzi_catalog_dev`.`marketing_mart`.`mart_brand_market_position`\nWHERE `brand_name` IS NOT NULL\n  AND `own_dollar_share_pct` IS NOT NULL\nGROUP BY\n  `brand_id`,\n  `brand_name`\nORDER BY\n  `market_share_pct` DESC,\n  `brand_name` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-M-05",
+    "dept": "マーケ",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "sales_core.pos_transaction"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[3301054850.26] / 一致=1件",
+    "truth_numbers": [
+      3301054850.26
+    ],
+    "genie_numbers": [
+      3301054850.26
+    ],
+    "question": "当社の店頭での売れ行きは2026年いくらですか？",
+    "authoritative": "sales_core.pos_transaction.dollar_sales ＝ 自社の店頭実売・JPY建て・Nielsenパネルの約15%ACV投影値",
+    "genie_text": "2026年の当社の店頭での売れ行きは、**3,301,054,850.26円**です。今回の集計は `sales_core.pos_transaction` の `dollar_sales` を2026年1月1日から2026年12月31日まで合計した結果で、当社の店頭実売の年間合計として確認できます。",
+    "genie_sql": "SELECT SUM(pos_transaction.dollar_sales) AS total_store_sellout_jpy\nFROM `rongzi_catalog_dev`.`sales_core`.`pos_transaction`\nWHERE pos_transaction.transaction_date >= DATE('2026-01-01')\n  AND pos_transaction.transaction_date < DATE('2027-01-01')",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-M-06",
+    "dept": "マーケ",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "boolean",
+    "detail": "否定=True 肯定=False / 期待=いいえ",
+    "truth_numbers": [
+      2935350.2,
+      53695170.66
+    ],
+    "genie_numbers": [],
+    "question": "消費者調査の費用は、マーケティング投下額に含まれますか？",
+    "authoritative": "含まれない。marketing_core.consumer_insight は調査プロジェクトの費用で、キャンペーンや媒体への投下ではない",
+    "genie_text": "含まれません。  \nこのデータ定義では、マーケティング投下額は `marketing_campaign_performance` の `total_actual_spend_usd`、消費者調査費は `marketing_consumer_insight` の `total_actual_spend_usd` で、別物です。",
+    "genie_sql": "",
+    "genie_status": "COMPLETED",
+    "error": null,
+    "rescored": "boolean-v2"
+  },
+  {
+    "id": "MK-F-01",
+    "dept": "マーケ",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_core.campaign",
+      "marketing_core.campaign_execution"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=9,523 / 一致した列=4 / その列の上位=[9523, 9312, 8942, 8493, 8303] / 数値列数=5",
+    "truth_numbers": [
+      9522.57,
+      9312.24,
+      8941.88,
+      8493.08,
+      8303.33
+    ],
+    "genie_numbers": [
+      3719.0,
+      165.0,
+      15702.95,
+      6180.38,
+      9522.57,
+      596.0
+    ],
+    "question": "2026年9月に終了したキャンペーン執行のうち、計画の70%も使えていないものを、未消化額が大きい順に5件教えてください。",
+    "authoritative": "marketing_core.campaign_execution の planned_spend_amount と actual_spend_amount の差（USD建て）",
+    "genie_text": "2026年9月に終了し、実績消化率が**70%未満**だったキャンペーン執行の上位5件は以下のとおりです。\n- **ブリックス プレミアム 8月shopper施策**：未消化額 **$9,522.57**（計画 **$15,702.95**、実績 **$6,180.38**、終了日 **2026-09-18**）\n- **ブリックス ラガー 8月digital施策**：未消化額 **$9,312.24**（計画 **$14,923.30**、実績 **$5,611.06**、終了日 **2026-09-26**）\n- **ブリックス 微炭酸 8月ooh施策**：未消化額 **$8,941.88**（計画 **$14,116.83**、実績 **$5,174.95**、終了日 **2026-09-03**）\n- **ブリックス プレミアム 8月influencer施策**：未消化額 **$8,493.08**（計画 **$16,377.08**、実績 **$7,884.00**、終了日 **2026-09-02**）\n- **ブリックス 微炭酸 8月digital施策**：未消化額 **$8,303.33**（計画 **$15,182.74**、実績 **$6,879.41**、終了日 **2026-09-28**）\n5件すべての執行ステータスは**completed**で、未消化額は **$8,303.33〜$9,522.57** の範囲でした。",
+    "genie_sql": "SELECT\n  `ce`.`campaign_execution_id`,\n  `ce`.`campaign_id`,\n  `c`.`campaign_name`,\n  `ce`.`flight_end_date`,\n  `ce`.`planned_spend_amount`,\n  `ce`.`actual_spend_amount`,\n  (`ce`.`planned_spend_amount` - `ce`.`actual_spend_amount`) AS `unspent_amount_usd`,\n  `ce`.`execution_status`\nFROM `rongzi_catalog_dev`.`marketing_core`.`campaign_execution` AS `ce`\nLEFT JOIN `rongzi_catalog_dev`.`marketing_core`.`campaign` AS `c`\n  ON `ce`.`campaign_id` = `c`.`campaign_id`\nWHERE `ce`.`flight_end_date` IS NOT NULL\n  AND `ce`.`planned_spend_amount` IS NOT NULL\n  AND `ce`.`actual_spend_amount` IS NOT NULL\n  AND `ce`.`planned_spend_amount` > 0\n  AND `ce`.`flight_end_date` >= DATE '2026-09-01'\n  AND `ce`.`flight_end_date` < DATE '2026-10-01'\n  AND `ce`.`actual_spend_amount` < 0.7 * `ce`.`planned_spend_amount`\nORDER BY `unspent_amount_usd` DESC, `ce`.`campaign_execution_id` ASC\nLIMIT 5",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-F-02",
+    "dept": "マーケ",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_mart.mart_media_efficiency"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=1 / 一致した列=0 / その列の上位=[1, 1, 1, 1, 1] / 数値列数=1",
+    "truth_numbers": [
+      0.78,
+      0.79,
+      0.8,
+      0.8,
+      0.81,
+      0.82
+    ],
+    "genie_numbers": [
+      0.785,
+      0.7912,
+      0.7989,
+      0.803,
+      0.8099,
+      0.8179
+    ],
+    "question": "2026年の媒体チャネル別のCPMを、安い順に教えてください。",
+    "authoritative": "marketing_mart.mart_media_efficiency.cpm_usd（USD建て）",
+    "genie_text": "2026年の媒体チャネル別CPMを安い順に並べると、**OOH**が最も低く、**Print**が最も高いです。全6チャネルの結果は次のとおりです。\n\n- **OOH**: **0.784962 USD**\n- **Social**: **0.791229 USD**\n- **In-Store**: **0.798910 USD**\n- **Digital**: **0.802970 USD**\n- **TV**: **0.809947 USD**\n\n6チャネル全体では、最安のOOHと最高のPrint（0.817852 USD）の差は**約0.033 USD**で、大きな開きはありません。",
+    "genie_sql": "SELECT\n  `media_channel`,\n  try_divide(1000 * SUM(`actual_spend_usd`),SUM(`impressions`)) AS `cpm_usd_2026`\nFROM `rongzi_catalog_dev`.`marketing_mart`.`mart_media_efficiency`\nWHERE `month_start` >= TIMESTAMP('2026-01-01')\n  AND `month_start` < TIMESTAMP('2027-01-01')\n  AND `media_channel` IS NOT NULL\n  AND `cpm_usd` IS NOT NULL\n  AND `impressions` IS NOT NULL\n  AND `impressions` > 0\n  AND `actual_spend_usd` IS NOT NULL\nGROUP BY `media_channel`\nORDER BY `cpm_usd_2026` ASC, `media_channel` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-F-03",
+    "dept": "マーケ",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_core.campaign_execution"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[60.0] / 一致=1件",
+    "truth_numbers": [
+      60.0
+    ],
+    "genie_numbers": [
+      60.0
+    ],
+    "question": "費用は発生しているのに配信実績（インプレッション）がゼロになっている執行は何件ありますか？",
+    "authoritative": "marketing_core.campaign_execution の delivery_when_spent 違反件数",
+    "genie_text": "費用が発生していて、かつ配信実績（インプレッション）が **0** の執行件数は **60件** です。今回の結果では、`actual_spend_amount > 0` かつ `impressions_delivered = 0` に該当する執行が **60件** あり、費用計上と配信実績の不一致が確認できます。",
+    "genie_sql": "SELECT COUNT(*) AS `zero_impression_paid_execution_count`\nFROM `rongzi_catalog_dev`.`marketing_core`.`campaign_execution`\nWHERE `actual_spend_amount` > 0\n  AND `impressions_delivered` = 0",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-F-04",
+    "dept": "マーケ",
+    "persona": "現場",
+    "conflict": true,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_core.media_spend"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "scalar",
+    "detail": "正解=[125.0] / 一致=1件",
+    "truth_numbers": [
+      125.0
+    ],
+    "genie_numbers": [
+      125.0
+    ],
+    "question": "媒体費の明細で、通貨が記録されていない行は何件ありますか？",
+    "authoritative": "marketing_core.media_spend の currency_declared 違反件数。通貨が無い行をJPYだと思って集計すると150倍ずれる",
+    "genie_text": "媒体費の明細で、`currency_code` が未記録の行は **125件** です。今回の結果では、通貨未記録の媒体費明細が **125件** あることが確認できます。",
+    "genie_sql": "SELECT COUNT(*) AS `missing_currency_row_count`\nFROM `rongzi_catalog_dev`.`marketing_core`.`media_spend`\nWHERE `currency_code` IS NULL OR TRIM(`currency_code`) = ''",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-F-05",
+    "dept": "マーケ",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_core.brand",
+      "marketing_mart.marketing_media_spend"
+    ],
+    "source_ok": false,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=4,816,012 / 一致した列=1 / その列の上位=[4816012, 3645395, 3596215, 3343726, 3103961] / 数値列数=3",
+    "truth_numbers": [
+      4816012.39,
+      3645394.71,
+      3596215.19,
+      3343726.08,
+      3103961.23
+    ],
+    "genie_numbers": [
+      7.0,
+      4816012.39,
+      1.0,
+      5.0,
+      3645394.71,
+      2.0
+    ],
+    "question": "2026年の媒体費が多いブランドを上位5つ教えてください。",
+    "authoritative": "marketing_core.media_spend.actual_spend_amount をブランド別に集計（USD建て）",
+    "genie_text": "Would you like to see the top 5 brands by total marketing campaign spend instead of just media spend?",
+    "genie_sql": "WITH `brand_media` AS (\n  SELECT\n    `brand_id`,\n    MEASURE(`total_actual_spend_amount`) AS `media_spend_usd`\n  FROM `rongzi_catalog_dev`.`marketing_mart`.`marketing_media_spend`\n  WHERE `spend_date` >= DATE '2026-01-01'\n    AND `spend_date` < DATE '2027-01-01'\n    AND `brand_id` IS NOT NULL\n  GROUP BY ALL\n),\n`ranked` AS (\n  SELECT\n    `bm`.`brand_id`,\n    `b`.`brand_name`,\n    `bm`.`media_spend_usd`,\n    RANK() OVER (ORDER BY `bm`.`media_spend_usd` DESC) AS `spend_rank`\n  FROM `brand_media` AS `bm`\n  INNER JOIN `rongzi_catalog_dev`.`marketing_core`.`brand` AS `b`\n    ON `bm`.`brand_id` = `b`.`brand_id`\n  WHERE `b`.`brand_name` IS NOT NULL\n    AND `bm`.`media_spend_usd` IS NOT NULL\n)\nSELECT\n  `brand_id`,\n  `brand_name`,\n  `media_spend_usd`,\n  `spend_rank`\nFROM `ranked`\nWHERE `spend_rank` <= 5\nORDER BY `spend_rank` ASC, `media_spend_usd` DESC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "MK-F-06",
+    "dept": "マーケ",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dbaf61f16b0d3ef3eff342016",
+    "refs": [
+      "marketing_core.brand"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=34 / 一致した列=0 / その列の上位=[34, 38, 49, 51, 51] / 数値列数=2",
+    "truth_numbers": [
+      34.16,
+      38.24,
+      49.0,
+      50.53,
+      51.24
+    ],
+    "genie_numbers": [
+      34.16,
+      1.0,
+      38.24,
+      2.0,
+      49.0,
+      3.0
+    ],
+    "question": "認知率が低いブランドを下位5つ教えてください。",
+    "authoritative": "marketing_core.brand.awareness_pct",
+    "genie_text": "認知率が低いブランドの下位5つは次のとおりです。\n- **ブリックス プレミアム**：**34.16%**\n- **ブリックス 天然水**：**38.24%**\n- **ブリックス 微炭酸**：**49.00%**\n- **ブリックス 乳酸菌ガード**：**50.53%**\n- **ブリックス コラーゲン**：**51.24%**\nこの5ブランドの中では、最も低い**ブリックス プレミアム**と5番目の**ブリックス コラーゲン**で**17.08ポイント**の差があります。",
+    "genie_sql": "WITH `ranked_brands` AS (\n  SELECT\n    `brand`.`brand_name`,\n    `brand`.`awareness_pct`,\n    RANK() OVER (ORDER BY `brand`.`awareness_pct` ASC) AS `awareness_rank`\n  FROM `rongzi_catalog_dev`.`marketing_core`.`brand` AS `brand`\n  WHERE `brand`.`awareness_pct` IS NOT NULL\n    AND `brand`.`brand_name` IS NOT NULL\n)\nSELECT\n  `brand_name`,\n  `awareness_pct`,\n  `awareness_rank`\nFROM `ranked_brands`\nWHERE `awareness_rank` <= 5\nORDER BY `awareness_pct` ASC, `brand_name` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "XD-06",
+    "dept": "横断",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbbd51e24985da13d0ba87c5a",
+    "refs": [],
+    "source_ok": null,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "explanation",
+    "detail": "概念 3/4 一致（必要 3）: ['USD', 'JPY', '換算']",
+    "truth_numbers": [],
+    "genie_numbers": [],
+    "question": "マーケ投下額と販促費を足して「マーケティング総投資額」と呼んでよいですか？足す前に注意すべきことを教えてください。",
+    "authoritative": "そのままは足せない。マーケ(marketing_core)はUSD建て、販促(trade_core)はJPY建てなので、換算レートを決めてから足す必要がある",
+    "genie_text": "足せますが、そのままは不可です。マーケ投下額は USD、販促費は JPY なので、換算してからでないと合算できず、この用途では `rongzi_catalog_dev.xdept_mart.mart_brand_investment_return` の `marketing_spend_fx_rate` と `fx_basis` を使って `campaign_actual_jpy` と `trade_funding_jpy` を合算した `total_investment_jpy` を見る必要があります。  \n必要なら、その定義で実際の金額を取得します。",
+    "genie_sql": "",
+    "genie_status": "COMPLETED",
+    "error": null
+  },
+  {
+    "id": "XD-07",
+    "dept": "横断",
+    "persona": "部長",
+    "conflict": true,
+    "space": "01f1d10dbbd51e24985da13d0ba87c5a",
+    "refs": [],
+    "source_ok": null,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "boolean",
+    "detail": "否定=True 肯定=False / 期待=いいえ",
+    "truth_numbers": [
+      13178053285.19,
+      3301054850.26
+    ],
+    "genie_numbers": [],
+    "question": "syndicated_market_data の dollar_sales は、当社の売上ですか？",
+    "authoritative": "違う。market_type='category_total' の市場全体の売上で競合を含む。自社分は dollar_share_pct を掛けた値。単位もUSD",
+    "genie_text": "当社売上ではなく、市場全体の売上です。`marketing_core`.`syndicated_market_data`.`dollar_sales` は USD 建てで競合を含み、当社の店頭実売は `sales_core`.`pos_transaction`.`dollar_sales`（JPY・Nielsenパネル投影値）です。\n当社の売上ではありません。  \n`syndicated_market_data`.`dollar_sales` は競合を含む市場全体の売上で、USD建てです。  \n当社の店頭実売は `sales_core`.`pos_transaction`.`dollar_sales` ですが、こちらは JPY 建てのNielsenパネル投影値です。",
+    "genie_sql": "",
+    "genie_status": "COMPLETED",
+    "error": null,
+    "rescored": "boolean-v2"
+  }
+]

@@ -1,0 +1,52 @@
+# 集計
+全体 value_ok   : 1/1 (100%)
+全体 source_ok  : 1/1 (100%)
+罠を踏んだ       : 0/1 (0%)
+聞き返しで終了   : 0/1 (0%)
+直答して不正解   : 0/1 (0%)
+
+衝突あり value_ok : 0/0
+衝突あり source_ok: 0/0
+衝突あり 罠を踏んだ: 0/0
+
+衝突なし value_ok : 1/1 (100%)
+
+営業   value_ok: 0/0
+財務   value_ok: 1/1 (100%)
+マーケ  value_ok: 0/0
+横断   value_ok: 0/0
+
+scalar   value_ok: 0/0
+ranking  value_ok: 1/1 (100%)
+boolean  value_ok: 0/0
+explanation value_ok: 0/0
+
+# Brickshouse 評価ハーネス — fix_fif05
+routing=部門別 / 質問数=1 / 許容誤差=2%
+spaces={"営業": "01f1d10db91f1a0f8058c509f70f077a", "財務": "01f1d10dba011b8981645be70f048880", "マーケ": "01f1d10dbaf61f16b0d3ef3eff342016", "横断": "01f1d10dbbd51e24985da13d0ba87c5a"}
+
+## [FI-F-05] 財務 / 現場 / conflict=False / space=01f1d10dba011b8981645be70f048880
+Q: 月次の純売上と入金の推移を並べてください。
+正本: finance_mart.mart_revenue_reconciliation
+truth_sql: SELECT date_trunc('month', invoice_date) mo, SUM(net_amount) revenue_net, SUM(payment_amount) paid FROM rongzi_catalog_dev.finance_core.ar_invoice GROUP BY 1 ORDER BY 1
+正解の数値: [8691996488.99, 7489889059.81, 12187103591.9, 10216928935.41, 10415752327.88, 9112305492.89]
+Genie status: COMPLETED  error=None
+Genie 回答: 2026年の月次推移では、**純売上・入金ともに8月が最大**で、純売上は**16,724,763,486.97円**、入金は**14,900,455,917.38円**でした。全11か月の表示範囲では毎月**純売上が入金を上回っており**、1月から8月にかけて増加した後、9月以降は低下しています。
+
+一部の月の例は以下の通りです:
+- **1月**: 純売上 **8,691,996,488.99円** / 入金 **7,489,889,059.81円**
+- **2月**: 純売上 **12,187,103,591.90円** / 入金 **10,216,928,935.41円**
+- **6月**: 純売上 **13,858,709,092.30円** / 入金 **12,268,263,618.23円**
+- **8月**: 純売上 **16,724,763,486.97円** / 
+Genie 生成SQL: SELECT
+  `month_start`,
+  SUM(`revenue_net_amount`) AS `revenue_net_amount`,
+  SUM(`payment_amount`) AS `payment_amount`
+FROM `rongzi_catalog_dev`.`finance_mart`.`mart_revenue_reconciliation`
+WHERE `month_start` IS NOT NULL
+GROUP BY `month_start`
+ORDER BY `month_start` ASC
+参照オブジェクト: ['finance_mart.mart_revenue_reconciliation']
+Genie の数値: [8691996488.99, 7489889059.81, 12187103591.9, 10216928935.41, 10415752327.88, 9112305492.89]
+採点方式: ranking  正解1位=8,691,996,489 / 一致した列=0 / その列の上位=[8691996489, 12187103592, 10415752328, 11064119056, 11610926845] / 数値列数=2
+判定 -> value_ok=True  source_ok=True  trap_hit=False  聞き返し=False

@@ -1,0 +1,40 @@
+[
+  {
+    "id": "FI-F-05",
+    "dept": "財務",
+    "persona": "現場",
+    "conflict": false,
+    "space": "01f1d10dba011b8981645be70f048880",
+    "refs": [
+      "finance_mart.mart_revenue_reconciliation"
+    ],
+    "source_ok": true,
+    "trap_hit": false,
+    "value_ok": true,
+    "clarified": false,
+    "score_type": "ranking",
+    "detail": "正解1位=8,691,996,489 / 一致した列=0 / その列の上位=[8691996489, 12187103592, 10415752328, 11064119056, 11610926845] / 数値列数=2",
+    "truth_numbers": [
+      8691996488.99,
+      7489889059.81,
+      12187103591.9,
+      10216928935.41,
+      10415752327.88,
+      9112305492.89
+    ],
+    "genie_numbers": [
+      8691996488.99,
+      7489889059.81,
+      12187103591.9,
+      10216928935.41,
+      10415752327.88,
+      9112305492.89
+    ],
+    "question": "月次の純売上と入金の推移を並べてください。",
+    "authoritative": "finance_mart.mart_revenue_reconciliation",
+    "genie_text": "2026年の月次推移では、**純売上・入金ともに8月が最大**で、純売上は**16,724,763,486.97円**、入金は**14,900,455,917.38円**でした。全11か月の表示範囲では毎月**純売上が入金を上回っており**、1月から8月にかけて増加した後、9月以降は低下しています。\n\n一部の月の例は以下の通りです:\n- **1月**: 純売上 **8,691,996,488.99円** / 入金 **7,489,889,059.81円**\n- **2月**: 純売上 **12,187,103,591.90円** / 入金 **10,216,928,935.41円**\n- **6月**: 純売上 **13,858,709,092.30円** / 入金 **12,268,263,618.23円**\n- **8月**: 純売上 **16,724,763,486.97円** / 入金 **14,900,455,917.38円**\n- **10月**: 純売上 **13,722,888,284.48円** / 入金 **11,798,642,563.48円**",
+    "genie_sql": "SELECT\n  `month_start`,\n  SUM(`revenue_net_amount`) AS `revenue_net_amount`,\n  SUM(`payment_amount`) AS `payment_amount`\nFROM `rongzi_catalog_dev`.`finance_mart`.`mart_revenue_reconciliation`\nWHERE `month_start` IS NOT NULL\nGROUP BY `month_start`\nORDER BY `month_start` ASC",
+    "genie_status": "COMPLETED",
+    "error": null
+  }
+]

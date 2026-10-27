@@ -1,0 +1,948 @@
+{
+  "datasets": [
+    {
+      "name": "ds_sales",
+      "displayName": "受注（月 × 得意先 × チャネル）",
+      "queryLines": [
+        "SELECT month_start, account_id, account_name, channel, sales_region,\n",
+        "       order_status, order_type, order_source,\n",
+        "       order_count, order_quantity, order_gross_amount,\n",
+        "       order_discount_amount, order_net_amount, backorder_count,\n",
+        "       trade_allowance_order_amount,\n",
+        "       CASE WHEN channel IN ('SM','CVS','DgS','卸','EC') THEN channel\n",
+        "            ELSE '未マップ: ' || channel END AS channel_label,\n",
+        "       CASE WHEN channel IN ('SM','CVS','DgS','卸','EC') THEN 0 ELSE 1 END AS is_unmapped_channel\n",
+        "FROM sales_mart.mart_sales_performance\n"
+      ],
+      "columns": [
+        {
+          "displayName": "受注純額",
+          "description": "受注の純額（値引後・JPY）。会社の売上ではない",
+          "expression": "SUM(`order_net_amount`)"
+        },
+        {
+          "displayName": "受注件数",
+          "description": "受注の件数",
+          "expression": "SUM(`order_count`)"
+        },
+        {
+          "displayName": "値引率",
+          "description": "値引額 ÷ 受注総額",
+          "expression": "SUM(`order_discount_amount`) / NULLIF(SUM(`order_gross_amount`), 0)"
+        },
+        {
+          "displayName": "未マップのチャネル行",
+          "description": "マスタに無いチャネルコードの行数（品質シグナル）",
+          "expression": "SUM(`is_unmapped_channel`)"
+        },
+        {
+          "displayName": "販促対象の受注額",
+          "description": "trade_allowance_order_amount の合計",
+          "expression": "SUM(`trade_allowance_order_amount`)"
+        }
+      ]
+    },
+    {
+      "name": "ds_rev",
+      "displayName": "「売上」と呼ばれる数字（月次）",
+      "queryLines": [
+        "SELECT month_start, sales_order_net_amount, invoiced_gross_amount,\n",
+        "       trade_discount_amount, deduction_amount, revenue_net_amount,\n",
+        "       promo_settlement_net_amount, panel_sellout_amount,\n",
+        "       order_to_revenue_gap, revenue_to_order_ratio\n",
+        "FROM xdept_mart.mart_revenue_definitions\n",
+        "WHERE month_start >= TIMESTAMP'2026-01-01' AND month_start < TIMESTAMP'2026-11-01'\n"
+      ],
+      "columns": [
+        {
+          "displayName": "受注純額（営業）",
+          "description": "sales_core.order の純額。着地見込みに使う",
+          "expression": "SUM(`sales_order_net_amount`)"
+        },
+        {
+          "displayName": "純売上（財務・正本）",
+          "description": "finance_core.ar_invoice の純額。会社の売上はこれ",
+          "expression": "SUM(`revenue_net_amount`)"
+        },
+        {
+          "displayName": "受注→純売上 転換率",
+          "description": "純売上 ÷ 受注純額",
+          "expression": "SUM(`revenue_net_amount`) / NULLIF(SUM(`sales_order_net_amount`), 0)"
+        },
+        {
+          "displayName": "販促値引",
+          "description": "ar_invoice の trade_discount_amount",
+          "expression": "SUM(`trade_discount_amount`)"
+        },
+        {
+          "displayName": "控除",
+          "description": "ar_invoice の deduction_amount",
+          "expression": "SUM(`deduction_amount`)"
+        },
+        {
+          "displayName": "販促精算（売上ではない）",
+          "description": "trade_core.settlement の純額。得意先への支払い",
+          "expression": "SUM(`promo_settlement_net_amount`)"
+        }
+      ]
+    },
+    {
+      "name": "ds_trade",
+      "displayName": "販促費の流れ（月次）",
+      "queryLines": [
+        "SELECT month_start, accrual_amount, claim_amount, settled_amount,\n",
+        "       deduction_amount, accrual_to_settlement_gap, settlement_rate\n",
+        "FROM trade_mart.mart_trade_spend_flow\n",
+        "WHERE month_start IS NOT NULL\n"
+      ],
+      "columns": [
+        {
+          "displayName": "引当",
+          "description": "販促費の引当額（accrual）",
+          "expression": "SUM(`accrual_amount`)"
+        },
+        {
+          "displayName": "精算",
+          "description": "実際に支払った額（settlement）",
+          "expression": "SUM(`settled_amount`)"
+        },
+        {
+          "displayName": "控除",
+          "description": "得意先が差し引いた額（deduction）",
+          "expression": "SUM(`deduction_amount`)"
+        },
+        {
+          "displayName": "精算率",
+          "description": "精算 ÷ 引当",
+          "expression": "SUM(`settled_amount`) / NULLIF(SUM(`accrual_amount`), 0)"
+        }
+      ]
+    },
+    {
+      "name": "ds_top_accounts",
+      "displayName": "得意先別の受注と販促",
+      "queryLines": [
+        "SELECT account_name, channel, sales_region,\n",
+        "       SUM(order_net_amount) AS order_net_amount,\n",
+        "       SUM(order_count) AS order_count,\n",
+        "       SUM(order_discount_amount) / NULLIF(SUM(order_gross_amount), 0) AS discount_rate,\n",
+        "       SUM(backorder_count) AS backorder_count\n",
+        "FROM sales_mart.mart_sales_performance\n",
+        "GROUP BY account_name, channel, sales_region\n",
+        "ORDER BY order_net_amount DESC\n",
+        "LIMIT 25\n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "filters",
+      "displayName": "絞り込み",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "f_channel",
+            "queries": [
+              {
+                "name": "ds_sales_channel",
+                "query": {
+                  "datasetName": "ds_sales",
+                  "fields": [
+                    {
+                      "name": "channel",
+                      "expression": "`channel`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "channel",
+                    "displayName": "チャネル",
+                    "queryName": "ds_sales_channel"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "チャネル",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f_region",
+            "queries": [
+              {
+                "name": "ds_sales_sales_region",
+                "query": {
+                  "datasetName": "ds_sales",
+                  "fields": [
+                    {
+                      "name": "sales_region",
+                      "expression": "`sales_region`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "sales_region",
+                    "displayName": "地域",
+                    "queryName": "ds_sales_sales_region"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "地域",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f_otype",
+            "queries": [
+              {
+                "name": "ds_sales_order_type",
+                "query": {
+                  "datasetName": "ds_sales",
+                  "fields": [
+                    {
+                      "name": "order_type",
+                      "expression": "`order_type`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "order_type",
+                    "displayName": "受注区分",
+                    "queryName": "ds_sales_order_type"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "受注区分",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 4,
+            "height": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "overview",
+      "displayName": "概況",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "hd",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# 営業ダッシュボード（販促を含む）\n",
+                "\n",
+                "**この画面の主題は「受注と売上は違う」こと。** 営業が着地見込みに使う受注純額と、",
+                "財務が会社の売上として計上する純売上は、一部出荷・販促値引・控除の分だけ離れます。",
+                "左の2つの数字を並べているのはそのためです。\n",
+                "\n",
+                "期間 2026年1月〜10月（受注は 10/24 まで）・金額は JPY・受注は order_line を持たないヘッダ粒度",
+                "（商品軸は店頭実売と配下率で見ます）。出所は `sales_mart.mart_sales_performance` と",
+                "`xdept_mart.mart_revenue_definitions`。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_order",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_rev",
+                  "fields": [
+                    {
+                      "name": "measure(受注純額（営業）)",
+                      "expression": "MEASURE(`受注純額（営業）`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(受注純額（営業）)",
+                  "displayName": "2026年1〜10月・JPY",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "JPY",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "受注純額（営業の着地見込み）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_rev",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_rev",
+                  "fields": [
+                    {
+                      "name": "measure(純売上（財務・正本）)",
+                      "expression": "MEASURE(`純売上（財務・正本）`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(純売上（財務・正本）)",
+                  "displayName": "2026年1〜10月・JPY・正本",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "JPY",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "純売上（財務・会社の売上）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_ratio",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_rev",
+                  "fields": [
+                    {
+                      "name": "measure(受注→純売上 転換率)",
+                      "expression": "MEASURE(`受注→純売上 転換率`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(受注→純売上 転換率)",
+                  "displayName": "純売上 ÷ 受注純額",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "受注が売上になった割合",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "l_rev",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_rev",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "measure(受注純額（営業）)",
+                      "expression": "MEASURE(`受注純額（営業）`)"
+                    },
+                    {
+                      "name": "measure(純売上（財務・正本）)",
+                      "expression": "MEASURE(`純売上（財務・正本）`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "月"
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(受注純額（営業）)",
+                      "displayName": "受注純額（営業）"
+                    },
+                    {
+                      "fieldName": "measure(純売上（財務・正本）)",
+                      "displayName": "純売上（財務・正本）"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "title": "月次：受注純額と純売上（同じ軸で並べる）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "b_channel",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_sales",
+                  "fields": [
+                    {
+                      "name": "channel_label",
+                      "expression": "`channel_label`"
+                    },
+                    {
+                      "name": "measure(受注純額)",
+                      "expression": "MEASURE(`受注純額`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(受注純額)",
+                      "displayName": "受注純額"
+                    }
+                  ]
+                },
+                "y": {
+                  "fieldName": "channel_label",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "value"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "チャネル別 受注純額（未マップのコードも隠さず出す）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 6,
+            "width": 4,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "hd2",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## 販促費の流れ — 引当から精算、そして控除へ\n",
+                "販促精算と控除は**売上のマイナス要素**であって売上そのものではありません。",
+                "引当と精算の差が未精算残高です。出所 `trade_mart.mart_trade_spend_flow`。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "l_trade",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_trade",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "measure(引当)",
+                      "expression": "MEASURE(`引当`)"
+                    },
+                    {
+                      "name": "measure(精算)",
+                      "expression": "MEASURE(`精算`)"
+                    },
+                    {
+                      "name": "measure(控除)",
+                      "expression": "MEASURE(`控除`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "月"
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(引当)",
+                      "displayName": "引当（accrual）"
+                    },
+                    {
+                      "fieldName": "measure(精算)",
+                      "displayName": "精算（settlement）"
+                    },
+                    {
+                      "fieldName": "measure(控除)",
+                      "displayName": "控除（deduction）"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "title": "月次：販促費の3段",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 8,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "k_settle",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_trade",
+                  "fields": [
+                    {
+                      "name": "measure(精算率)",
+                      "expression": "MEASURE(`精算率`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(精算率)",
+                  "displayName": "精算 ÷ 引当",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "引当のうち精算された割合",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 14,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_unmapped",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_sales",
+                  "fields": [
+                    {
+                      "name": "measure(未マップのチャネル行)",
+                      "expression": "MEASURE(`未マップのチャネル行`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(未マップのチャネル行)",
+                  "displayName": "品質シグナル・件数",
+                  "format": {
+                    "type": "number",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 0
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "マスタに無いチャネルコードの行数",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 17,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "hd3",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## 得意先別（受注純額の上位25社）\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 19,
+            "width": 12,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "t_top",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_top_accounts",
+                  "fields": [
+                    {
+                      "name": "account_name",
+                      "expression": "`account_name`"
+                    },
+                    {
+                      "name": "channel",
+                      "expression": "`channel`"
+                    },
+                    {
+                      "name": "sales_region",
+                      "expression": "`sales_region`"
+                    },
+                    {
+                      "name": "order_net_amount",
+                      "expression": "`order_net_amount`"
+                    },
+                    {
+                      "name": "order_count",
+                      "expression": "`order_count`"
+                    },
+                    {
+                      "name": "discount_rate",
+                      "expression": "`discount_rate`"
+                    },
+                    {
+                      "name": "backorder_count",
+                      "expression": "`backorder_count`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "account_name",
+                    "displayName": "得意先"
+                  },
+                  {
+                    "fieldName": "channel",
+                    "displayName": "チャネル"
+                  },
+                  {
+                    "fieldName": "sales_region",
+                    "displayName": "地域"
+                  },
+                  {
+                    "fieldName": "order_net_amount",
+                    "displayName": "受注純額",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "JPY",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "order_count",
+                    "displayName": "受注件数",
+                    "format": {
+                      "type": "number",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 0
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "discount_rate",
+                    "displayName": "値引率",
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "backorder_count",
+                    "displayName": "取り寄せ件数",
+                    "format": {
+                      "type": "number",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 0
+                      }
+                    }
+                  }
+                ]
+              },
+              "frame": {
+                "title": "得意先別 受注（上位25社）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 20,
+            "width": 12,
+            "height": 7
+          }
+        }
+      ]
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#F9F7F4",
+        "dark": "#0B2026"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#112B33"
+      },
+      "fontColor": {
+        "light": "#11252C",
+        "dark": "#EEF4F5"
+      },
+      "selectionColor": {
+        "light": "#FF3621",
+        "dark": "#FF5F46"
+      },
+      "visualizationColors": [
+        "#003F5C",
+        "#3C6997",
+        "#594E90",
+        "#BC4C96",
+        "#FF5F66",
+        "#FFA600",
+        "#12795A"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "DM Sans",
+      "widgetCornerRadius": 12
+    }
+  }
+}

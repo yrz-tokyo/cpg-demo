@@ -1,0 +1,939 @@
+{
+  "datasets": [
+    {
+      "name": "ds_recon",
+      "displayName": "売上照合（月 × 得意先 × チャネル）",
+      "queryLines": [
+        "SELECT month_start, account_id, account_name, channel, invoice_status,\n",
+        "       invoice_count, invoiced_gross_amount, trade_discount_amount,\n",
+        "       deduction_amount, revenue_net_amount, tax_amount,\n",
+        "       payment_amount, open_receivable_amount, short_payment_amount\n",
+        "FROM finance_mart.mart_revenue_reconciliation\n"
+      ],
+      "columns": [
+        {
+          "displayName": "純売上",
+          "description": "請求総額 − 販促値引 − 控除。会社の売上の正本",
+          "expression": "SUM(`revenue_net_amount`)"
+        },
+        {
+          "displayName": "請求総額",
+          "description": "ar_invoice の gross_amount",
+          "expression": "SUM(`invoiced_gross_amount`)"
+        },
+        {
+          "displayName": "販促値引",
+          "description": "ar_invoice の trade_discount_amount",
+          "expression": "SUM(`trade_discount_amount`)"
+        },
+        {
+          "displayName": "控除",
+          "description": "ar_invoice の deduction_amount",
+          "expression": "SUM(`deduction_amount`)"
+        },
+        {
+          "displayName": "リーケージ",
+          "description": "販促値引 + 控除。請求したのに売上にならなかった額",
+          "expression": "SUM(`trade_discount_amount`) + SUM(`deduction_amount`)"
+        },
+        {
+          "displayName": "リーケージ率",
+          "description": "リーケージ ÷ 請求総額",
+          "expression": "(SUM(`trade_discount_amount`) + SUM(`deduction_amount`)) / NULLIF(SUM(`invoiced_gross_amount`), 0)"
+        },
+        {
+          "displayName": "未回収売掛",
+          "description": "open_receivable_amount の合計。リーケージとは別物",
+          "expression": "SUM(`open_receivable_amount`)"
+        },
+        {
+          "displayName": "入金額",
+          "description": "payment_amount の合計",
+          "expression": "SUM(`payment_amount`)"
+        }
+      ]
+    },
+    {
+      "name": "ds_rate",
+      "displayName": "原価率（月次）",
+      "queryLines": [
+        "SELECT month_start, revenue_net_amount, purchase_order_net_amount,\n",
+        "       payable_net_amount, sales_order_net_amount\n",
+        "FROM xdept_mart.mart_revenue_definitions\n",
+        "WHERE month_start >= TIMESTAMP'2026-01-01' AND month_start < TIMESTAMP'2026-11-01'\n"
+      ],
+      "columns": [
+        {
+          "displayName": "原価率",
+          "description": "発注(purchase_order) ÷ 純売上。買掛や受注を分子にしてはならない",
+          "expression": "SUM(`purchase_order_net_amount`) / NULLIF(SUM(`revenue_net_amount`), 0)"
+        },
+        {
+          "displayName": "発注額（仕入）",
+          "description": "procurement.purchase_order の純額。売上ではない",
+          "expression": "SUM(`purchase_order_net_amount`)"
+        },
+        {
+          "displayName": "買掛額（仕入）",
+          "description": "finance.ap_invoice の純額。売上ではない",
+          "expression": "SUM(`payable_net_amount`)"
+        }
+      ]
+    },
+    {
+      "name": "ds_cost",
+      "displayName": "標準原価の2系統比較",
+      "queryLines": [
+        "SELECT sku_id, product_name, product_line,\n",
+        "       product_side_unit_cost, finance_side_unit_cost,\n",
+        "       unit_cost_gap, unit_cost_gap_ratio\n",
+        "FROM finance_mart.mart_standard_cost_compare\n",
+        "WHERE unit_cost_gap_ratio IS NOT NULL\n",
+        "ORDER BY abs(unit_cost_gap_ratio) DESC\n",
+        "LIMIT 25\n"
+      ]
+    },
+    {
+      "name": "ds_dispute",
+      "displayName": "係争中・照合不一致（件数と金額）",
+      "queryLines": [
+        "SELECT '係争中の売掛請求' AS kind, count(*) AS cnt, sum(net_amount) AS amount\n",
+        "FROM finance_core.ar_invoice WHERE dispute_status = 'open'\n",
+        "UNION ALL\n",
+        "SELECT '照合不一致の買掛請求', count(*), sum(net_amount)\n",
+        "FROM finance_core.ap_invoice WHERE match_status <> 'matched'\n",
+        "UNION ALL\n",
+        "SELECT '係争中の控除', count(*), sum(net_amount)\n",
+        "FROM trade_core.deduction WHERE deduction_status = 'disputed'\n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "filters",
+      "displayName": "絞り込み",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "f_channel",
+            "queries": [
+              {
+                "name": "ds_recon_channel",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "channel",
+                      "expression": "`channel`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "channel",
+                    "displayName": "チャネル",
+                    "queryName": "ds_recon_channel"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "チャネル",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f_status",
+            "queries": [
+              {
+                "name": "ds_recon_invoice_status",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "invoice_status",
+                      "expression": "`invoice_status`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "invoice_status",
+                    "displayName": "請求ステータス",
+                    "queryName": "ds_recon_invoice_status"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "請求ステータス",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "overview",
+      "displayName": "概況",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "hd",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# 財務ダッシュボード\n",
+                "\n",
+                "**この画面の数字が会社の売上の正本です。** 純売上 = 請求総額 − 販促値引 − 控除。",
+                "受注(営業)・発注(調達)・買掛(財務)・販促精算(販促) は同じ `total_net_amount` という名前の",
+                "指標を持ちますが、売上ではありません。\n",
+                "\n",
+                "期間 2026年1月〜10月・金額は JPY・原価率は 発注 ÷ 純売上。",
+                "出所は `finance_mart.mart_revenue_reconciliation`（得意先×月）と",
+                "`xdept_mart.mart_revenue_definitions`（月）。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_rev",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "measure(純売上)",
+                      "expression": "MEASURE(`純売上`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(純売上)",
+                  "displayName": "2026年1〜10月・JPY",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "JPY",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "純売上（会社の売上・正本）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_leak",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "measure(リーケージ率)",
+                      "expression": "MEASURE(`リーケージ率`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(リーケージ率)",
+                  "displayName": "(販促値引+控除) ÷ 請求総額",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "請求したのに売上にならなかった割合",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_cogs",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_rate",
+                  "fields": [
+                    {
+                      "name": "measure(原価率)",
+                      "expression": "MEASURE(`原価率`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(原価率)",
+                  "displayName": "発注 ÷ 純売上（買掛・受注は分子に使わない）",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "原価率",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 3,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "l_steps",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "measure(請求総額)",
+                      "expression": "MEASURE(`請求総額`)"
+                    },
+                    {
+                      "name": "measure(純売上)",
+                      "expression": "MEASURE(`純売上`)"
+                    },
+                    {
+                      "name": "measure(入金額)",
+                      "expression": "MEASURE(`入金額`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "月"
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(請求総額)",
+                      "displayName": "請求総額"
+                    },
+                    {
+                      "fieldName": "measure(純売上)",
+                      "displayName": "純売上（正本）"
+                    },
+                    {
+                      "fieldName": "measure(入金額)",
+                      "displayName": "入金額"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "title": "月次：請求総額 → 純売上 → 入金",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "k_open",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "measure(未回収売掛)",
+                      "expression": "MEASURE(`未回収売掛`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(未回収売掛)",
+                  "displayName": "リーケージとは別物・JPY",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "JPY",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "未回収売掛残高",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 6,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_leak_amt",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "measure(リーケージ)",
+                      "expression": "MEASURE(`リーケージ`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(リーケージ)",
+                  "displayName": "販促値引 + 控除・JPY",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "JPY",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "リーケージ額",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 9,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "hd2",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## 目減りの内訳と、チャネル別の構成\n",
+                "販促値引と控除がどのチャネルで出ているか。**未回収売掛（入金が無い）と",
+                "リーケージ（そもそも売上にならなかった）は別物**です。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "b_leak",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "channel",
+                      "expression": "`channel`"
+                    },
+                    {
+                      "name": "measure(販促値引)",
+                      "expression": "MEASURE(`販促値引`)"
+                    },
+                    {
+                      "name": "measure(控除)",
+                      "expression": "MEASURE(`控除`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "value"
+                    }
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(販促値引)",
+                      "displayName": "販促値引"
+                    },
+                    {
+                      "fieldName": "measure(控除)",
+                      "displayName": "控除"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "title": "チャネル別 リーケージの内訳",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "b_rev",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_recon",
+                  "fields": [
+                    {
+                      "name": "channel",
+                      "expression": "`channel`"
+                    },
+                    {
+                      "name": "measure(純売上)",
+                      "expression": "MEASURE(`純売上`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(純売上)",
+                      "displayName": "純売上"
+                    }
+                  ]
+                },
+                "y": {
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "value"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "チャネル別 純売上",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 14,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "hd3",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## 止まっている伝票 — 係争中と照合不一致\n",
+                "判定列を取り違えやすいところ。係争中の売掛は `dispute_status='open'`、",
+                "照合不一致の買掛は `match_status<>'matched'`、係争中の控除は",
+                "`deduction_status='disputed'`。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 19,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "t_dispute",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_dispute",
+                  "fields": [
+                    {
+                      "name": "kind",
+                      "expression": "`kind`"
+                    },
+                    {
+                      "name": "cnt",
+                      "expression": "`cnt`"
+                    },
+                    {
+                      "name": "amount",
+                      "expression": "`amount`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "kind",
+                    "displayName": "種類"
+                  },
+                  {
+                    "fieldName": "cnt",
+                    "displayName": "件数",
+                    "format": {
+                      "type": "number",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 0
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "amount",
+                    "displayName": "金額",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "JPY",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              "frame": {
+                "title": "係争中・照合不一致の件数と金額",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 21,
+            "width": 5,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "t_cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_cost",
+                  "fields": [
+                    {
+                      "name": "sku_id",
+                      "expression": "`sku_id`"
+                    },
+                    {
+                      "name": "product_name",
+                      "expression": "`product_name`"
+                    },
+                    {
+                      "name": "product_line",
+                      "expression": "`product_line`"
+                    },
+                    {
+                      "name": "product_side_unit_cost",
+                      "expression": "`product_side_unit_cost`"
+                    },
+                    {
+                      "name": "finance_side_unit_cost",
+                      "expression": "`finance_side_unit_cost`"
+                    },
+                    {
+                      "name": "unit_cost_gap_ratio",
+                      "expression": "`unit_cost_gap_ratio`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "sku_id",
+                    "displayName": "SKU ID"
+                  },
+                  {
+                    "fieldName": "product_name",
+                    "displayName": "商品"
+                  },
+                  {
+                    "fieldName": "product_line",
+                    "displayName": "製品ライン"
+                  },
+                  {
+                    "fieldName": "product_side_unit_cost",
+                    "displayName": "製品側 単位原価",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "JPY",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "finance_side_unit_cost",
+                    "displayName": "財務側 単位原価",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "JPY",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "unit_cost_gap_ratio",
+                    "displayName": "乖離率",
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              "frame": {
+                "title": "標準原価が2系統で食い違っている SKU（乖離の大きい順25件）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 21,
+            "width": 7,
+            "height": 4
+          }
+        }
+      ]
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#F9F7F4",
+        "dark": "#0B2026"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#112B33"
+      },
+      "fontColor": {
+        "light": "#11252C",
+        "dark": "#EEF4F5"
+      },
+      "selectionColor": {
+        "light": "#FF3621",
+        "dark": "#FF5F46"
+      },
+      "visualizationColors": [
+        "#003F5C",
+        "#3C6997",
+        "#594E90",
+        "#BC4C96",
+        "#FF5F66",
+        "#FFA600",
+        "#12795A"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "DM Sans",
+      "widgetCornerRadius": 12
+    }
+  }
+}

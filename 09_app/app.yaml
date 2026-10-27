@@ -1,0 +1,14 @@
+# Databricks Apps の起動設定。
+# 依存は Apps 側で requirements.txt から解決される（このMacは /etc/hosts で pypi が塞がれている）。
+command: ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+env:
+  - name: BRICKSHOUSE_CATALOG
+    value: "rongzi_catalog_dev"
+  - name: LAKEBASE_INSTANCE
+    value: "brickshouse"
+  - name: LAKEBASE_DB
+    value: "databricks_postgres"
+  - name: GENIE_SPACE_IDS
+    value: ""          # 空なら 06_genie/space_ids.json を読む。Apps では値を入れる
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: warehouse

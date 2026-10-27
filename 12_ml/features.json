@@ -1,0 +1,2455 @@
+[
+ {
+  "measure_name": "tax_amount",
+  "objects": [
+   "finance_core.ap_invoice",
+   "finance_core.ar_invoice",
+   "finance_mart.mart_revenue_reconciliation",
+   "procure_core.purchase_order",
+   "sales_core.invoice",
+   "sales_mart.sales_invoice",
+   "trade_core.deduction",
+   "trade_core.settlement"
+  ],
+  "n_objects": 8,
+  "n_departments": 3,
+  "n_schemas": 6,
+  "departments": [
+   "営業",
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 17.2715,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.0417,
+  "comment_jaccard_avg": 0.1618,
+  "observed": {
+   "finance_core.ar_invoice": 12893409066.03,
+   "finance_core.ap_invoice": 5300828439.66,
+   "finance_mart.mart_revenue_reconciliation": 12893409066.03,
+   "procure_core.purchase_order": 5983171860.01,
+   "sales_core.invoice": 2390017402.15,
+   "sales_mart.sales_invoice": 2390017402.1500087,
+   "trade_core.deduction": 746513305.38,
+   "trade_core.settlement": 1064542061.81
+  }
+ },
+ {
+  "measure_name": "total_gross_amount",
+  "objects": [
+   "finance_mart.finance_ap_invoice",
+   "finance_mart.finance_ar_invoice",
+   "procure_mart.procurement_purchase_order",
+   "sales_core.order",
+   "sales_mart.sales_order",
+   "trade_mart.trade_settlement"
+  ],
+  "n_objects": 6,
+  "n_departments": 3,
+  "n_schemas": 5,
+  "departments": [
+   "営業",
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 15.276,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.0,
+  "comment_jaccard_avg": 0.3911,
+  "observed": {
+   "finance_mart.finance_ap_invoice": 55225523749.92013,
+   "finance_mart.finance_ar_invoice": 136380425604.65942,
+   "procure_mart.procurement_purchase_order": 63337592554.860016,
+   "sales_core.order": 168985541596.42,
+   "sales_mart.sales_order": 168985541596.4202,
+   "trade_mart.trade_settlement": 11062152183.179989
+  }
+ },
+ {
+  "measure_name": "total_net_amount",
+  "objects": [
+   "finance_mart.finance_ap_invoice",
+   "finance_mart.finance_ar_invoice",
+   "procure_mart.procurement_purchase_order",
+   "sales_core.order",
+   "sales_mart.sales_order",
+   "trade_mart.trade_settlement"
+  ],
+  "n_objects": 6,
+  "n_departments": 3,
+  "n_schemas": 5,
+  "departments": [
+   "営業",
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 14.7719,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.1111,
+  "comment_jaccard_avg": 0.4021,
+  "observed": {
+   "finance_mart.finance_ap_invoice": 53008284375.73979,
+   "finance_mart.finance_ar_invoice": 128613230122.31966,
+   "procure_mart.procurement_purchase_order": 59831718576.36977,
+   "sales_core.order": 157253032520.84,
+   "sales_mart.sales_order": 157253032520.83945,
+   "trade_mart.trade_settlement": 10645420612.490002
+  }
+ },
+ {
+  "measure_name": "net_amount",
+  "objects": [
+   "finance_core.ap_invoice",
+   "finance_core.ar_invoice",
+   "procure_core.purchase_order",
+   "trade_core.deduction",
+   "trade_core.settlement"
+  ],
+  "n_objects": 5,
+  "n_departments": 2,
+  "n_schemas": 3,
+  "departments": [
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 17.9393,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.0588,
+  "comment_jaccard_avg": 0.1667,
+  "observed": {
+   "finance_core.ar_invoice": 128613230122.32,
+   "finance_core.ap_invoice": 53008284375.74,
+   "procure_core.purchase_order": 59831718576.37,
+   "trade_core.deduction": 7169374825.85,
+   "trade_core.settlement": 10645420612.49
+  }
+ },
+ {
+  "measure_name": "nps_score",
+  "objects": [
+   "marketing_core.brand",
+   "marketing_core.consumer_insight",
+   "marketing_mart.mart_brand_market_position",
+   "xdept_mart.mart_brand_investment_return"
+  ],
+  "n_objects": 4,
+  "n_departments": 1,
+  "n_schemas": 3,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 79.5004,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.2368,
+  "comment_jaccard_avg": 0.6184,
+  "observed": {
+   "marketing_core.brand": 200.75,
+   "marketing_core.consumer_insight": 11314.69,
+   "marketing_mart.mart_brand_market_position": 15959.7,
+   "xdept_mart.mart_brand_investment_return": 200.75
+  }
+ },
+ {
+  "measure_name": "actual_spend_usd",
+  "objects": [
+   "marketing_core.campaign",
+   "marketing_core.consumer_insight",
+   "marketing_mart.mart_campaign_performance",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 4,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 18.2926,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": 0.2222,
+  "comment_jaccard_avg": 0.4815,
+  "observed": {
+   "marketing_core.campaign": 53695170.66,
+   "marketing_core.consumer_insight": 2935350.2,
+   "marketing_mart.mart_media_efficiency": 37676246.87,
+   "marketing_mart.mart_campaign_performance": 53695170.66
+  }
+ },
+ {
+  "measure_name": "gross_amount",
+  "objects": [
+   "finance_core.ap_invoice",
+   "finance_core.ar_invoice",
+   "trade_core.deduction",
+   "trade_core.settlement"
+  ],
+  "n_objects": 4,
+  "n_departments": 2,
+  "n_schemas": 2,
+  "departments": [
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 18.269,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.069,
+  "comment_jaccard_avg": 0.1882,
+  "observed": {
+   "finance_core.ar_invoice": 136380425604.66,
+   "finance_core.ap_invoice": 55225523749.92,
+   "trade_core.deduction": 7465133036.06,
+   "trade_core.settlement": 11062152183.18
+  }
+ },
+ {
+  "measure_name": "trade_discount_amount",
+  "objects": [
+   "finance_core.ar_invoice",
+   "finance_mart.mart_revenue_reconciliation",
+   "sales_core.invoice",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 4,
+  "n_departments": 2,
+  "n_schemas": 4,
+  "departments": [
+   "営業",
+   "財務"
+  ],
+  "max_over_min": 5.4783,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.1818,
+  "comment_jaccard_avg": 0.1818,
+  "observed": {
+   "finance_core.ar_invoice": 4750995670.18,
+   "finance_mart.mart_revenue_reconciliation": 4750995670.18,
+   "sales_core.invoice": 867240233.72,
+   "xdept_mart.mart_revenue_definitions": 4750995670.18
+  }
+ },
+ {
+  "measure_name": "deduction_amount",
+  "objects": [
+   "finance_core.ar_invoice",
+   "finance_mart.mart_revenue_reconciliation",
+   "trade_mart.mart_trade_spend_flow",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 4,
+  "n_departments": 2,
+  "n_schemas": 4,
+  "departments": [
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 2.6599,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "finance_core.ar_invoice": 2695339328.39,
+   "finance_mart.mart_revenue_reconciliation": 2695339328.39,
+   "trade_mart.mart_trade_spend_flow": 7169374825.85,
+   "xdept_mart.mart_revenue_definitions": 2695339328.39
+  }
+ },
+ {
+  "measure_name": "equity_score",
+  "objects": [
+   "marketing_core.brand",
+   "marketing_mart.mart_brand_market_position",
+   "xdept_mart.mart_brand_investment_return"
+  ],
+  "n_objects": 3,
+  "n_departments": 1,
+  "n_schemas": 3,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 79.5353,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "marketing_core.brand": 758.92,
+   "marketing_mart.mart_brand_market_position": 60360.96,
+   "xdept_mart.mart_brand_investment_return": 758.92
+  }
+ },
+ {
+  "measure_name": "awareness_pct",
+  "objects": [
+   "marketing_core.brand",
+   "marketing_mart.mart_brand_market_position",
+   "xdept_mart.mart_brand_investment_return"
+  ],
+  "n_objects": 3,
+  "n_departments": 1,
+  "n_schemas": 3,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 79.5256,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "marketing_core.brand": 651.08,
+   "marketing_mart.mart_brand_market_position": 51777.51,
+   "xdept_mart.mart_brand_investment_return": 651.08
+  }
+ },
+ {
+  "measure_name": "exchange_rate",
+  "objects": [
+   "finance_core.ap_invoice",
+   "procure_core.purchase_order",
+   "sales_core.invoice"
+  ],
+  "n_objects": 3,
+  "n_departments": 2,
+  "n_schemas": 3,
+  "departments": [
+   "営業",
+   "財務"
+  ],
+  "max_over_min": 2.7666,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.2273,
+  "comment_jaccard_avg": 0.3235,
+  "observed": {
+   "finance_core.ap_invoice": 7952.0,
+   "procure_core.purchase_order": 7952.0,
+   "sales_core.invoice": 22000.0
+  }
+ },
+ {
+  "measure_name": "total_amount",
+  "objects": [
+   "sales_core.invoice",
+   "sales_mart.sales_invoice",
+   "trade_mart.trade_accrual"
+  ],
+  "n_objects": 3,
+  "n_departments": 2,
+  "n_schemas": 3,
+  "departments": [
+   "営業",
+   "販促"
+  ],
+  "max_over_min": 1.5688,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.1,
+  "comment_jaccard_avg": 0.2333,
+  "observed": {
+   "sales_core.invoice": 23900173958.67,
+   "sales_mart.sales_invoice": 23900173958.66999,
+   "trade_mart.trade_accrual": 15234681399.849995
+  }
+ },
+ {
+  "measure_name": "adjustment_amount",
+  "objects": [
+   "trade_core.deduction",
+   "trade_core.settlement",
+   "trade_mart.mart_trade_spend_flow"
+  ],
+  "n_objects": 3,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.409,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.7778,
+  "comment_jaccard_avg": 0.7778,
+  "observed": {
+   "trade_core.deduction": -295758210.21,
+   "trade_core.settlement": -416731570.69,
+   "trade_mart.mart_trade_spend_flow": -416731570.69
+  }
+ },
+ {
+  "measure_name": "reach",
+  "objects": [
+   "marketing_core.campaign_execution",
+   "marketing_core.media_spend",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 3,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.1879,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.4643,
+  "comment_jaccard_avg": 0.4643,
+  "observed": {
+   "marketing_core.campaign_execution": 15173075039.0,
+   "marketing_core.media_spend": 12773422511.0,
+   "marketing_mart.mart_media_efficiency": 12773422511.0
+  }
+ },
+ {
+  "measure_name": "invoice_count",
+  "objects": [
+   "finance_mart.mart_revenue_reconciliation",
+   "sales_mart.sales_invoice",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 3,
+  "n_departments": 2,
+  "n_schemas": 3,
+  "departments": [
+   "営業",
+   "財務"
+  ],
+  "max_over_min": 1.007,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "finance_mart.mart_revenue_reconciliation": 21847.0,
+   "sales_mart.sales_invoice": 22000.0,
+   "xdept_mart.mart_revenue_definitions": 21847.0
+  }
+ },
+ {
+  "measure_name": "order_count",
+  "objects": [
+   "sales_mart.mart_sales_performance",
+   "sales_mart.sales_order",
+   "xdept_mart.mart_customer_360"
+  ],
+  "n_objects": 3,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "営業"
+  ],
+  "max_over_min": 1.0059,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "sales_mart.mart_sales_performance": 23525.0,
+   "sales_mart.sales_order": 23525.0,
+   "xdept_mart.mart_customer_360": 23387.0
+  }
+ },
+ {
+  "measure_name": "revenue_net_amount",
+  "objects": [
+   "finance_mart.mart_revenue_reconciliation",
+   "xdept_mart.mart_customer_360",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 3,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0051,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 3,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "finance_mart.mart_revenue_reconciliation": 128613230122.32,
+   "xdept_mart.mart_revenue_definitions": 128613230122.32,
+   "xdept_mart.mart_customer_360": 127957535045.07
+  }
+ },
+ {
+  "measure_name": "campaign_count",
+  "objects": [
+   "marketing_mart.marketing_campaign_performance",
+   "xdept_mart.mart_brand_investment_return",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 3,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 3,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.marketing_campaign_performance": 238.0,
+   "xdept_mart.mart_brand_investment_return": 238.0,
+   "xdept_mart.mart_spend_definitions": 238.0
+  }
+ },
+ {
+  "measure_name": "variance_amount",
+  "objects": [
+   "finance_core.finance_standard_cost",
+   "trade_core.settlement"
+  ],
+  "n_objects": 2,
+  "n_departments": 2,
+  "n_schemas": 2,
+  "departments": [
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 816880.4679,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.0,
+  "comment_jaccard_avg": 0.0,
+  "observed": {
+   "finance_core.finance_standard_cost": 510.15,
+   "trade_core.settlement": -416731570.69
+  }
+ },
+ {
+  "measure_name": "cpc",
+  "objects": [
+   "marketing_core.media_spend",
+   "marketing_mart.marketing_media_spend"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 14862.5,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.1579,
+  "comment_jaccard_avg": 0.1579,
+  "observed": {
+   "marketing_core.media_spend": 2378.0,
+   "marketing_mart.marketing_media_spend": 0.16
+  }
+ },
+ {
+  "measure_name": "cpm",
+  "objects": [
+   "marketing_core.media_spend",
+   "marketing_mart.marketing_media_spend"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 9840.9375,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.2,
+  "comment_jaccard_avg": 0.2,
+  "observed": {
+   "marketing_core.media_spend": 7872.75,
+   "marketing_mart.marketing_media_spend": 0.8
+  }
+ },
+ {
+  "measure_name": "avg_roi_index",
+  "objects": [
+   "marketing_mart.marketing_media_spend",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 172.2833,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.marketing_media_spend": 1.2284917447568042,
+   "marketing_mart.mart_media_efficiency": 211.6486
+  }
+ },
+ {
+  "measure_name": "budget_amount",
+  "objects": [
+   "finance_core.cost_center",
+   "trade_core.promotion_line"
+  ],
+  "n_objects": 2,
+  "n_departments": 2,
+  "n_schemas": 2,
+  "departments": [
+   "財務",
+   "販促"
+  ],
+  "max_over_min": 111.2247,
+  "cross_layer": 0,
+  "n_currencies": 10,
+  "currency_mixed": 1,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.0417,
+  "comment_jaccard_avg": 0.0417,
+  "observed": {
+   "finance_core.cost_center": 16233364.19,
+   "trade_core.promotion_line": 1805550899.86
+  }
+ },
+ {
+  "measure_name": "moq",
+  "objects": [
+   "procure_core.purchase_order",
+   "procure_core.supplier"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 89.348,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.3548,
+  "comment_jaccard_avg": 0.3548,
+  "observed": {
+   "procure_core.purchase_order": 3953871.98,
+   "procure_core.supplier": 44252.49
+  }
+ },
+ {
+  "measure_name": "total_actual_spend_usd",
+  "objects": [
+   "marketing_mart.marketing_campaign_performance",
+   "marketing_mart.marketing_consumer_insight"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 18.2926,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": 0.25,
+  "comment_jaccard_avg": 0.25,
+  "observed": {
+   "marketing_mart.marketing_consumer_insight": 2935350.1999999997,
+   "marketing_mart.marketing_campaign_performance": 53695170.66000001
+  }
+ },
+ {
+  "measure_name": "revenue_to_order_ratio",
+  "objects": [
+   "xdept_mart.mart_customer_360",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 14.7461,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_revenue_definitions": 8.2123,
+   "xdept_mart.mart_customer_360": 121.0995
+  }
+ },
+ {
+  "measure_name": "acv_distribution_pct",
+  "objects": [
+   "marketing_core.syndicated_market_data",
+   "marketing_mart.mart_brand_market_position"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 7.4597,
+  "cross_layer": 1,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_core.syndicated_market_data": 425478.3,
+   "marketing_mart.mart_brand_market_position": 57036.552923
+  }
+ },
+ {
+  "measure_name": "tdp",
+  "objects": [
+   "marketing_core.syndicated_market_data",
+   "marketing_mart.mart_brand_market_position"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 7.4438,
+  "cross_layer": 1,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_core.syndicated_market_data": 41818779.59,
+   "marketing_mart.mart_brand_market_position": 5617962.333342
+  }
+ },
+ {
+  "measure_name": "freight_amount",
+  "objects": [
+   "sales_core.invoice",
+   "trade_core.deduction"
+  ],
+  "n_objects": 2,
+  "n_departments": 2,
+  "n_schemas": 2,
+  "departments": [
+   "営業",
+   "販促"
+  ],
+  "max_over_min": 6.4031,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.0,
+  "comment_jaccard_avg": 0.0,
+  "observed": {
+   "sales_core.invoice": 478003479.32,
+   "trade_core.deduction": 74651330.44
+  }
+ },
+ {
+  "measure_name": "dollar_sales",
+  "objects": [
+   "marketing_core.syndicated_market_data",
+   "sales_core.pos_transaction"
+  ],
+  "n_objects": 2,
+  "n_departments": 2,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング",
+   "営業"
+  ],
+  "max_over_min": 3.9921,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.0741,
+  "comment_jaccard_avg": 0.0741,
+  "observed": {
+   "marketing_core.syndicated_market_data": 13178053285.19,
+   "sales_core.pos_transaction": 3301054850.26
+  }
+ },
+ {
+  "measure_name": "numeric_distribution_pct",
+  "objects": [
+   "marketing_core.syndicated_market_data",
+   "sales_core.distribution_point"
+  ],
+  "n_objects": 2,
+  "n_departments": 2,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング",
+   "営業"
+  ],
+  "max_over_min": 3.2754,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.1739,
+  "comment_jaccard_avg": 0.1739,
+  "observed": {
+   "marketing_core.syndicated_market_data": 374293.66,
+   "sales_core.distribution_point": 114273.61
+  }
+ },
+ {
+  "measure_name": "total_tax_amount",
+  "objects": [
+   "finance_mart.finance_ap_invoice",
+   "sales_core.order"
+  ],
+  "n_objects": 2,
+  "n_departments": 2,
+  "n_schemas": 2,
+  "departments": [
+   "営業",
+   "財務"
+  ],
+  "max_over_min": 2.9666,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.3333,
+  "comment_jaccard_avg": 0.3333,
+  "observed": {
+   "finance_mart.finance_ap_invoice": 5300828439.659987,
+   "sales_core.order": 15725303258.5
+  }
+ },
+ {
+  "measure_name": "total_impressions",
+  "objects": [
+   "marketing_mart.marketing_media_spend",
+   "marketing_mart.mart_campaign_performance"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 2.0979,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.marketing_media_spend": 47027382188.0,
+   "marketing_mart.mart_campaign_performance": 98660153685.0
+  }
+ },
+ {
+  "measure_name": "burn_rate",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.3235,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_media_efficiency": 166.5787,
+   "marketing_mart.mart_campaign_performance": 220.4623
+  }
+ },
+ {
+  "measure_name": "planned_spend_amount",
+  "objects": [
+   "marketing_core.campaign_execution",
+   "marketing_core.media_spend"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.3119,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.3913,
+  "comment_jaccard_avg": 0.3913,
+  "observed": {
+   "marketing_core.campaign_execution": 50634691.35,
+   "marketing_core.media_spend": 38596475.17
+  }
+ },
+ {
+  "measure_name": "average_net_amount",
+  "objects": [
+   "procure_mart.procurement_purchase_order",
+   "trade_mart.trade_settlement"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.2595,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.5714,
+  "comment_jaccard_avg": 0.5714,
+  "observed": {
+   "procure_mart.procurement_purchase_order": 7524109.47891978,
+   "trade_mart.trade_settlement": 5973861.174236814
+  }
+ },
+ {
+  "measure_name": "quantity",
+  "objects": [
+   "trade_core.deduction",
+   "trade_core.promotion_line"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.2345,
+  "cross_layer": 0,
+  "n_currencies": 5,
+  "currency_mixed": 1,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.2222,
+  "comment_jaccard_avg": 0.2222,
+  "observed": {
+   "trade_core.deduction": 2228827.0,
+   "trade_core.promotion_line": 1805422.0
+  }
+ },
+ {
+  "measure_name": "actual_spend_amount",
+  "objects": [
+   "marketing_core.campaign_execution",
+   "marketing_core.media_spend"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.2057,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.2174,
+  "comment_jaccard_avg": 0.2174,
+  "observed": {
+   "marketing_core.campaign_execution": 45424637.86,
+   "marketing_core.media_spend": 37676246.87
+  }
+ },
+ {
+  "measure_name": "cpm_usd",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0531,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_media_efficiency": 139.92,
+   "marketing_mart.mart_campaign_performance": 132.87
+  }
+ },
+ {
+  "measure_name": "agency_fee_usd",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0095,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_media_efficiency": 2829295.66,
+   "marketing_mart.mart_campaign_performance": 2802643.56
+  }
+ },
+ {
+  "measure_name": "media_actual_usd",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0094,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_campaign_performance": 37325734.34,
+   "xdept_mart.mart_spend_definitions": 37676246.87
+  }
+ },
+ {
+  "measure_name": "media_line_count",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0092,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_campaign_performance": 8882.0,
+   "xdept_mart.mart_spend_definitions": 8964.0
+  }
+ },
+ {
+  "measure_name": "open_receivable_amount",
+  "objects": [
+   "finance_mart.mart_revenue_reconciliation",
+   "xdept_mart.mart_customer_360"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0077,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "finance_mart.mart_revenue_reconciliation": 16388673547.81,
+   "xdept_mart.mart_customer_360": 16263758522.55
+  }
+ },
+ {
+  "measure_name": "execution_count",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0076,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_campaign_performance": 5919.0,
+   "xdept_mart.mart_spend_definitions": 5964.0
+  }
+ },
+ {
+  "measure_name": "panel_sellout_amount",
+  "objects": [
+   "xdept_mart.mart_customer_360",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 1.0071,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_revenue_definitions": 3301054850.26,
+   "xdept_mart.mart_customer_360": 3277942053.29
+  }
+ },
+ {
+  "measure_name": "execution_planned_usd",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0068,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_campaign_performance": 50290590.2,
+   "xdept_mart.mart_spend_definitions": 50634691.35
+  }
+ },
+ {
+  "measure_name": "clicks_delivered",
+  "objects": [
+   "marketing_core.campaign_execution",
+   "marketing_mart.mart_campaign_performance"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0067,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_core.campaign_execution": 247191498.0,
+   "marketing_mart.mart_campaign_performance": 245541309.0
+  }
+ },
+ {
+  "measure_name": "promo_settlement_net_amount",
+  "objects": [
+   "xdept_mart.mart_customer_360",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 1.0065,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_revenue_definitions": 10645420612.49,
+   "xdept_mart.mart_customer_360": 10576820563.79
+  }
+ },
+ {
+  "measure_name": "execution_actual_usd",
+  "objects": [
+   "marketing_mart.mart_campaign_performance",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0064,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_campaign_performance": 45136141.36,
+   "xdept_mart.mart_spend_definitions": 45424637.86
+  }
+ },
+ {
+  "measure_name": "consumer_insight_usd",
+  "objects": [
+   "xdept_mart.mart_brand_investment_return",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 1.0058,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_brand_investment_return": 2935350.2,
+   "xdept_mart.mart_spend_definitions": 2918458.61
+  }
+ },
+ {
+  "measure_name": "direct_labor_cost",
+  "objects": [
+   "finance_core.finance_standard_cost",
+   "master_core.product_standard_cost"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0057,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.3871,
+  "comment_jaccard_avg": 0.3871,
+  "observed": {
+   "finance_core.finance_standard_cost": 5876.08,
+   "master_core.product_standard_cost": 5842.97
+  }
+ },
+ {
+  "measure_name": "freight_in_cost",
+  "objects": [
+   "finance_core.finance_standard_cost",
+   "master_core.product_standard_cost"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0057,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.4074,
+  "comment_jaccard_avg": 0.4074,
+  "observed": {
+   "finance_core.finance_standard_cost": 1356.11,
+   "master_core.product_standard_cost": 1348.41
+  }
+ },
+ {
+  "measure_name": "raw_material_cost",
+  "objects": [
+   "finance_core.finance_standard_cost",
+   "master_core.product_standard_cost"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0057,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.2647,
+  "comment_jaccard_avg": 0.2647,
+  "observed": {
+   "finance_core.finance_standard_cost": 23504.14,
+   "master_core.product_standard_cost": 23371.95
+  }
+ },
+ {
+  "measure_name": "study_count",
+  "objects": [
+   "xdept_mart.mart_brand_investment_return",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 1.0051,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_brand_investment_return": 595.0,
+   "xdept_mart.mart_spend_definitions": 592.0
+  }
+ },
+ {
+  "measure_name": "order_net_amount",
+  "objects": [
+   "sales_mart.mart_sales_performance",
+   "xdept_mart.mart_customer_360"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "営業"
+  ],
+  "max_over_min": 1.0043,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "sales_mart.mart_sales_performance": 157253032520.84,
+   "xdept_mart.mart_customer_360": 156576935025.43
+  }
+ },
+ {
+  "measure_name": "costing_lot_size",
+  "objects": [
+   "finance_core.finance_standard_cost",
+   "master_core.product_standard_cost"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0014,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.3548,
+  "comment_jaccard_avg": 0.3548,
+  "observed": {
+   "finance_core.finance_standard_cost": 131509612.71,
+   "master_core.product_standard_cost": 131693907.58
+  }
+ },
+ {
+  "measure_name": "panel_units",
+  "objects": [
+   "xdept_mart.mart_brand_investment_return",
+   "xdept_mart.mart_customer_360"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 1.0007,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_brand_investment_return": 5462559.0,
+   "xdept_mart.mart_customer_360": 5458621.0
+  }
+ },
+ {
+  "measure_name": "accrual_count",
+  "objects": [
+   "trade_mart.mart_trade_spend_flow",
+   "trade_mart.trade_accrual"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "trade_mart.mart_trade_spend_flow": 4000.0,
+   "trade_mart.trade_accrual": 4000.0
+  }
+ },
+ {
+  "measure_name": "actual_revenue",
+  "objects": [
+   "trade_core.promotion_event",
+   "trade_mart.mart_promotion_roi"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "trade_core.promotion_event": 96036381605.83,
+   "trade_mart.mart_promotion_roi": 96036381605.83
+  }
+ },
+ {
+  "measure_name": "acv_target_pct",
+  "objects": [
+   "marketing_core.campaign",
+   "marketing_mart.mart_campaign_performance"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "marketing_core.campaign": 16340.45,
+   "marketing_mart.mart_campaign_performance": 16340.45
+  }
+ },
+ {
+  "measure_name": "annual_marketing_budget",
+  "objects": [
+   "marketing_core.brand",
+   "xdept_mart.mart_brand_investment_return"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "marketing_core.brand": 53318181.81,
+   "xdept_mart.mart_brand_investment_return": 53318181.81
+  }
+ },
+ {
+  "measure_name": "campaign_actual_usd",
+  "objects": [
+   "xdept_mart.mart_brand_investment_return",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_brand_investment_return": 53695170.66,
+   "xdept_mart.mart_spend_definitions": 53695170.66
+  }
+ },
+ {
+  "measure_name": "campaign_planned_usd",
+  "objects": [
+   "xdept_mart.mart_brand_investment_return",
+   "xdept_mart.mart_spend_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 0,
+  "n_schemas": 1,
+  "departments": [],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "xdept_mart.mart_brand_investment_return": 57756391.74,
+   "xdept_mart.mart_spend_definitions": 57756391.74
+  }
+ },
+ {
+  "measure_name": "clicks",
+  "objects": [
+   "marketing_core.media_spend",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_core.media_spend": 237796040.0,
+   "marketing_mart.mart_media_efficiency": 237796040.0
+  }
+ },
+ {
+  "measure_name": "impressions",
+  "objects": [
+   "marketing_core.media_spend",
+   "marketing_mart.mart_media_efficiency"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_core.media_spend": 47027382188.0,
+   "marketing_mart.mart_media_efficiency": 47027382188.0
+  }
+ },
+ {
+  "measure_name": "invoiced_gross_amount",
+  "objects": [
+   "finance_mart.mart_revenue_reconciliation",
+   "xdept_mart.mart_revenue_definitions"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "finance_mart.mart_revenue_reconciliation": 136380425604.66,
+   "xdept_mart.mart_revenue_definitions": 136380425604.66
+  }
+ },
+ {
+  "measure_name": "market_dollar_sales_usd",
+  "objects": [
+   "marketing_mart.mart_brand_market_position",
+   "xdept_mart.mart_brand_investment_return"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 2,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "marketing_mart.mart_brand_market_position": 13178053285.19,
+   "xdept_mart.mart_brand_investment_return": 13178053285.19
+  }
+ },
+ {
+  "measure_name": "media_impressions_target",
+  "objects": [
+   "marketing_core.campaign",
+   "marketing_mart.mart_campaign_performance"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "marketing_core.campaign": 28715084733.0,
+   "marketing_mart.mart_campaign_performance": 28715084733.0
+  }
+ },
+ {
+  "measure_name": "payment_amount",
+  "objects": [
+   "finance_core.ar_invoice",
+   "finance_mart.mart_revenue_reconciliation"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "finance_core.ar_invoice": 112121801761.96,
+   "finance_mart.mart_revenue_reconciliation": 112121801761.96
+  }
+ },
+ {
+  "measure_name": "planned_budget_usd",
+  "objects": [
+   "marketing_core.campaign",
+   "marketing_mart.mart_campaign_performance"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 1,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "marketing_core.campaign": 57756391.74,
+   "marketing_mart.mart_campaign_performance": 57756391.74
+  }
+ },
+ {
+  "measure_name": "promotion_line_count",
+  "objects": [
+   "trade_mart.trade_promotion_line",
+   "xdept_mart.mart_brand_investment_return"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "trade_mart.trade_promotion_line": 4000.0,
+   "xdept_mart.mart_brand_investment_return": 4000.0
+  }
+ },
+ {
+  "measure_name": "promotional_spend_gross",
+  "objects": [
+   "trade_core.promotion_event",
+   "trade_mart.mart_promotion_roi"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "trade_core.promotion_event": 16497617650.59,
+   "trade_mart.mart_promotion_roi": 16497617650.59
+  }
+ },
+ {
+  "measure_name": "promotional_spend_net",
+  "objects": [
+   "trade_core.promotion_event",
+   "trade_mart.mart_promotion_roi"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "trade_core.promotion_event": 13982553134.86,
+   "trade_mart.mart_promotion_roi": 13982553134.86
+  }
+ },
+ {
+  "measure_name": "reach_target_households",
+  "objects": [
+   "marketing_core.campaign",
+   "marketing_mart.mart_campaign_performance"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "マーケティング"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "marketing_core.campaign": 1712423929.0,
+   "marketing_mart.mart_campaign_performance": 1712423929.0
+  }
+ },
+ {
+  "measure_name": "settlement_count",
+  "objects": [
+   "trade_mart.mart_trade_spend_flow",
+   "trade_mart.trade_settlement"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 1,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 0,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "trade_mart.mart_trade_spend_flow": 1782.0,
+   "trade_mart.trade_settlement": 1782.0
+  }
+ },
+ {
+  "measure_name": "short_payment_amount",
+  "objects": [
+   "finance_core.ar_invoice",
+   "finance_mart.mart_revenue_reconciliation"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "財務"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 1,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "finance_core.ar_invoice": 693581090.21,
+   "finance_mart.mart_revenue_reconciliation": 693581090.21
+  }
+ },
+ {
+  "measure_name": "subtotal_amount",
+  "objects": [
+   "sales_core.invoice",
+   "sales_mart.sales_invoice"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "営業"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.1,
+  "comment_jaccard_avg": 0.1,
+  "observed": {
+   "sales_core.invoice": 24767414192.39,
+   "sales_mart.sales_invoice": 24767414192.38989
+  }
+ },
+ {
+  "measure_name": "target_revenue",
+  "objects": [
+   "trade_core.promotion_event",
+   "trade_mart.mart_promotion_roi"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 1.0,
+  "comment_jaccard_avg": 1.0,
+  "observed": {
+   "trade_core.promotion_event": 102995218617.08,
+   "trade_mart.mart_promotion_roi": 102995218617.08
+  }
+ },
+ {
+  "measure_name": "tdp_contribution_pct",
+  "objects": [
+   "sales_core.distribution_point",
+   "sales_mart.mart_account_coverage"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "営業"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 0,
+  "currency_mixed": 0,
+  "in_metric_view": 0,
+  "certified_count": 0,
+  "name_has_amount": 0,
+  "name_has_rate": 1,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": null,
+  "comment_jaccard_avg": null,
+  "observed": {
+   "sales_core.distribution_point": 9688.1,
+   "sales_mart.mart_account_coverage": 9688.1
+  }
+ },
+ {
+  "measure_name": "total_discount_amount",
+  "objects": [
+   "sales_core.order",
+   "sales_mart.sales_order"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "営業"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 1,
+  "currency_mixed": 0,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 1,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.25,
+  "comment_jaccard_avg": 0.25,
+  "observed": {
+   "sales_core.order": 11732509075.58,
+   "sales_mart.sales_order": 11732509075.580015
+  }
+ },
+ {
+  "measure_name": "total_funding_amount",
+  "objects": [
+   "trade_core.promotion_line",
+   "trade_mart.trade_promotion_line"
+  ],
+  "n_objects": 2,
+  "n_departments": 1,
+  "n_schemas": 2,
+  "departments": [
+   "販促"
+  ],
+  "max_over_min": 1.0,
+  "cross_layer": 1,
+  "n_currencies": 5,
+  "currency_mixed": 1,
+  "in_metric_view": 1,
+  "certified_count": 0,
+  "name_has_amount": 1,
+  "name_has_rate": 0,
+  "name_has_count": 0,
+  "name_has_usd": 0,
+  "comment_jaccard_min": 0.2727,
+  "comment_jaccard_avg": 0.2727,
+  "observed": {
+   "trade_core.promotion_line": 1801779940.21,
+   "trade_mart.trade_promotion_line": 1801779940.210004
+  }
+ }
+]

@@ -1,0 +1,1169 @@
+{
+  "datasets": [
+    {
+      "name": "ds_campaign",
+      "displayName": "キャンペーン（USD建て）",
+      "queryLines": [
+        "SELECT campaign_id, campaign_code, campaign_name, campaign_type, channel,\n",
+        "       objective, brand_id, brand_name, brand_category, owner_division,\n",
+        "       start_date, end_date, campaign_status, currency_code,\n",
+        "       planned_budget_usd, actual_spend_usd, media_actual_usd,\n",
+        "       agency_fee_usd, execution_count, underspent_executions,\n",
+        "       total_impressions, clicks_delivered, burn_rate, cpm_usd\n",
+        "FROM marketing_mart.mart_campaign_performance\n"
+      ],
+      "columns": [
+        {
+          "displayName": "投下額 USD",
+          "description": "キャンペーンの実投下額。これが「マーケ投下額」の正本",
+          "expression": "SUM(`actual_spend_usd`)"
+        },
+        {
+          "displayName": "計画予算 USD",
+          "description": "planned_budget_usd の合計。実績ではない",
+          "expression": "SUM(`planned_budget_usd`)"
+        },
+        {
+          "displayName": "媒体費 USD",
+          "description": "投下額のうち媒体購入分。投下額の全部ではない",
+          "expression": "SUM(`media_actual_usd`)"
+        },
+        {
+          "displayName": "消化率",
+          "description": "投下額 ÷ 計画予算",
+          "expression": "SUM(`actual_spend_usd`) / NULLIF(SUM(`planned_budget_usd`), 0)"
+        },
+        {
+          "displayName": "キャンペーン数",
+          "description": "件数",
+          "expression": "COUNT(`campaign_id`)"
+        },
+        {
+          "displayName": "未消化の執行数",
+          "description": "計画の70%未満しか使えていない執行の数",
+          "expression": "SUM(`underspent_executions`)"
+        },
+        {
+          "displayName": "CPM USD",
+          "description": "千インプレッションあたり費用",
+          "expression": "1000.0 * SUM(`actual_spend_usd`) / NULLIF(SUM(`total_impressions`), 0)"
+        }
+      ]
+    },
+    {
+      "name": "ds_spend",
+      "displayName": "「マーケに使ったお金」と呼ばれる数字（月次）",
+      "queryLines": [
+        "SELECT month_start, campaign_actual_usd, media_actual_usd,\n",
+        "       execution_actual_usd, consumer_insight_usd, trade_settled_jpy,\n",
+        "       insight_to_campaign_ratio, campaign_burn_rate\n",
+        "FROM xdept_mart.mart_spend_definitions\n",
+        "WHERE month_start >= TIMESTAMP'2026-01-01' AND month_start < TIMESTAMP'2026-11-01'\n"
+      ],
+      "columns": [
+        {
+          "displayName": "キャンペーン投下 USD",
+          "description": "正本。marketing.campaign の実投下額",
+          "expression": "SUM(`campaign_actual_usd`)"
+        },
+        {
+          "displayName": "媒体費 USD（内訳）",
+          "description": "投下額のうち媒体分",
+          "expression": "SUM(`media_actual_usd`)"
+        },
+        {
+          "displayName": "消費者調査費 USD",
+          "description": "調査会社に払った費用。投下額ではない",
+          "expression": "SUM(`consumer_insight_usd`)"
+        },
+        {
+          "displayName": "販促精算 JPY",
+          "description": "営業部門の販促。**建値が違うので上の USD と足せない**",
+          "expression": "SUM(`trade_settled_jpy`)"
+        },
+        {
+          "displayName": "調査費 ÷ 投下額",
+          "description": "取り違えたときの倍率の逆数",
+          "expression": "SUM(`consumer_insight_usd`) / NULLIF(SUM(`campaign_actual_usd`), 0)"
+        }
+      ]
+    },
+    {
+      "name": "ds_brand",
+      "displayName": "ブランド別の投資対効果と市場シェア",
+      "queryLines": [
+        "SELECT brand_name, brand_category, owner_division, lifecycle_status,\n",
+        "       campaign_actual_usd, campaign_actual_jpy, trade_funding_jpy,\n",
+        "       total_investment_jpy, brand_sales_jpy, return_on_investment,\n",
+        "       roi_on_panel_basis, avg_dollar_share_pct, market_dollar_sales_usd,\n",
+        "       awareness_pct, nps_score, marketing_spend_fx_rate\n",
+        "FROM xdept_mart.mart_brand_investment_return\n",
+        "ORDER BY return_on_investment DESC\n"
+      ],
+      "columns": [
+        {
+          "displayName": "ブランド売上 JPY（推計）",
+          "description": "市場全体 × 自社シェア を JPY 換算した推計。財務の純売上とは一致しない",
+          "expression": "SUM(`brand_sales_jpy`)"
+        },
+        {
+          "displayName": "総投資 JPY",
+          "description": "マーケ投下(USD×150) + 販促費(JPY)",
+          "expression": "SUM(`total_investment_jpy`)"
+        },
+        {
+          "displayName": "ROI",
+          "description": "ブランド売上(推計) ÷ 総投資。ブランド間の相対比較に使う",
+          "expression": "SUM(`brand_sales_jpy`) / NULLIF(SUM(`total_investment_jpy`), 0)"
+        },
+        {
+          "displayName": "平均シェア",
+          "description": "Nielsen syndicated の金額シェア",
+          "expression": "AVG(`avg_dollar_share_pct`) / 100.0"
+        }
+      ]
+    },
+    {
+      "name": "ds_media",
+      "displayName": "媒体チャネル別の効率（USD建て）",
+      "queryLines": [
+        "SELECT month_start, media_channel, media_type, buying_type,\n",
+        "       planned_spend_usd, actual_spend_usd, agency_fee_usd,\n",
+        "       impressions, clicks, reach, line_count, missing_currency_rows,\n",
+        "       working_media_usd, cpm_usd, cpc_usd, ctr_pct, avg_roi_index, burn_rate\n",
+        "FROM marketing_mart.mart_media_efficiency\n"
+      ],
+      "columns": [
+        {
+          "displayName": "媒体投下 USD",
+          "description": "媒体購入の実額",
+          "expression": "SUM(`actual_spend_usd`)"
+        },
+        {
+          "displayName": "媒体CPM USD",
+          "description": "千インプレッションあたり費用",
+          "expression": "1000.0 * SUM(`actual_spend_usd`) / NULLIF(SUM(`impressions`), 0)"
+        },
+        {
+          "displayName": "ワーキングメディア比率",
+          "description": "枠に出た分 ÷ 媒体投下額",
+          "expression": "SUM(`working_media_usd`) / NULLIF(SUM(`actual_spend_usd`), 0)"
+        },
+        {
+          "displayName": "通貨が欠けた明細",
+          "description": "currency_code が空の行数。集計前に必ず見る",
+          "expression": "SUM(`missing_currency_rows`)"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "filters",
+      "displayName": "絞り込み",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "f_cat",
+            "queries": [
+              {
+                "name": "ds_campaign_brand_category",
+                "query": {
+                  "datasetName": "ds_campaign",
+                  "fields": [
+                    {
+                      "name": "brand_category",
+                      "expression": "`brand_category`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "brand_category",
+                    "displayName": "カテゴリ",
+                    "queryName": "ds_campaign_brand_category"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "カテゴリ",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f_type",
+            "queries": [
+              {
+                "name": "ds_campaign_campaign_type",
+                "query": {
+                  "datasetName": "ds_campaign",
+                  "fields": [
+                    {
+                      "name": "campaign_type",
+                      "expression": "`campaign_type`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "campaign_type",
+                    "displayName": "キャンペーン種別",
+                    "queryName": "ds_campaign_campaign_type"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "キャンペーン種別",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "f_status",
+            "queries": [
+              {
+                "name": "ds_campaign_campaign_status",
+                "query": {
+                  "datasetName": "ds_campaign",
+                  "fields": [
+                    {
+                      "name": "campaign_status",
+                      "expression": "`campaign_status`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "campaign_status",
+                    "displayName": "ステータス",
+                    "queryName": "ds_campaign_campaign_status"
+                  }
+                ]
+              },
+              "frame": {
+                "title": "ステータス",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 4,
+            "height": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "overview",
+      "displayName": "概況",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "hd",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# マーケティングダッシュボード\n",
+                "\n",
+                "**この部門の金額はすべて USD 建てです。** 営業・財務・販促は JPY なので、",
+                "換算せずに足したり割ったりはできません（換算すると150倍ずれます）。",
+                "換算が必要な集計は `xdept_mart.mart_brand_investment_return` を使い、",
+                "レートと根拠を表の中に持たせています。\n",
+                "\n",
+                "**もう1つの注意**: 「マーケ投下額」はキャンペーン投下額です。",
+                "消費者調査費は同じ名前の measure を持ちますが投下額ではなく、約18分の1の規模です。",
+                "媒体費は投下額の一部（約7割）で、全部ではありません。\n",
+                "\n",
+                "期間 2026年1月〜10月・出所は `marketing_mart.mart_campaign_performance` /",
+                "`mart_media_efficiency` と `xdept_mart.mart_spend_definitions` / `mart_brand_investment_return`。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "k_spend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_campaign",
+                  "fields": [
+                    {
+                      "name": "measure(投下額 USD)",
+                      "expression": "MEASURE(`投下額 USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(投下額 USD)",
+                  "displayName": "2026年1〜10月・**USD**",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "マーケ投下額（正本）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_burn",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_campaign",
+                  "fields": [
+                    {
+                      "name": "measure(消化率)",
+                      "expression": "MEASURE(`消化率`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(消化率)",
+                  "displayName": "投下額 ÷ 計画予算",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "計画予算の消化率",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_cpm",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_campaign",
+                  "fields": [
+                    {
+                      "name": "measure(CPM USD)",
+                      "expression": "MEASURE(`CPM USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(CPM USD)",
+                  "displayName": "投下額 ÷ インプレッション・USD",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "CPM（千インプレッションあたり）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "hd2",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## 「マーケに使ったお金」と呼ばれる4つの数字\n",
+                "投下額・媒体費・調査費は **USD**、販促精算は **JPY**。",
+                "列名の接尾辞が建値です。**合計列は意図的に置いていません**。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "l_spend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_spend",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "measure(キャンペーン投下 USD)",
+                      "expression": "MEASURE(`キャンペーン投下 USD`)"
+                    },
+                    {
+                      "name": "measure(媒体費 USD（内訳）)",
+                      "expression": "MEASURE(`媒体費 USD（内訳）`)"
+                    },
+                    {
+                      "name": "measure(消費者調査費 USD)",
+                      "expression": "MEASURE(`消費者調査費 USD`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "月"
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(キャンペーン投下 USD)",
+                      "displayName": "キャンペーン投下（USD・正本）"
+                    },
+                    {
+                      "fieldName": "measure(媒体費 USD（内訳）)",
+                      "displayName": "媒体費（USD・内訳）"
+                    },
+                    {
+                      "fieldName": "measure(消費者調査費 USD)",
+                      "displayName": "消費者調査費（USD・投下ではない）"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "title": "月次：USD建ての3つ（同じ軸で並べてよい）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 8,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "k_insight",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_spend",
+                  "fields": [
+                    {
+                      "name": "measure(消費者調査費 USD)",
+                      "expression": "MEASURE(`消費者調査費 USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(消費者調査費 USD)",
+                  "displayName": "投下額の約5%・USD",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "消費者調査費（投下額ではない）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 9,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_trade_jpy",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_spend",
+                  "fields": [
+                    {
+                      "name": "measure(販促精算 JPY)",
+                      "expression": "MEASURE(`販促精算 JPY`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(販促精算 JPY)",
+                  "displayName": "建値が違うので上の USD と合算不可",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "JPY",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "販促精算（JPY・足せない）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 12,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "hd3",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## ブランド別の投資対効果 — 市場が大きくてもシェアが薄ければ戻らない\n",
+                "ROI の分子は **市場全体 × 自社シェア の JPY 換算推計**（CPG の実務標準）。",
+                "受注がヘッダ粒度で財務の純売上をブランドに割れないためで、",
+                "全社 P/L の粗利とは一致しません。用途はブランド間の相対比較です。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 15,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "b_roi",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_brand",
+                  "fields": [
+                    {
+                      "name": "brand_name",
+                      "expression": "`brand_name`"
+                    },
+                    {
+                      "name": "measure(ROI)",
+                      "expression": "MEASURE(`ROI`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(ROI)",
+                      "displayName": "ROI（売上推計 ÷ 総投資）"
+                    }
+                  ]
+                },
+                "y": {
+                  "fieldName": "brand_name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "value"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "ブランド別 ROI（高い順）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "b_share",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_brand",
+                  "fields": [
+                    {
+                      "name": "brand_name",
+                      "expression": "`brand_name`"
+                    },
+                    {
+                      "name": "measure(平均シェア)",
+                      "expression": "MEASURE(`平均シェア`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(平均シェア)",
+                      "displayName": "市場シェア"
+                    }
+                  ]
+                },
+                "y": {
+                  "fieldName": "brand_name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "value"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "ブランド別 市場シェア（Nielsen syndicated）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 17,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "hd4",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## 媒体の効率と、集計の信頼度\n",
+                "`missing_currency_rows` は **通貨が記録されていない明細の数**。",
+                "空を JPY と思って集計すると静かに間違うので、集計前にここを見ます。\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 23,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "b_cpm",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_media",
+                  "fields": [
+                    {
+                      "name": "media_channel",
+                      "expression": "`media_channel`"
+                    },
+                    {
+                      "name": "measure(媒体CPM USD)",
+                      "expression": "MEASURE(`媒体CPM USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "media_channel",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "value"
+                    }
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(媒体CPM USD)",
+                      "displayName": "CPM（USD）"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "title": "媒体チャネル別 CPM（安い順に読む）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 25,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "k_missing",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_media",
+                  "fields": [
+                    {
+                      "name": "measure(通貨が欠けた明細)",
+                      "expression": "MEASURE(`通貨が欠けた明細`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(通貨が欠けた明細)",
+                  "displayName": "品質シグナル・件数",
+                  "format": {
+                    "type": "number",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 0
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "通貨が記録されていない明細",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 25,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "k_working",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_media",
+                  "fields": [
+                    {
+                      "name": "measure(ワーキングメディア比率)",
+                      "expression": "MEASURE(`ワーキングメディア比率`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(ワーキングメディア比率)",
+                  "displayName": "枠に出た分 ÷ 媒体投下額",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "title": "ワーキングメディア比率",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 25,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "t_brand",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ds_brand",
+                  "fields": [
+                    {
+                      "name": "brand_name",
+                      "expression": "`brand_name`"
+                    },
+                    {
+                      "name": "brand_category",
+                      "expression": "`brand_category`"
+                    },
+                    {
+                      "name": "market_dollar_sales_usd",
+                      "expression": "`market_dollar_sales_usd`"
+                    },
+                    {
+                      "name": "avg_dollar_share_pct",
+                      "expression": "`avg_dollar_share_pct`"
+                    },
+                    {
+                      "name": "brand_sales_jpy",
+                      "expression": "`brand_sales_jpy`"
+                    },
+                    {
+                      "name": "total_investment_jpy",
+                      "expression": "`total_investment_jpy`"
+                    },
+                    {
+                      "name": "return_on_investment",
+                      "expression": "`return_on_investment`"
+                    },
+                    {
+                      "name": "roi_on_panel_basis",
+                      "expression": "`roi_on_panel_basis`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "brand_name",
+                    "displayName": "ブランド"
+                  },
+                  {
+                    "fieldName": "brand_category",
+                    "displayName": "カテゴリ"
+                  },
+                  {
+                    "fieldName": "market_dollar_sales_usd",
+                    "displayName": "市場規模（USD）",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "USD",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "avg_dollar_share_pct",
+                    "displayName": "シェア(%)",
+                    "format": {
+                      "type": "number",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 0
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "brand_sales_jpy",
+                    "displayName": "ブランド売上（推計JPY）",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "JPY",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "total_investment_jpy",
+                    "displayName": "総投資（JPY）",
+                    "format": {
+                      "type": "number-currency",
+                      "currencyCode": "JPY",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "return_on_investment",
+                    "displayName": "ROI",
+                    "format": {
+                      "type": "number",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 0
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "roi_on_panel_basis",
+                    "displayName": "ROI(POS基準・検算用)",
+                    "format": {
+                      "type": "number",
+                      "abbreviation": "compact",
+                      "decimalPlaces": {
+                        "type": "max",
+                        "places": 0
+                      }
+                    }
+                  }
+                ]
+              },
+              "frame": {
+                "title": "ブランド別 明細（ROI 高い順）",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 30,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ]
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#F9F7F4",
+        "dark": "#0B2026"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#112B33"
+      },
+      "fontColor": {
+        "light": "#11252C",
+        "dark": "#EEF4F5"
+      },
+      "selectionColor": {
+        "light": "#FF3621",
+        "dark": "#FF5F46"
+      },
+      "visualizationColors": [
+        "#003F5C",
+        "#3C6997",
+        "#594E90",
+        "#BC4C96",
+        "#FF5F66",
+        "#FFA600",
+        "#12795A"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "DM Sans",
+      "widgetCornerRadius": 12
+    }
+  }
+}

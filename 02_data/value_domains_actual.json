@@ -1,0 +1,318 @@
+{
+ "master_core.product_standard_cost": {
+  "cost_status": [
+   "draft",
+   "released"
+  ],
+  "cost_version": [
+   "2026.1"
+  ],
+  "costing_method": [
+   "moving_average",
+   "standard"
+  ]
+ },
+ "sales_core.order": {
+  "channel": [
+   "CVS",
+   "DgS",
+   "EC",
+   "SM",
+   "卸"
+  ],
+  "order_source": [
+   "EDI",
+   "phone",
+   "portal",
+   "rep"
+  ],
+  "order_status": [
+   "cancelled",
+   "delivered",
+   "invoiced",
+   "open",
+   "shipped"
+  ],
+  "order_type": [
+   "consignment",
+   "promotional",
+   "rush",
+   "standard"
+  ]
+ },
+ "sales_core.invoice": {
+  "invoice_status": [
+   "open",
+   "paid",
+   "posted"
+  ]
+ },
+ "sales_core.rep": {
+  "rep_type": [
+   "broker",
+   "direct",
+   "key_account"
+  ],
+  "sales_channel": [
+   "CVS",
+   "DgS",
+   "EC",
+   "SM",
+   "卸"
+  ],
+  "sales_region": [
+   "中国",
+   "中部",
+   "九州",
+   "北海道",
+   "四国",
+   "東北",
+   "関東",
+   "関西"
+  ]
+ },
+ "sales_core.pos_transaction": {
+  "currency_code": [
+   "JPY"
+  ],
+  "data_source": [
+   "Nielsen panel (projected, ~15% ACV)"
+  ],
+  "sales_channel": [
+   "CVS",
+   "DgS",
+   "EC",
+   "SM",
+   "卸"
+  ],
+  "store_format": [
+   "CVS",
+   "DgS",
+   "EC",
+   "SM",
+   "卸"
+  ],
+  "transaction_status": [
+   "settled"
+  ]
+ },
+ "sales_core.distribution_point": {
+  "classification_type": [
+   "must_stock",
+   "optional",
+   "seasonal"
+  ],
+  "data_source": [
+   "Nielsen"
+  ],
+  "distribution_status": [
+   "authorized",
+   "pending",
+   "void"
+  ],
+  "period_type": [
+   "monthly",
+   "quarterly",
+   "weekly"
+  ]
+ },
+ "sales_core.account": {
+  "account_type": [
+   "distributor",
+   "ecommerce",
+   "retail"
+  ],
+  "channel": [
+   "CVS",
+   "DgS",
+   "EC",
+   "SM",
+   "卸"
+  ]
+ },
+ "finance_core.ar_invoice": {
+  "channel_type": [
+   "CVS",
+   "DgS",
+   "EC",
+   "SM",
+   "卸"
+  ],
+  "invoice_status": [
+   "open",
+   "overdue",
+   "paid",
+   "partially_paid"
+  ]
+ },
+ "finance_core.ap_invoice": {
+  "invoice_status": [
+   "blocked",
+   "paid",
+   "posted"
+  ],
+  "match_status": [
+   "matched",
+   "price_variance",
+   "qty_variance"
+  ]
+ },
+ "trade_core.promotion_event": {
+  "channel": [
+   "CVS",
+   "DgS",
+   "EC",
+   "SM",
+   "卸"
+  ],
+  "mechanic_type": [
+   "BOGO",
+   "TPR",
+   "増量",
+   "多数買い"
+  ],
+  "promotion_event_status": [
+   "closed",
+   "executing",
+   "planned"
+  ],
+  "promotion_objective": [
+   "distribution",
+   "share",
+   "trial",
+   "volume"
+  ],
+  "promotion_type": [
+   "bonus_pack",
+   "coupon",
+   "end_aisle",
+   "feature_display",
+   "price_discount"
+  ]
+ },
+ "trade_core.settlement": {
+  "settlement_status": [
+   "disputed",
+   "pending",
+   "posted"
+  ],
+  "settlement_type": [
+   "chargeback",
+   "promotion_claim",
+   "rebate"
+  ],
+  "source_system": [
+   "TPM"
+  ]
+ },
+ "trade_core.accrual": {
+  "accrual_status": [
+   "open",
+   "posted",
+   "reversed"
+  ],
+  "accrual_type": [
+   "promotion",
+   "rebate",
+   "slotting"
+  ],
+  "basis": [
+   "fixed",
+   "net_sales",
+   "volume"
+  ]
+ },
+ "trade_core.deduction": {
+  "deduction_category": [
+   "logistics",
+   "quality",
+   "trade"
+  ],
+  "deduction_status": [
+   "cleared",
+   "disputed",
+   "open"
+  ],
+  "deduction_type": [
+   "damage",
+   "pricing",
+   "promotion",
+   "return",
+   "shortage"
+  ],
+  "source_system": [
+   "TPM"
+  ]
+ },
+ "procure_core.purchase_order": {
+  "po_type": [
+   "blanket",
+   "contract",
+   "standard"
+  ],
+  "source_system": [
+   "SAP MM"
+  ]
+ },
+ "marketing_core.campaign": {
+  "campaign_status": [
+   "completed",
+   "in_flight"
+  ],
+  "campaign_type": [
+   "digital",
+   "influencer",
+   "ooh",
+   "print",
+   "shopper",
+   "tv"
+  ]
+ },
+ "marketing_core.media_spend": {
+  "data_source": [
+   "Mediaocean"
+  ],
+  "spend_status": [
+   "accrued",
+   "committed",
+   "invoiced"
+  ]
+ },
+ "marketing_core.consumer_insight": {
+  "study_type": [
+   "brand_health",
+   "concept_test",
+   "nps_wave",
+   "sensory",
+   "shopper"
+  ]
+ },
+ "marketing_core.campaign_execution": {
+  "buying_type": [
+   "direct",
+   "programmatic"
+  ],
+  "claim_compliance_status": [
+   "cleared",
+   "in_review"
+  ],
+  "execution_status": [
+   "completed",
+   "live"
+  ]
+ },
+ "marketing_core.syndicated_market_data": {
+  "data_aggregation_level": [
+   "brand_market_week"
+  ],
+  "market_type": [
+   "category_total"
+  ],
+  "reporting_period_type": [
+   "weekly"
+  ],
+  "source_system": [
+   "Nielsen Scantrack"
+  ]
+ }
+}

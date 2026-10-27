@@ -1,0 +1,182 @@
+[
+  {
+    "domain": "product",
+    "table": "sku",
+    "schema": "master_core",
+    "columns": 55
+  },
+  {
+    "domain": "product",
+    "table": "category",
+    "schema": "master_core",
+    "columns": 20
+  },
+  {
+    "domain": "product",
+    "table": "product_standard_cost",
+    "schema": "master_core",
+    "columns": 33
+  },
+  {
+    "domain": "sales",
+    "table": "order",
+    "schema": "sales_core",
+    "columns": 47
+  },
+  {
+    "domain": "sales",
+    "table": "invoice",
+    "schema": "sales_core",
+    "columns": 45
+  },
+  {
+    "domain": "sales",
+    "table": "rep",
+    "schema": "sales_core",
+    "columns": 33
+  },
+  {
+    "domain": "sales",
+    "table": "territory",
+    "schema": "sales_core",
+    "columns": 25
+  },
+  {
+    "domain": "sales",
+    "table": "pos_transaction",
+    "schema": "sales_core",
+    "columns": 35
+  },
+  {
+    "domain": "sales",
+    "table": "distribution_point",
+    "schema": "sales_core",
+    "columns": 28
+  },
+  {
+    "domain": "customer",
+    "table": "account",
+    "schema": "sales_core",
+    "columns": 36
+  },
+  {
+    "domain": "finance",
+    "table": "ar_invoice",
+    "schema": "finance_core",
+    "columns": 44
+  },
+  {
+    "domain": "finance",
+    "table": "ap_invoice",
+    "schema": "finance_core",
+    "columns": 44
+  },
+  {
+    "domain": "finance",
+    "table": "gl_account",
+    "schema": "finance_core",
+    "columns": 43
+  },
+  {
+    "domain": "finance",
+    "table": "cost_center",
+    "schema": "finance_core",
+    "columns": 44
+  },
+  {
+    "domain": "finance",
+    "table": "profit_center",
+    "schema": "finance_core",
+    "columns": 42
+  },
+  {
+    "domain": "finance",
+    "table": "finance_standard_cost",
+    "schema": "finance_core",
+    "columns": 42
+  },
+  {
+    "domain": "trade",
+    "table": "promotion_event",
+    "schema": "trade_core",
+    "columns": 46
+  },
+  {
+    "domain": "trade",
+    "table": "promotion_line",
+    "schema": "trade_core",
+    "columns": 40
+  },
+  {
+    "domain": "trade",
+    "table": "settlement",
+    "schema": "trade_core",
+    "columns": 31
+  },
+  {
+    "domain": "trade",
+    "table": "fund",
+    "schema": "trade_core",
+    "columns": 27
+  },
+  {
+    "domain": "trade",
+    "table": "accrual",
+    "schema": "trade_core",
+    "columns": 24
+  },
+  {
+    "domain": "trade",
+    "table": "deduction",
+    "schema": "trade_core",
+    "columns": 44
+  },
+  {
+    "domain": "procurement",
+    "table": "purchase_order",
+    "schema": "procure_core",
+    "columns": 50
+  },
+  {
+    "domain": "procurement",
+    "table": "supplier",
+    "schema": "procure_core",
+    "columns": 48
+  },
+  {
+    "domain": "marketing",
+    "table": "brand",
+    "schema": "marketing_core",
+    "columns": 43
+  },
+  {
+    "domain": "marketing",
+    "table": "campaign",
+    "schema": "marketing_core",
+    "columns": 43
+  },
+  {
+    "domain": "marketing",
+    "table": "media_spend",
+    "schema": "marketing_core",
+    "columns": 44
+  },
+  {
+    "domain": "marketing",
+    "table": "consumer_insight",
+    "schema": "marketing_core",
+    "columns": 44
+  },
+  {
+    "domain": "marketing",
+    "table": "campaign_execution",
+    "schema": "marketing_core",
+    "columns": 47
+  },
+  {
+    "domain": "marketing",
+    "table": "syndicated_market_data",
+    "schema": "marketing_core",
+    "columns": 43
+  }
+]

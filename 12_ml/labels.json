@@ -1,0 +1,412 @@
+[
+ {
+  "measure_name": "accrual_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "actual_revenue",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "actual_spend_amount",
+  "label": 1,
+  "rationale": "同じく執行4,542万 と媒体3,768万。campaign_id でロールアップする関係にあり、足してはならない。"
+ },
+ {
+  "measure_name": "actual_spend_usd",
+  "label": 1,
+  "rationale": "「マーケ投下額」。campaign 5,370万 vs consumer_insight 294万（調査費）。18倍差で、調査費は投下ではない。"
+ },
+ {
+  "measure_name": "acv_distribution_pct",
+  "label": 0,
+  "rationale": "syndicated の生合計 vs mart の集計。同じ列。"
+ },
+ {
+  "measure_name": "acv_target_pct",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "adjustment_amount",
+  "label": 1,
+  "rationale": "settlement の調整 -4.2億 vs deduction の調整 -3.0億。同じ「調整額」で対象が違う。"
+ },
+ {
+  "measure_name": "agency_fee_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "annual_marketing_budget",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "average_net_amount",
+  "label": 1,
+  "rationale": "procurement の平均発注額752万 vs settlement の平均精算額597万。「平均単価」で対象が違う。"
+ },
+ {
+  "measure_name": "avg_roi_index",
+  "label": 0,
+  "rationale": "mart の合計 vs metric view の平均。同じ ROI 指数。"
+ },
+ {
+  "measure_name": "awareness_pct",
+  "label": 0,
+  "rationale": "同上。粒度の展開で合計が増えているだけ。"
+ },
+ {
+  "measure_name": "budget_amount",
+  "label": 1,
+  "rationale": "promotion_line の販促予算18億 vs cost_center の予算1,623万。111倍差。しかも建値が10種混在。"
+ },
+ {
+  "measure_name": "burn_rate",
+  "label": 0,
+  "rationale": "キャンペーン単位の消化率と媒体単位の消化率。率の合計に意味がないだけで概念は同じ。"
+ },
+ {
+  "measure_name": "campaign_actual_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "campaign_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "campaign_planned_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "clicks",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "clicks_delivered",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "consumer_insight_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "costing_lot_size",
+  "label": 0,
+  "rationale": "同上。ロットサイズは両系統で一致。"
+ },
+ {
+  "measure_name": "cpc",
+  "label": 0,
+  "rationale": "media_spend の行値合計 vs metric view の MEASURE 計算。同じ CPC で、生列を足すこと自体が無意味。"
+ },
+ {
+  "measure_name": "cpm",
+  "label": 0,
+  "rationale": "同じく。桁違いは集計方法の違いで、概念は1つ。"
+ },
+ {
+  "measure_name": "cpm_usd",
+  "label": 0,
+  "rationale": "媒体単位の CPM 139.92 とキャンペーン単位の CPM 132.87。分母のインプレッションの集め方が違うだけで、概念は同じ CPM。差は5%で業務判断が変わらない。"
+ },
+ {
+  "measure_name": "deduction_amount",
+  "label": 1,
+  "rationale": "mart_trade_spend_flow 71.7億（販促側の控除総額）vs ar_invoice 27.0億（売上から引いた分）。2.7倍差で範囲が違う。"
+ },
+ {
+  "measure_name": "direct_labor_cost",
+  "label": 0,
+  "rationale": "product_standard_cost と finance_standard_cost で同値。原価の2系統の乖離は unit_cost_gap で別に扱っており、この列自体は衝突していない。"
+ },
+ {
+  "measure_name": "dollar_sales",
+  "label": 1,
+  "rationale": "syndicated 132億（市場全体・USD・競合込み）vs pos_transaction 33億（自社店頭実売・JPY・パネル投影）。universe も建値も違う。"
+ },
+ {
+  "measure_name": "equity_score",
+  "label": 0,
+  "rationale": "brand(759) と mart_brand_investment_return(759) は同値。mart_brand_market_position は月×地域に展開した合計なので増えている。同じ列。"
+ },
+ {
+  "measure_name": "exchange_rate",
+  "label": 1,
+  "rationale": "為替レートが invoice / ap_invoice / purchase_order の3表に別々にある。どれを正とするか決まっていないと換算が揃わない。"
+ },
+ {
+  "measure_name": "execution_actual_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "execution_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "execution_planned_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "freight_amount",
+  "label": 1,
+  "rationale": "invoice の運賃4.8億（請求する）vs deduction の運賃控除0.75億（差し引かれる）。符号の向きが逆。"
+ },
+ {
+  "measure_name": "freight_in_cost",
+  "label": 0,
+  "rationale": "同上。"
+ },
+ {
+  "measure_name": "gross_amount",
+  "label": 1,
+  "rationale": "同じく silver 側。売掛136億/買掛55億/精算11億/控除7億。受け取る額と支払う額が同名。"
+ },
+ {
+  "measure_name": "impressions",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "invoice_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "invoiced_gross_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "market_dollar_sales_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "media_actual_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "media_impressions_target",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "media_line_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "moq",
+  "label": 1,
+  "rationale": "purchase_order の最小発注量 vs supplier マスタの MOQ。89倍差。発注実績と仕入先の取り決めが同名。"
+ },
+ {
+  "measure_name": "net_amount",
+  "label": 1,
+  "rationale": "total_net_amount の silver 側の生列。ar/purchase_order/ap/settlement/deduction に同名で存在し17.9倍差。"
+ },
+ {
+  "measure_name": "nps_score",
+  "label": 1,
+  "rationale": "brand の NPS（12ブランド）vs consumer_insight の NPS（600調査ウェーブ）。「NPSは？」で対象が変わる。"
+ },
+ {
+  "measure_name": "numeric_distribution_pct",
+  "label": 1,
+  "rationale": "syndicated（市場の配荷率）vs distribution_point（自社の配荷率）。3.3倍差で universe が違う。"
+ },
+ {
+  "measure_name": "open_receivable_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "order_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "order_net_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "panel_sellout_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "panel_units",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "payment_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "planned_budget_usd",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "planned_spend_amount",
+  "label": 1,
+  "rationale": "campaign_execution 5,063万 vs media_spend 3,860万。配信執行の計画と媒体購入の計画。足すと二重計上。"
+ },
+ {
+  "measure_name": "promo_settlement_net_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "promotion_line_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "promotional_spend_gross",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "promotional_spend_net",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "quantity",
+  "label": 1,
+  "rationale": "deduction の数量 vs promotion_line の数量。建値が5種混在しており単位が揃っていない。"
+ },
+ {
+  "measure_name": "raw_material_cost",
+  "label": 0,
+  "rationale": "同上。"
+ },
+ {
+  "measure_name": "reach",
+  "label": 1,
+  "rationale": "campaign_execution 151億 vs media_spend 127億。配信執行側と媒体購入側の2系統のリーチ。足すと二重計上。"
+ },
+ {
+  "measure_name": "reach_target_households",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "revenue_net_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "revenue_to_order_ratio",
+  "label": 1,
+  "rationale": "mart_customer_360（得意先別の比率）vs mart_revenue_definitions（月別の比率）。粒度が違うのに同名で、合計すると無意味になる。"
+ },
+ {
+  "measure_name": "settlement_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "short_payment_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "study_count",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "subtotal_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "target_revenue",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "tax_amount",
+  "label": 1,
+  "rationale": "「消費税」。売掛の税129億（受け取る）/発注60億・買掛53億（支払う）/精算11億/控除7億。8オブジェクト3部門。受け取る税と支払う税が同名。"
+ },
+ {
+  "measure_name": "tdp",
+  "label": 0,
+  "rationale": "同上。"
+ },
+ {
+  "measure_name": "tdp_contribution_pct",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "total_actual_spend_usd",
+  "label": 1,
+  "rationale": "上の metric view 版。ECM が campaign と consumer_insight の両方に同名の measure を置いている。"
+ },
+ {
+  "measure_name": "total_amount",
+  "label": 1,
+  "rationale": "sales_invoice の請求額239億 vs trade_accrual の計上額152億。「合計金額」で会計処理の段が違う。"
+ },
+ {
+  "measure_name": "total_discount_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "total_funding_amount",
+  "label": 0,
+  "rationale": "方針「同じ列が core → mart に集計されただけ」の一括適用。値が一致またはほぼ一致し、関与部門は1つ。業務語の衝突にならない。"
+ },
+ {
+  "measure_name": "total_gross_amount",
+  "label": 1,
+  "rationale": "「総額」。受注総額1,690億/請求総額1,364億/発注633億/買掛552億/精算111億。売上の総額と仕入の総額が同名。"
+ },
+ {
+  "measure_name": "total_impressions",
+  "label": 1,
+  "rationale": "mart_campaign_performance 986億（執行＋媒体の合計）vs marketing_media_spend 470億（媒体のみ）。2.1倍差で範囲が違う。"
+ },
+ {
+  "measure_name": "total_net_amount",
+  "label": 1,
+  "rationale": "「売上」。受注1,573億/純売上1,286億(正本)/発注598億/買掛530億/販促精算106億。うち3つは売上ですらない。3部門にまたがる。"
+ },
+ {
+  "measure_name": "total_tax_amount",
+  "label": 1,
+  "rationale": "sales_order の税157億 vs finance_ap_invoice の税53億。受注の税と買掛の税が同名。"
+ },
+ {
+  "measure_name": "trade_discount_amount",
+  "label": 1,
+  "rationale": "ar_invoice 系3つは同値47.5億だが sales_core.invoice だけ8.7億。請求明細側の値引と売上から引く販促値引が同名。"
+ },
+ {
+  "measure_name": "variance_amount",
+  "label": 1,
+  "rationale": "settlement の精算差異 -4.2億 vs finance_standard_cost の原価差異 510。同じ「差異」で片方は金額、片方は単価差。816,880倍。"
+ }
+]

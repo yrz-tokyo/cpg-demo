@@ -1,0 +1,15 @@
+# 第三者の依存物。npm レジストリがローカルで塞がれているため
+# venture-loop-demo から複製して置いているだけで、成果物ではない。
+09_app/frontend/node_modules/
+09_app/frontend/dist/
+__pycache__/
+*.pyc
+.venv/
+
+# 生成物。SEED=20261025 で決定的に再生成できる（python3 02_data/generate.py）。
+# 206,028行・58MB をリポジトリに入れる意味がないため除外する。
+02_data/raw/
+02_data/clean/
+02_data/landing/
+
+*.bak
