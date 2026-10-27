@@ -12,27 +12,26 @@ API は**まだ公開されていない**。社内資料（Jesse Kemp「Pre-Buil
 
 ```
 ドメイン「Brickshouse Food and Beverage」とそのサブドメイン（営業 / 財務 / マーケティング）に
-Page を作ってください。4つとも作成済みで、draft ではありません。添付した pages_content.md が
-唯一の情報源です。
+既にある22本の Page を、添付した最新の pages_content.md の内容に**置き換えて**ください。
+4つのドメインは作成済みで draft ではありません。
 
-ファイルには22本の Page が「## 連番. タイトル」区切りで書かれています。各 Page には
-**同義語** / **Definition** / **Business use** / **Related assets** / **Sources** があります。
-これらをそのまま対応する項目に入れてください。
+ファイルには22本が「## 連番. タイトル」区切りで書かれています。各 Page には
+**同義語** / **説明** / **Definition** / **Business use** / **Examples** /
+**Related assets** / **Sources** があります。見出しの構成をそのまま使ってください。
 
 守ってほしいこと:
-- タイトルは「（Brickshouse ...）」の括弧まで含めて、ファイルのとおりにしてください
-- 同義語は1語も足さないでください。特に Net Sales / Net Revenue / Total Revenue は
-  このアカウントの他の Page が使っている語なので、絶対に追加しないでください
-- ファイルに無い用語を新しく作らないでください（22本ちょうどにしてください）
-- Related assets のテーブル名は rongzi_catalog_dev から始まる3段で書いてあるので、
-  そのまま関連アセットとして紐付けてください
-- Sources 欄は URL しか入らないので**空のままにして**、本文の末尾に
-  「## Sources」の見出しを作ってテーブル名をそのまま書いてください
+- タイトルは「（Brickshouse ...）」の括弧まで含めてファイルのとおり
+- 同義語は1語も足さない。特に Net Sales / Net Revenue / Total Revenue は追加しない
+- **本文に Markdown の表を作らない**（箇条書きのまま入れる）
+- **金額や比率を補わない。** ファイルに数字が無いのは意図的で、
+  用語集に数値を書くとデータ更新のたびに Genie が食い違いを報告するため
+- Sources 欄は URL しか入らないので空にして、本文末尾の「## Sources」に書く
+- 22本ちょうど。新しい用語を作らない
 - ドメインの割り当て:
-    タイトルが「Brickshouse 営業」「Brickshouse 販促」 → 営業 サブドメイン
-    「Brickshouse 財務」                            → 財務 サブドメイン
-    「Brickshouse マーケ」                          → マーケティング サブドメイン
-    「Brickshouse 全社定義」「Brickshouse 調達」      → 親ドメイン
+    「Brickshouse 営業」「Brickshouse 販促」 → 営業
+    「Brickshouse 財務」                   → 財務
+    「Brickshouse マーケ」                 → マーケティング
+    「Brickshouse 全社定義」「Brickshouse 調達」→ 親
 ```
 
 4. **Attach sources** で `07_pages/pages_content.md` を添付（ローカルファイルで可）
@@ -64,6 +63,25 @@ databricks domains create-domain "Brickshouse Food and Beverage/営業" \
 
 枠が空いていたので（985/1000）、**マーケティングもサブドメインとして作れた**。
 10/25 時点では上限で作れず「タグのみ」だったが、3部門すべてが本物のサブドメインになった。
+
+## 書式を実機のお手本に合わせた（2026-10-27）
+
+他のFEの Page（`Attrition rate (Current network)`）を見て、想定していた書式と
+違うことが分かったので22本を書き直した。
+
+| 項目 | お手本 | 直す前のうち |
+|---|---|---|
+| 数値 | **ゼロ**。式と条件だけ | 金額・比率が散在 |
+| Definition | **1行の式** | 段落＋表 |
+| Business use | **箇条書き3行** | 段落＋Markdown表 |
+| Examples | **想定質問1つ** | **無かった** |
+| 長さ | 画面1枚 | 画面2〜3枚 |
+
+効いているのは2つ。**`MEASURE(total_net_amount)` のように metric view の組み方を書く**こと
+（「この表を使え」では Genie が組み立てを推測する）。そして **Examples に実際の質問文を置く**こと。
+
+本文から Markdown の表を全部外した。お手本に表が無いこともあるが、
+Discover の Page 一覧が「読み込みに失敗しました」になった障害の原因候補でもある。
 
 ## なぜ Publish が必須か
 
