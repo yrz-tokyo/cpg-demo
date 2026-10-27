@@ -14,10 +14,8 @@
 ## 投稿文（英語・そのまま貼れる）
 
 ```
-Hi @feinfra — requesting an exception (or protection) for 4 Discover domains + their
-governed tag policies until 2026-11-15.
-
-**What I need protected**
+Hi @feinfra — can these 4 Discover domains be protected from the unused-domain cleanup?
+They are an ongoing CPG demo asset, not a time-boxed project, so there's no end date.
 
 Account: FEVM (05d08df7-ae03-43ad-bbae-14babb530ec0)
 Workspace: fevm-serverless-rongzi-cpg-general (7474658774258275)
@@ -29,46 +27,29 @@ Workspace: fevm-serverless-rongzi-cpg-general (7474658774258275)
 | Brickshouse Food and Beverage/財務 | 7209c1c9-0c34-4c9d-93bd-d039726eddef |
 | Brickshouse Food and Beverage/マーケティング | 04be6f8f-405f-4d82-a492-88c9fae8c232 |
 
-Plus the 4 governed tag policies with the same keys (a domain cannot exist without its
-tag policy, and deleting the policy cascades to the domain).
+Plus the 4 governed tag policies with the same keys — deleting a policy cascades to its
+domain.
 
-**Why**
+The parent was deleted on 2026-10-27 00:40:47Z in a sweep of 17 domains (found it in
+system.access.audit). No complaint — the account is pinned at the 1000-domain limit and
+mine looked abandoned. Recreating the domains takes a minute, but the 22 Discover Pages
+inside them are lost with them, and Pages have no public API yet, so recovery is a
+30-minute manual bulk import.
 
-This is an FE Bar submission (due 2026-11-15) and a customer demo for CPG accounts in
-Japan. The build demonstrates Genie One + the UC ontology: 22 Discover Pages live in
-these domains and define the terms where departments disagree ("net sales" means five
-different numbers across sales / finance / trade / procurement / marketing).
+They're now non-draft, owner-tagged, 59 UC assets attached, and purpose in the subtitle,
+so they shouldn't read as unused anymore. Happy to re-confirm they're still in use
+whenever you ask.
 
-**What already happened**
-
-My parent domain was deleted on 2026-10-27 00:40:47Z as part of a sweep of 17 domains
-in 8 minutes. I found it in system.access.audit. Deleting the parent took the
-subdomains with it. I don't think this was anything other than someone freeing slots in
-an account that is pinned at the 1000-domain limit — my domains were a draft with no
-owner set, so they looked abandoned.
-
-The cost to me isn't the domains (1 minute to recreate). It's that the 22 Pages inside
-them are lost, and Pages have no public API yet, so the only way back is a 30-minute
-Genie Code bulk import. If that happens the night before the demo I have no recovery
-window.
-
-**What I've already done so I'm not just asking you to absorb this**
-
-- Set business_owner_ids / technical_owner_ids so they no longer look ownerless
-  (only 465 of 989 domains in this account have an owner set)
-- Created them non-draft
-- Tagged 59 UC assets into them, so they aren't empty
-- Put the purpose and the 2026-11-15 expiry in the subtitle, visible in Discover
-- A scheduled job re-creates them within 2 hours if they disappear again
-
-**Duration**
-
-Until 2026-11-15. After that I'll delete all 4 domains and all 4 tag policies myself —
-happy to be held to that date. Footprint is 4 of 1000 domains and 4 of 3074 tag policies.
-
-Thanks — and if there's a better channel or a Jira type for this, point me at it and
-I'll move it there.
+If there's a better channel or a Jira type for this, point me at it.
 ```
+
+## 期限を書かない代わりに入れたもの
+
+恒久例外は通りにくいので、元は「11/15 に自分で消す」と期限を切っていた。
+継続して使う資産なので期限は外し、代わりに
+**「使用中かどうかは聞かれたら答える」**を入れた。
+掃除する側が欲しいのは期限ではなく「生きているかを確認できる相手がいること」なので、
+これで同じ役割を果たす。
 
 ## 書く上で意識したこと
 
