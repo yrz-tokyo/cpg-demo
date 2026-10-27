@@ -24,7 +24,7 @@ RUN=$(databricks jobs submit --profile "$P" -o json --json "{
   }],
   \"environments\": [{
     \"environment_key\": \"default\",
-    \"spec\": {\"client\": \"3\", \"dependencies\": [\"scikit-learn==1.7.2\", \"pandas\", \"mlflow>=3\"]}
+    \"spec\": {\"client\": \"3\", \"dependencies\": [\"scikit-learn==1.7.2\", \"pandas==2.2.3\", \"mlflow>=3\"]}
   }]
 }" | python3 -I -c "import sys,json;print(json.load(sys.stdin)['run_id'])")
 echo "   run_id=$RUN"

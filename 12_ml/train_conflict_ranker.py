@@ -121,9 +121,21 @@ def main():
         est.fit(X, y)
         mlflow.log_param("selected_model", name)
         sig = infer_signature(df[cols], est.predict_proba(X)[:, 1])
+        # 依存は推論させずに明示する。推論に任せると実行環境の pandas 1.5.3 が
+        # そのまま書かれ、serving のコンテナ（Python 3.12）に cp312 の wheel が無いため
+        # ソースビルドに落ちて `ModuleNotFoundError: No module named 'pkg_resources'`
+        # （setuptools 81 で削除された）でビルドが失敗する。
         info = mlflow.sklearn.log_model(est, name="model", signature=sig,
                                         input_example=df[cols].head(3),
-                                        registered_model_name=MODEL_NAME)
+                                        registered_model_name=MODEL_NAME,
+                                        pip_requirements=[
+                                            "mlflow==3.17.2",
+                                            "cloudpickle==3.0.0",
+                                            "numpy==1.26.4",
+                                            "pandas==2.2.3",
+                                            "scikit-learn==1.7.2",
+                                            "scipy==1.13.1",
+                                        ])
         # 並べ替えの結果をそのまま証跡に残す（上位が本物かを目で見るため）
         rank = df.assign(score=oof).sort_values("score", ascending=False)
         rank_path = "/tmp/conflict_ranking.csv"

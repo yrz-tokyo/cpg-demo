@@ -23,7 +23,7 @@
 
 ---
 
-## 1. 売上（Brickshouse 全社定義）★最重要
+## 1. 売上（Brickshouse 全社定義）
 
 **同義語**: 売上, Brickshouse の売上, Brickshouse の純売上, 純売上, 計上売上, 認識売上, 売上高, 財務の売上, Brickshouse revenue, Brickshouse net sales, トップライン
 
@@ -49,8 +49,8 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 
 **なぜ紛らわしいか**: 業界標準データモデル(ECM)の metric view は、この5つすべてに `total_net_amount` という**完全に同じ名前の measure** を持つ。名前だけでは区別できない。
 
-**Related assets**: `finance_mart.finance_ar_invoice`, `finance_mart.mart_revenue_reconciliation`, `xdept_mart.mart_revenue_definitions`
-**Sources**: `finance_core.ar_invoice`
+**Related assets**: `rongzi_catalog_dev.finance_mart.finance_ar_invoice`, `rongzi_catalog_dev.finance_mart.mart_revenue_reconciliation`, `rongzi_catalog_dev.xdept_mart.mart_revenue_definitions`
+**Sources**: `rongzi_catalog_dev.finance_core.ar_invoice`
 
 ---
 
@@ -67,8 +67,8 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 製品側原価は開発・設計時の見積り、財務側原価は会計上の評価に使う。
 食い違いを見るときは `finance_mart.mart_standard_cost_compare` を使う（両者を並べて差分を出してある）。
 
-**Related assets**: `finance_mart.mart_standard_cost_compare`, `master_mart.product_standard_cost`
-**Sources**: `finance_core.finance_standard_cost`, `master_core.product_standard_cost`
+**Related assets**: `rongzi_catalog_dev.finance_mart.mart_standard_cost_compare`, `rongzi_catalog_dev.master_mart.product_standard_cost`
+**Sources**: `rongzi_catalog_dev.finance_core.finance_standard_cost`, `rongzi_catalog_dev.master_core.product_standard_cost`
 
 ---
 
@@ -83,8 +83,8 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 **Business use**
 得意先を軸に3部門を横断して見るときは `xdept_mart.mart_customer_360` を使う（受注・純売上・未回収・販促費・精算・控除・店頭実売が1行に揃っている）。
 
-**Related assets**: `xdept_mart.mart_customer_360`, `sales_mart.customer_account_overview`
-**Sources**: `sales_core.account`
+**Related assets**: `rongzi_catalog_dev.xdept_mart.mart_customer_360`, `rongzi_catalog_dev.sales_mart.customer_account_overview`
+**Sources**: `rongzi_catalog_dev.sales_core.account`
 
 ---
 
@@ -98,8 +98,8 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 **注意**: `sales_core.order` は受注ヘッダ粒度で `sku_id` を持たない。商品軸の分析は
 `pos_transaction`（店頭実売）・`distribution_point`（配下）・`promotion_line`（販促明細）で行う。
 
-**Related assets**: `master_core.sku`, `master_core.category`
-**Sources**: `master_core.sku`
+**Related assets**: `rongzi_catalog_dev.master_core.sku`, `rongzi_catalog_dev.master_core.category`
+**Sources**: `rongzi_catalog_dev.master_core.sku`
 
 ---
 
@@ -115,8 +115,8 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 営業の着地見込みにはこれを使う。**「会社の売上」として使ってはならない**。
 差が出る理由は 一部出荷・返品・販促値引・控除。差の内訳は `xdept_mart.mart_revenue_definitions` に月次で入っている。
 
-**Related assets**: `sales_mart.mart_sales_performance`, `xdept_mart.mart_revenue_definitions`
-**Sources**: `sales_core.order`
+**Related assets**: `rongzi_catalog_dev.sales_mart.mart_sales_performance`, `rongzi_catalog_dev.xdept_mart.mart_revenue_definitions`
+**Sources**: `rongzi_catalog_dev.sales_core.order`
 
 ---
 
@@ -132,8 +132,8 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 棚取りの進捗を見る指標。集計済みは `sales_mart.mart_account_coverage`。
 前期比の増減は `acv_change_pct`。
 
-**Related assets**: `sales_mart.mart_account_coverage`
-**Sources**: `sales_core.distribution_point`
+**Related assets**: `rongzi_catalog_dev.sales_mart.mart_account_coverage`
+**Sources**: `rongzi_catalog_dev.sales_core.distribution_point`
 
 ---
 
@@ -149,7 +149,7 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 純売上1,274.7億円の一部を投影したものに過ぎない。比較は**伸び率・指数**で行う。
 sell-in と sell-out の乖離を見る目的（棚の消化不足・過剰出荷の検知）に使う。
 
-**Sources**: `sales_core.pos_transaction`
+**Sources**: `rongzi_catalog_dev.sales_core.pos_transaction`
 
 ---
 
@@ -171,8 +171,8 @@ Brickshouse の売上が**いつの月に立つか**は `finance_core.ar_invoice
 **なぜ分けてあるか**: 「売上はいくら」と「売上はいつ立つ」は別の問い。
 同じ Page に両方を書くと、金額を聞かれたときに計上日の説明が混ざる。
 
-**Related assets**: `finance_mart.mart_revenue_reconciliation`, `xdept_mart.mart_revenue_definitions`
-**Sources**: `finance_core.ar_invoice`
+**Related assets**: `rongzi_catalog_dev.finance_mart.mart_revenue_reconciliation`, `rongzi_catalog_dev.xdept_mart.mart_revenue_definitions`
+**Sources**: `rongzi_catalog_dev.finance_core.ar_invoice`
 
 ---
 
@@ -189,8 +189,8 @@ Brickshouse の売上が**いつの月に立つか**は `finance_core.ar_invoice
 得意先別は `xdept_mart.mart_customer_360.revenue_leakage_amount` / `leakage_ratio`。
 原因の内訳は `trade_core.deduction.deduction_type`。
 
-**Related assets**: `xdept_mart.mart_customer_360`, `trade_mart.mart_trade_spend_flow`
-**Sources**: `finance_core.ar_invoice`, `trade_core.deduction`
+**Related assets**: `rongzi_catalog_dev.xdept_mart.mart_customer_360`, `rongzi_catalog_dev.trade_mart.mart_trade_spend_flow`
+**Sources**: `rongzi_catalog_dev.finance_core.ar_invoice`, `rongzi_catalog_dev.trade_core.deduction`
 
 ---
 
@@ -206,8 +206,8 @@ ROI は `trade_mart.mart_promotion_roi`。
 **注意**: `promotion_event.actual_revenue` は**販促システム側の自己申告値**であり、財務の純売上とは一致しない。
 会社の売上として使ってはならない。販促の効果測定にのみ使う。
 
-**Related assets**: `trade_mart.mart_promotion_roi`, `trade_mart.mart_trade_spend_flow`
-**Sources**: `trade_core.promotion_event`
+**Related assets**: `rongzi_catalog_dev.trade_mart.mart_promotion_roi`, `rongzi_catalog_dev.trade_mart.mart_trade_spend_flow`
+**Sources**: `rongzi_catalog_dev.trade_core.promotion_event`
 
 ---
 
@@ -224,7 +224,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 売上に対しては `ar_invoice` の `deduction_amount` としてマイナス方向に反映される。
 精算額を売上に足すと**二重計上**になる。
 
-**Sources**: `trade_core.settlement`
+**Sources**: `rongzi_catalog_dev.trade_core.settlement`
 
 ---
 
@@ -240,7 +240,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 `ar_invoice.deduction_amount` に反映され、純売上を押し下げる。
 係争中（`dispute_flag`）のものは回収交渉の対象。
 
-**Sources**: `trade_core.deduction`
+**Sources**: `rongzi_catalog_dev.trade_core.deduction`
 
 ---
 
@@ -256,7 +256,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 原価率の算出（発注 ÷ 純売上 = 約47%）に使う。
 `finance_mart.finance_ap_invoice`（買掛・532.3億円）も同様に売上ではない。
 
-**Sources**: `procure_core.purchase_order`, `finance_core.ap_invoice`
+**Sources**: `rongzi_catalog_dev.procure_core.purchase_order`, `rongzi_catalog_dev.finance_core.ap_invoice`
 
 ---
 
@@ -275,11 +275,11 @@ ROI は `trade_mart.mart_promotion_roi`。
 **Business use**
 受注・純売上・販促費の構成比を見る標準軸。`order.channel` と `pos_transaction.store_format` も同じ区分。
 
-**Sources**: `sales_core.account`
+**Sources**: `rongzi_catalog_dev.sales_core.account`
 
 ---
 
-## 15. マーケ投下額（Brickshouse マーケ）★最重要
+## 15. マーケ投下額（Brickshouse マーケ）
 
 **同義語**: マーケ投下額, マーケティング投下額, マーケ費, マーケティング費用, 広宣費, 広告宣伝費, 投下額, marketing spend, media investment, A&P, ATL費用, キャンペーン費用
 
@@ -302,12 +302,12 @@ ROI は `trade_mart.mart_promotion_roi`。
 
 **なぜ紛らわしいか**: 業界標準データモデル(ECM)の metric view は、`campaign` と `consumer_insight` の**両方に `total_actual_spend_usd` という完全に同じ名前の measure** を持つ。名前だけでは区別できず、調査費を選ぶと約18分の1になる。
 
-**Related assets**: `marketing_mart.marketing_campaign_performance`, `marketing_mart.mart_campaign_performance`, `xdept_mart.mart_spend_definitions`
-**Sources**: `marketing_core.campaign`
+**Related assets**: `rongzi_catalog_dev.marketing_mart.marketing_campaign_performance`, `rongzi_catalog_dev.marketing_mart.mart_campaign_performance`, `rongzi_catalog_dev.xdept_mart.mart_spend_definitions`
+**Sources**: `rongzi_catalog_dev.marketing_core.campaign`
 
 ---
 
-## 16. 通貨（Brickshouse 全社定義）★最重要
+## 16. 通貨（Brickshouse 全社定義）
 
 **同義語**: 通貨, 建値, 為替, currency, USD, ドル建て, 円建て, JPY, 換算, 為替レート, FX
 
@@ -328,12 +328,12 @@ Brickshouse のデータは**部門によって建値が違う**。
 - デモ環境の換算レートは **1USD = 150.0 JPY 固定**（実務では期中平均レートを使う）。
 - **`currency_code` が空の行がある。** 媒体費の明細で通貨が落ちることがある（2026年で約126行）。空の行を JPY と思って集計すると静かに間違う。`marketing_mart.mart_media_efficiency.missing_currency_rows` 列でその場で件数が分かる。
 
-**Related assets**: `xdept_mart.mart_brand_investment_return`, `marketing_mart.mart_media_efficiency`, `xdept_mart.mart_spend_definitions`
-**Sources**: `marketing_core.campaign`, `marketing_core.media_spend`, `trade_core.promotion_line`
+**Related assets**: `rongzi_catalog_dev.xdept_mart.mart_brand_investment_return`, `rongzi_catalog_dev.marketing_mart.mart_media_efficiency`, `rongzi_catalog_dev.xdept_mart.mart_spend_definitions`
+**Sources**: `rongzi_catalog_dev.marketing_core.campaign`, `rongzi_catalog_dev.marketing_core.media_spend`, `rongzi_catalog_dev.trade_core.promotion_line`
 
 ---
 
-## 17. 投資対効果 / ROI（Brickshouse 全社定義）★最重要
+## 17. 投資対効果 / ROI（Brickshouse 全社定義）
 
 **同義語**: ROI, 投資対効果, 投資効率, 費用対効果, リターン, 回収率, 投下効率, return on investment, ROAS, ROMI
 
@@ -352,12 +352,12 @@ Brickshouse には ROI と呼ばれる数字が**3つ**あり、分母も分子�
 - ブランド ROI の分子に**財務の純売上は使えない**。ECM の受注がヘッダ粒度で `sku_id` を持たないため、純売上をブランドに割れない。したがってブランド ROI は**全社 P/L の粗利とは一致しない**。使い方は**ブランド間の相対比較**まで。
 - 分母には必ず**換算済みの金額**を使う（→ Page「通貨」）。
 
-**Related assets**: `xdept_mart.mart_brand_investment_return`, `trade_mart.mart_promotion_roi`, `marketing_mart.mart_media_efficiency`
-**Sources**: `marketing_core.campaign`, `trade_core.promotion_line`, `sales_core.pos_transaction`
+**Related assets**: `rongzi_catalog_dev.xdept_mart.mart_brand_investment_return`, `rongzi_catalog_dev.trade_mart.mart_promotion_roi`, `rongzi_catalog_dev.marketing_mart.mart_media_efficiency`
+**Sources**: `rongzi_catalog_dev.marketing_core.campaign`, `rongzi_catalog_dev.trade_core.promotion_line`, `rongzi_catalog_dev.sales_core.pos_transaction`
 
 ---
 
-## 18. 市場規模・市場シェア（Brickshouse マーケ）★
+## 18. 市場規模・市場シェア（Brickshouse マーケ）
 
 **同義語**: 市場規模, 市場全体, カテゴリ規模, 市場売上, 市場シェア, シェア, 金額シェア, 数量シェア, market size, market share, dollar share, Nielsen, シンジケートデータ, SRI
 
@@ -376,8 +376,8 @@ Brickshouse には ROI と呼ばれる数字が**3つ**あり、分母も分子�
 **なぜ紛らわしいか**: この2つは**列名が `dollar_sales` で完全に同じ**。universe（市場全体 / 自社）も単位（USD / JPY）も違うのに、名前では区別できない。混ぜると自社が市場規模に見える（約348倍）。
 自社の市場売上が欲しい場合は `market_dollar_sales_usd × own_dollar_share_pct ÷ 100`（同表の `own_market_sales_usd` 列）を使う。これは POS とは出所も通貨も違う別の数字である。
 
-**Related assets**: `marketing_mart.mart_brand_market_position`
-**Sources**: `marketing_core.syndicated_market_data`, `sales_core.pos_transaction`
+**Related assets**: `rongzi_catalog_dev.marketing_mart.mart_brand_market_position`
+**Sources**: `rongzi_catalog_dev.marketing_core.syndicated_market_data`, `rongzi_catalog_dev.sales_core.pos_transaction`
 
 ---
 
@@ -403,8 +403,8 @@ Brickshouse には ROI と呼ばれる数字が**3つ**あり、分母も分子�
 ブランド軸で部門を横断する分析は `xdept_mart.mart_brand_investment_return` に集約してある。
 `brand.annual_marketing_budget` は **USD建ての予算**で実績ではない（実績は Page「マーケ投下額」）。
 
-**Related assets**: `xdept_mart.mart_brand_investment_return`, `marketing_mart.mart_brand_market_position`
-**Sources**: `marketing_core.brand`, `master_core.sku`
+**Related assets**: `rongzi_catalog_dev.xdept_mart.mart_brand_investment_return`, `rongzi_catalog_dev.marketing_mart.mart_brand_market_position`
+**Sources**: `rongzi_catalog_dev.marketing_core.brand`, `rongzi_catalog_dev.master_core.sku`
 
 ---
 
@@ -421,8 +421,8 @@ Brickshouse には ROI と呼ばれる数字が**3つ**あり、分母も分子�
 - `sales_core.order.campaign_id` があるので、受注をキャンペーン軸で見ることはできる。ただし**受注のキャンペーン紐付けは営業入力**であり、投下の効果測定として使うには弱い。
 - 投下額の明細は `media_spend`（媒体の購入）と `campaign_execution`（配信の執行）の2系統。**両方を足すと二重計上になる。**
 
-**Related assets**: `marketing_mart.mart_campaign_performance`, `marketing_mart.mart_media_efficiency`
-**Sources**: `marketing_core.campaign`, `marketing_core.campaign_execution`, `marketing_core.media_spend`
+**Related assets**: `rongzi_catalog_dev.marketing_mart.mart_campaign_performance`, `rongzi_catalog_dev.marketing_mart.mart_media_efficiency`
+**Sources**: `rongzi_catalog_dev.marketing_core.campaign`, `rongzi_catalog_dev.marketing_core.campaign_execution`, `rongzi_catalog_dev.marketing_core.media_spend`
 
 ---
 
@@ -441,8 +441,8 @@ ECM の metric view `marketing_consumer_insight` はこの列に **`total_actual
 
 調査の**中身**（NPS・コンセプトテストスコア・官能評価）はこの表の正しい使い道で、`avg_nps_score` / `avg_concept_test_score` / `avg_sensory_score` を使う。
 
-**Related assets**: `marketing_mart.marketing_consumer_insight`, `xdept_mart.mart_spend_definitions`
-**Sources**: `marketing_core.consumer_insight`
+**Related assets**: `rongzi_catalog_dev.marketing_mart.marketing_consumer_insight`, `rongzi_catalog_dev.xdept_mart.mart_spend_definitions`
+**Sources**: `rongzi_catalog_dev.marketing_core.consumer_insight`
 
 ---
 
@@ -460,5 +460,5 @@ ECM の metric view `marketing_consumer_insight` はこの列に **`total_actual
 - `roi_index` は Nielsen の**指数**で投資回収率ではない（→ Page「投資対効果 / ROI」）。
 - **`currency_code` が空の明細がある。** 集計前に `mart_media_efficiency.missing_currency_rows` を見る（→ Page「通貨」）。
 
-**Related assets**: `marketing_mart.mart_media_efficiency`, `marketing_mart.marketing_media_spend`
-**Sources**: `marketing_core.media_spend`
+**Related assets**: `rongzi_catalog_dev.marketing_mart.mart_media_efficiency`, `rongzi_catalog_dev.marketing_mart.marketing_media_spend`
+**Sources**: `rongzi_catalog_dev.marketing_core.media_spend`

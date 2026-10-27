@@ -11,8 +11,9 @@ API は**まだ公開されていない**。社内資料（Jesse Kemp「Pre-Buil
 3. どのドメインに入れるかを伝える。次のとおり打てばよい：
 
 ```
-ドメイン「Brickshouse Food and Beverage」とそのサブドメイン（営業 / 財務）に
-Page を作ってください。添付した pages_content.md が唯一の情報源です。
+ドメイン「Brickshouse Food and Beverage」とそのサブドメイン（営業 / 財務 / マーケティング）に
+Page を作ってください。4つとも作成済みで、draft ではありません。添付した pages_content.md が
+唯一の情報源です。
 
 ファイルには22本の Page が「## 連番. タイトル」区切りで書かれています。各 Page には
 **同義語** / **Definition** / **Business use** / **Related assets** / **Sources** があります。
@@ -23,14 +24,46 @@ Page を作ってください。添付した pages_content.md が唯一の情報
 - 同義語は1語も足さないでください。特に Net Sales / Net Revenue / Total Revenue は
   このアカウントの他の Page が使っている語なので、絶対に追加しないでください
 - ファイルに無い用語を新しく作らないでください（22本ちょうどにしてください）
-- ドメインの割り当て: タイトルが「Brickshouse 営業」「Brickshouse 販促」= 営業サブドメイン、
-  「Brickshouse 財務」= 財務サブドメイン、それ以外（全社定義 / マーケ / 調達）= 親ドメイン
+- Related assets のテーブル名は rongzi_catalog_dev から始まる3段で書いてあるので、
+  そのまま関連アセットとして紐付けてください
+- Sources 欄は URL しか入らないので**空のままにして**、本文の末尾に
+  「## Sources」の見出しを作ってテーブル名をそのまま書いてください
+- ドメインの割り当て:
+    タイトルが「Brickshouse 営業」「Brickshouse 販促」 → 営業 サブドメイン
+    「Brickshouse 財務」                            → 財務 サブドメイン
+    「Brickshouse マーケ」                          → マーケティング サブドメイン
+    「Brickshouse 全社定義」「Brickshouse 調達」      → 親ドメイン
 ```
 
 4. **Attach sources** で `07_pages/pages_content.md` を添付（ローカルファイルで可）
 5. 提案された Page を確認。重複・低信頼のフラグを解消する
 6. Genie Code が**下書き**としてまとめて作る
 7. **ここが重要：全部 Publish する**
+
+## ドメイン4本（2026-10-27 に作り直した）
+
+| tag_key | 名前 | domain_id | draft |
+|---|---|---|---|
+| `Brickshouse Food and Beverage` | 親 | `755ebf12-1718-4b8c-8eb9-9bc2b3650bea` | false |
+| `Brickshouse Food and Beverage/営業` | 営業 | `2e7a6889-45ea-40ef-82a4-57b75bb05269` | false |
+| `Brickshouse Food and Beverage/財務` | 財務 | `7209c1c9-0c34-4c9d-93bd-d039726eddef` | false |
+| `Brickshouse Food and Beverage/マーケティング` | マーケティング | `04be6f8f-405f-4d82-a492-88c9fae8c232` | false |
+
+**一度消えている。** 10/25 に作ったものは Genie Code が「存在しない」と言ってきた時点で
+アカウントの一覧（985件）から消えていた。tag policy の方は4本とも残っていたので、
+**消えたのは domain だけ**。当時 `--draft` で作っていたことが原因と見ている
+（アカウントがドメイン上限に張り付いていたので、誰かが下書きを掃除した可能性が高い）。
+作り直すときは `--draft` を付けない。
+
+```bash
+databricks domains create-domain "Brickshouse Food and Beverage" \
+  --name "Brickshouse Food and Beverage" --subtitle "..." --description "..."
+databricks domains create-domain "Brickshouse Food and Beverage/営業" \
+  --name "営業" --parent-domain-id <親のid> --subtitle "..."
+```
+
+枠が空いていたので（985/1000）、**マーケティングもサブドメインとして作れた**。
+10/25 時点では上限で作れず「タグのみ」だったが、3部門すべてが本物のサブドメインになった。
 
 ## なぜ Publish が必須か
 
