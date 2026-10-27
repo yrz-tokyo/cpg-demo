@@ -20,6 +20,16 @@ Page の `Sources` 欄は URL しか受け付けないので、**欄は空にし
 - 全社語（部門間で衝突する語）: `<語>（Brickshouse 全社定義）` / 同義語に**各部門の呼び方を全部**入れる
 - 部門語: `<語>（Brickshouse <部門>）` / 同義語にその部門の言い回し
 
+**鉄則0: 金額を固定で書かない**
+
+絶対額を書くと、パイプラインを回してデータが変わるたびに Genie が
+「用語集では1,274.7億円ですが、集計では1,286.1億円でした」と**食い違いを報告する**（実際に起きた）。
+用語集の仕事は「**どの列が正本か**」を決めることで、「いくらか」を答えることではない。
+金額は Genie が毎回集計すればよい。
+
+比率（原価率47% / 調査費は投下額の約5% / 媒体費は約70%）は
+データが揺れても変わらないので、**大小関係を示す必要があるときは比率で書く**。
+
 **同義語の2つの鉄則**（実機で Genie One を試して分かった）
 
 1. **自分の Page 同士で同じ語を取り合わない。** 同じ語を2つの Page に書くと、こちらの信号が
@@ -45,19 +55,19 @@ Page の `Sources` 欄は URL しか受け付けないので、**欄は空にし
 **Definition**
 Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finance_ar_invoice` の `total_net_amount`（純売上）** とする。
 計算式は `純売上 = 請求総額(gross_amount) − 販促値引(trade_discount_amount) − 控除(deduction_amount)`。
-2026年の値は約 **1,274.7億円**。
+正確な金額は Genie に聞く（用語集に金額を固定で書くと、データ更新のたびに実データと食い違う）。
 
 **Business use**
 社内には「売上」と呼ばれる数字が5つある。問いが「会社の売上」なら必ず純売上を使う。
 
 | 呼ばれ方 | 実体 | 2026年 | 売上か |
 |---|---|---|---|
-| 純売上・計上売上 | `finance_mart.finance_ar_invoice.total_net_amount` | 1,274.7億 | **これが正本** |
-| 受注・受注高 | `sales_mart.sales_order.total_net_amount` | 1,588.5億 | 売上ではない（一部出荷・値引・控除の前） |
-| 発注 | `procure_mart.procurement_purchase_order.total_net_amount` | 601.0億 | 売上ではない（仕入） |
-| 買掛 | `finance_mart.finance_ap_invoice.total_net_amount` | 532.3億 | 売上ではない（仕入） |
-| 販促精算 | `trade_mart.trade_settlement.total_net_amount` | 107.0億 | 売上ではない（得意先への支払い） |
-| 店頭実売 | `sales_core.pos_transaction.dollar_sales` | 33.2億 | 売上ではない（Nielsenパネルの投影値・絶対額比較不可） |
+| 純売上・計上売上 | `finance_mart.finance_ar_invoice.total_net_amount` | 約1,286億 | **これが正本** |
+| 受注・受注高 | `sales_mart.sales_order.total_net_amount` | 約1,573億 | 売上ではない（一部出荷・値引・控除の前） |
+| 発注 | `procure_mart.procurement_purchase_order.total_net_amount` | 約598億 | 売上ではない（仕入） |
+| 買掛 | `finance_mart.finance_ap_invoice.total_net_amount` | 約530億 | 売上ではない（仕入） |
+| 販促精算 | `trade_mart.trade_settlement.total_net_amount` | 約107億 | 売上ではない（得意先への支払い） |
+| 店頭実売 | `sales_core.pos_transaction.dollar_sales` | 約33億 | 売上ではない（Nielsenパネルの投影値・絶対額比較不可） |
 
 **なぜ紛らわしいか**: 業界標準データモデル(ECM)の metric view は、この5つすべてに `total_net_amount` という**完全に同じ名前の measure** を持つ。名前だけでは区別できない。
 
@@ -121,7 +131,7 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 
 **Definition**
 `sales_mart.sales_order.total_net_amount`。`総額(total_gross_amount) − 値引(total_discount_amount)`。
-2026年は約 **1,588.5億円**で、純売上より約 **25%大きい**。
+純売上より約 **22%大きい**（一部出荷・値引・控除の前なので）。
 
 **Business use**
 営業の着地見込みにはこれを使う。**「会社の売上」として使ってはならない**。
@@ -157,8 +167,7 @@ Brickshouse の「売上」の正本は **`rongzi_catalog_dev.finance_mart.finan
 `sales_core.pos_transaction.dollar_sales`。出所は **Nielsen の syndicated パネルで、全店 census ではなく約15% ACV の投影値**。
 
 **Business use**
-**当社の売上（sell-in）と絶対額で比較してはならない。** 2026年のパネル値は33.2億円だが、これは
-純売上1,274.7億円の一部を投影したものに過ぎない。比較は**伸び率・指数**で行う。
+**当社の売上（sell-in）と絶対額で比較してはならない。** パネル値は純売上の**約2.6%**にすぎない。比較は**伸び率・指数**で行う。
 sell-in と sell-out の乖離を見る目的（棚の消化不足・過剰出荷の検知）に使う。
 
 **Related assets**: `rongzi_catalog_dev.sales_mart.mart_sales_performance`
@@ -195,7 +204,7 @@ Brickshouse の売上が**いつの月に立つか**は `finance_core.ar_invoice
 
 **Definition**
 `finance_core.ar_invoice` の `trade_discount_amount + deduction_amount`。
-請求したのに純売上にならなかった金額。2026年は約 **75億円**（純売上の5.9%）。
+請求したのに純売上にならなかった金額。純売上の約 **5.8%**。
 
 **Business use**
 **未回収売掛（`open_amount`）とは別物。** 未回収は「回収できていない」、リーケージは「そもそも請求額から引かれた」。
@@ -212,7 +221,7 @@ Brickshouse の売上が**いつの月に立つか**は `finance_core.ar_invoice
 **同義語**: 販促費, 販促, トレードスペンド, trade spend, プロモーション費, 販促投資
 
 **Definition**
-`trade_mart.trade_promotion_event.promotional_spend_net`。2026年は約 **146.9億円**（純売上の11.5%）。
+`trade_mart.trade_promotion_event.promotional_spend_net`。純売上の約 **11%**。
 
 **Business use**
 ROI は `trade_mart.mart_promotion_roi`。
@@ -230,7 +239,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 
 **Definition**
 `trade_mart.trade_settlement.total_net_amount`。得意先からの請求（claim）に対する当社の支払い。
-`net_amount = original_claim_amount + adjustment_amount`。2026年は約 **107.0億円**。
+`net_amount = original_claim_amount + adjustment_amount`。純売上の約 **8%**。
 
 **Business use**
 **売上ではない。** `total_net_amount` という売上と同名の measure を持つため混同されやすい。
@@ -248,7 +257,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 
 **Definition**
 `trade_core.deduction.net_amount`。得意先が支払時に差し引いてくる金額。
-`deduction_type` は promotion / shortage / damage / pricing / return。2026年は約 **72.3億円**。
+`deduction_type` は promotion / shortage / damage / pricing / return。純売上の約 **5.6%**。
 
 **Business use**
 `ar_invoice.deduction_amount` に反映され、純売上を押し下げる。
@@ -264,12 +273,12 @@ ROI は `trade_mart.mart_promotion_roi`。
 **同義語**: 発注, 購買, 仕入, purchase order, PO, 調達金額
 
 **Definition**
-`procure_mart.procurement_purchase_order.total_net_amount`。2026年は約 **601.0億円**。
+`procure_mart.procurement_purchase_order.total_net_amount`。純売上の約 **47%**（＝原価率）。
 
 **Business use**
 **売上ではない。** `total_net_amount` という売上と同名の measure を持つが、当社が支払う金額。
 原価率の算出（発注 ÷ 純売上 = 約47%）に使う。
-`finance_mart.finance_ap_invoice`（買掛・532.3億円）も同様に売上ではない。
+`finance_mart.finance_ap_invoice`（買掛）も同様に売上ではない。
 
 **Related assets**: `rongzi_catalog_dev.procure_mart.procurement_purchase_order`, `rongzi_catalog_dev.finance_mart.finance_ap_invoice`
 **Sources**: `rongzi_catalog_dev.procure_core.purchase_order`, `rongzi_catalog_dev.finance_core.ap_invoice`
@@ -302,7 +311,7 @@ ROI は `trade_mart.mart_promotion_roi`。
 
 **Definition**
 「マーケ投下額」の正本は **`rongzi_catalog_dev.marketing_mart.marketing_campaign_performance` の `total_actual_spend_usd`**（＝ `marketing_core.campaign.actual_spend_usd` の合計）とする。
-**単位は USD。** 2026年の値は約 **$54.2M（1USD=150JPYで約81.3億円）**。
+**単位は USD。** 純売上に対して約 **6%**（1USD=150JPY で換算した場合）。
 内訳は媒体費（約70%）＋制作費・代理店フィー等。
 
 **Business use**
@@ -310,10 +319,10 @@ ROI は `trade_mart.mart_promotion_roi`。
 
 | 呼ばれ方 | 実体 | 2026年 | 投下額か |
 |---|---|---|---|
-| マーケ投下額・広宣費 | `marketing_mart.marketing_campaign_performance.total_actual_spend_usd` | $54.2M | **これが正本** |
-| 消費者調査費 | `marketing_mart.marketing_consumer_insight.total_actual_spend_usd` | $2.9M | **投下額ではない**（調査プロジェクトの費用・約18分の1） |
-| 媒体費 | `marketing_mart.marketing_media_spend.total_actual_spend_amount` | $37.5M | 投下額の**一部**（媒体の購入分だけ） |
-| 執行実績 | `marketing_core.campaign_execution.actual_spend_amount` | $45.6M | 投下額の明細（campaign_id でロールアップする。二重計上しない） |
+| マーケ投下額・広宣費 | `marketing_mart.marketing_campaign_performance.total_actual_spend_usd` | 投下額の100%（基準） | **これが正本** |
+| 消費者調査費 | `marketing_mart.marketing_consumer_insight.total_actual_spend_usd` | 投下額の約5% | **投下額ではない**（調査プロジェクトの費用・約18分の1） |
+| 媒体費 | `marketing_mart.marketing_media_spend.total_actual_spend_amount` | 投下額の約70% | 投下額の**一部**（媒体の購入分だけ） |
+| 執行実績 | `marketing_core.campaign_execution.actual_spend_amount` | 投下額の明細 | 投下額の明細（campaign_id でロールアップする。二重計上しない） |
 | 年間予算 | `marketing_core.brand.annual_marketing_budget` | — | 実績ではなく**予算** |
 | 販促費 | `trade_core.promotion_line.total_funding_amount` | **JPY建て** | 営業部門の販促。マーケ投下とは別勘定。**通貨が違うので足す前に換算する** |
 
@@ -379,7 +388,7 @@ Brickshouse には ROI と呼ばれる数字が**3つ**あり、分母も分子�
 **同義語**: 市場規模, 市場全体, カテゴリ規模, 市場売上, 市場シェア, シェア, 金額シェア, 数量シェア, market size, market share, dollar share, Nielsen, シンジケートデータ, SRI
 
 **Definition**
-市場規模の正本は **`marketing_mart.mart_brand_market_position.market_dollar_sales_usd`**（出所 `marketing_core.syndicated_market_data`、`market_type = 'category_total'`、**USD建て**）。2026年の合計は約 **$7.67B（約11,507億円）**。
+市場規模の正本は **`marketing_mart.mart_brand_market_position.market_dollar_sales_usd`**（出所 `marketing_core.syndicated_market_data`、`market_type = 'category_total'`、**USD建て**）。市場全体の規模は自社純売上の**9倍前後**（USD建て・競合込み）。
 自社シェアは同じ表の `own_dollar_share_pct`（平均約 **11%**）。
 
 **Business use**
@@ -387,8 +396,8 @@ Brickshouse には ROI と呼ばれる数字が**3つ**あり、分母も分子�
 
 | 列 | 意味 | 単位 | 2026年 |
 |---|---|---|---|
-| `syndicated_market_data.dollar_sales` | **市場全体**（競合込み） | **USD** | $7.67B ≒ 11,507億円 |
-| `pos_transaction.dollar_sales` | **自社の店頭実売**（Nielsenパネル約15%ACV投影） | **JPY** | 33.1億円 |
+| `syndicated_market_data.dollar_sales` | **市場全体**（競合込み） | **USD** | 自社純売上の9倍前後 |
+| `pos_transaction.dollar_sales` | **自社の店頭実売**（Nielsenパネル約15%ACV投影） | **JPY** | 自社純売上の約2.6% |
 
 **なぜ紛らわしいか**: この2つは**列名が `dollar_sales` で完全に同じ**。universe（市場全体 / 自社）も単位（USD / JPY）も違うのに、名前では区別できない。混ぜると自社が市場規模に見える（約348倍）。
 自社の市場売上が欲しい場合は `market_dollar_sales_usd × own_dollar_share_pct ÷ 100`（同表の `own_market_sales_usd` 列）を使う。これは POS とは出所も通貨も違う別の数字である。
@@ -448,7 +457,7 @@ Brickshouse には ROI と呼ばれる数字が**3つ**あり、分母も分子�
 **同義語**: 調査費, 消費者調査, リサーチ費用, 調査プロジェクト, consumer insight, market research, ブランドヘルス, コンセプトテスト, 官能評価, NPS調査
 
 **Definition**
-正本は **`marketing_core.consumer_insight.actual_spend_usd`**（**USD建て**）。2026年約 **$2.9M（約4.4億円）**。600プロジェクト。
+正本は **`marketing_core.consumer_insight.actual_spend_usd`**（**USD建て**）。マーケ投下額の約 **5%**。600プロジェクト。
 
 **Business use**
 **これはマーケ投下額ではない。** 媒体やキャンペーンに出したお金ではなく、調査会社に払った調査費である。マーケ投下額の約5%。
@@ -468,7 +477,7 @@ ECM の metric view `marketing_consumer_insight` はこの列に **`total_actual
 **同義語**: 媒体費, 媒体投下, メディア費, 広告枠, media spend, 媒体購入, ワーキングメディア, CPM, CPC
 
 **Definition**
-正本は **`marketing_mart.marketing_media_spend.total_actual_spend_amount`**（出所 `marketing_core.media_spend`、**USD建て**）。2026年約 **$37.5M（約56.2億円）**。マーケ投下額の約70%。
+正本は **`marketing_mart.marketing_media_spend.total_actual_spend_amount`**（出所 `marketing_core.media_spend`、**USD建て**）。マーケ投下額の約 **70%**。
 
 **Business use**
 - 媒体費は**マーケ投下額の一部**。「マーケにいくら使ったか」の答えには使わない（→ Page「マーケ投下額」）。
