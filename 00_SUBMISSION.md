@@ -30,6 +30,13 @@ Genie One に **「売上」** と1語入れたところ、**アカウントに�
 
 **Page を置かないと、AI は社内のどこかにある別の用語集で答える。** これが本当の痛み。
 
+**Page を22本置いた後、同じ質問が直った（2026-11-07 実測）。** 引用元は我々の
+`売上（Brickshouse 全社定義）` 1件だけになり、`xdept_mart.mart_revenue_definitions` で
+**5つの「売上」を出所つきで並べて正本を明示**した。さらに**言い方を3通りに変えても
+（「今期の売上は？」「当期の純売上はいくら？」「全社の売上実績を教えて」）
+3問とも同じ 1,286億円・同じ Page** を返した。
+うち2問は Genie One が**自分で部門の Genie Agent に裏を取り**、値の一致を報告している。
+
 ---
 
 ## 2. 作ったもの
@@ -146,8 +153,9 @@ python3 06_genie/apply_instructions.py && python3 04_eval/run_eval.py --route --
 python3 04_eval/rescore.py before after && python3 04_eval/variance.py after after2
 ```
 
-**未完**: Page 22本の投入（**公開APIがまだ無く** Genie Code の Bulk import が唯一の経路。
-手順は `07_pages/HOW_TO_IMPORT.md`）。ML serving endpoint はデモ直前に立てる（課金のため）。
+Page 22本は **Genie Code の Bulk import** で投入・公開済み（**公開APIがまだ無く**、
+これが唯一の経路。手順は `07_pages/HOW_TO_IMPORT.md`）。
+ML serving endpoint は scale-to-zero で常設、デモ直前に1件流して温める。
 
 ---
 
