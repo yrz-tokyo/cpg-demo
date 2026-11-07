@@ -1,0 +1,257 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<title>部門で「売上」が3つある会社に、Genie One を全社展開する</title>
+<link rel="stylesheet" href="style.css"></head><body>
+
+<section class="slide cover">
+  <h1>部門で「売上」が3つある会社に、<br>Genie One を全社展開する</h1>
+  <div class="sub">定義の衝突を測って、統治して、もう一度測った</div>
+  <div class="meta">Brickshouse Food and Beverage（架空・日本の CPG）<br>
+  Rongzi Yan / Solutions Architect, Field Engineering Japan<br>
+  データはすべて合成　github.com/yrz-tokyo/cpg-demo</div>
+</section>
+
+<section class="slide">
+  <h2>CPG の各部門は、別の数字を「売上」と呼ぶ</h2>
+  <div class="sub2">同じ会社・同じ年・5つの答え。最大15倍違う</div>
+  <div class="body">
+  <table><tr><th>部門が言う「売上」</th><th>実体</th><th>2026年</th></tr>
+  <tr><td>財務「純売上」</td><td>ar_invoice.net_amount</td><td class="num"><strong>1,286億円</strong>（正本）</td></tr>
+  <tr><td>営業「売上」</td><td>order.total_net_amount（受注）</td><td class="num">1,573億円</td></tr>
+  <tr><td>調達「売上」</td><td>purchase_order.net_amount（発注）</td><td class="num">598億円</td></tr>
+  <tr><td>販促「売上」</td><td>settlement.net_amount（精算）</td><td class="num">107億円</td></tr>
+  <tr><td>マーケ「売上」</td><td>pos_transaction.dollar_sales（POS）</td><td class="num">33億円</td></tr></table>
+  <p style="margin-top:22px">業界標準データモデル(ECM)の metric view は、この5つ<em>すべてに同じ名前の measure</em>
+  <span class="tag">total_net_amount</span> を持つ。名前では区別できない。</p>
+  </div>
+  <div class="foot"><span>1. 顧客の課題</span><span>Brickshouse Food and Beverage</span></div>
+</section>
+
+<section class="slide">
+  <h2>衝突は売上だけではない — 4つある</h2>
+  <div class="sub2">どれも ECM に素で存在する。作った問題ではない</div>
+  <div class="body">
+  <table><tr><th>衝突</th><th>何が同名か</th><th>間違えたときのズレ</th></tr>
+  <tr><td><strong>売上</strong></td><td>5つの表が total_net_amount を持つ</td><td class="num">最大 15倍</td></tr>
+  <tr><td><strong>マーケ投下額</strong></td><td>キャンペーン費・調査費・媒体費・予算</td><td class="num">最大 18倍</td></tr>
+  <tr><td><strong>通貨</strong></td><td>マーケは USD・他部門は JPY</td><td class="num">150倍</td></tr>
+  <tr><td><strong>dollar_sales</strong></td><td>自社POS と 市場全体（競合込み）</td><td class="num">約 550倍</td></tr></table>
+  <div class="callout" style="margin-top:26px">通貨が一番危ない。<em>換算せずに足すと150倍ずれ、ROI の分母に使うと150倍良く見える。</em>
+  桁が2つ違っても、CPG の金額感では気づけない。</div>
+  </div>
+  <div class="foot"><span>1. 顧客の課題</span><span>4つの定義衝突</span></div>
+</section>
+
+<section class="slide">
+  <h2>放置して AI を入れたら、実機で最悪のケースが起きた</h2>
+  <div class="sub2">2026-10-26 実測。Genie One に「売上」と1語だけ入れた</div>
+  <div class="body">
+  <div class="code">1. 「売上」で社内のオントロジーを検索
+2. <strong>他人の Page 4件</strong>がヒット（純売上 / Net Revenue / Net Sales / Total Revenue）
+3. 「純売上が公式定義だ」と判断してその Page を開く
+4. Page に書かれたテーブル名を探す
+5. samples.bakehouse.sales_transactions で集計
+   → 「売上 合計 66,471」（2024年5月・ベーカリーのサンプルデータ）</div>
+  <div class="callout" style="margin-top:26px"><em>Brickshouse のデータを1行も見ていない。</em>
+  用語集を置かないと、AI は社内のどこかにある<strong>他人の用語集</strong>で答える。これが本当の痛み。</div>
+  </div>
+  <div class="foot"><span>2. 実機の失敗</span><span>Page 0本の状態</span></div>
+</section>
+
+<section class="slide">
+  <h2>なぜ経営の問題なのか</h2>
+  <div class="sub2">定義が割れている会社は、漏れの責任者を決められない</div>
+  <div class="body">
+  <div class="kpis">
+    <div class="kpi"><div class="label">レベニューリーケージ</div><div class="val">74.5億円</div>
+      <div class="note">請求したのに売上として残らなかった金額</div></div>
+    <div class="kpi"><div class="label">純売上に対する比率</div><div class="val">5.8%</div>
+      <div class="note">内訳は販促値引と得意先の控除</div></div>
+  </div>
+  <p style="margin-top:28px">営業は受注を見て「達成」、財務は純売上を見て「未達」、販促は精算額を見て「予算内」と言う。
+  <em>3人とも自分の数字では正しい。</em></p>
+  <p>だから 5.8% が漏れていても、<strong>誰も自分の問題だと思っていない。</strong>
+  定義を揃えるのはレポートの見た目の問題ではなく、<em>漏れの責任者を決められるか</em>の問題である。</p>
+  </div>
+  <div class="foot"><span>3. 経営へのインパクト</span><span>実データから算出</span></div>
+</section>
+
+<section class="slide">
+  <h2>作ったもの — 統治のループ</h2>
+  <div class="sub2">1回限りの整備ではなく、人の決定が次の検出に効く</div>
+  <div class="body">
+  <div class="flow">
+    <div class="step"><div class="n">01</div><div class="t">Lakeflow</div>
+      <div class="d">ECM から合成データ206,028行を SDP 3層で取り込み・統治可能な形に</div></div>
+    <div class="step"><div class="n">02</div><div class="t">Unity Catalog</div>
+      <div class="d">Page 22本・metric view 16・認定・ドメインで「正本」を宣言</div></div>
+    <div class="step"><div class="n">03</div><div class="t">Genie Agent</div>
+      <div class="d">部門別4本。統治 ON/OFF を切り替えて答えの差を測る</div></div>
+    <div class="step"><div class="n">04</div><div class="t">ML で順位付け</div>
+      <div class="d">同名列82グループを、人が見るべき順に並べ替える</div></div>
+    <div class="step"><div class="n">05</div><div class="t">App で決着</div>
+      <div class="d">人が正本を決める。Lakebase に残り、次の検出の制約になる</div></div>
+  </div>
+  <div class="callout" style="margin-top:30px"><em>折り返し点があるのが肝。</em>
+  人が「これが正本」と決めた結果が Lakebase に残り、次の衝突検出でその判断が制約として効く。</div>
+  </div>
+  <div class="foot"><span>4. 解決の全体像</span><span>6コンポーネントを1本の筋に通す</span></div>
+</section>
+
+<section class="slide">
+  <h2>6コンポーネントの実装</h2>
+  <div class="sub2">すべて実機で稼働。証跡はリポジトリにテキストで committed</div>
+  <div class="body">
+  <table><tr><th>必須</th><th>実装</th></tr>
+  <tr><td><strong>Lakeflow</strong></td><td>SDP 3層。ST 30 → silver MV 30 → mart MV 13。<strong>PK 30 / FK 78 / expectations 43 をパイプライン定義で宣言</strong></td></tr>
+  <tr><td><strong>Unity Catalog</strong></td><td>silver <strong>1,190列</strong>に業務コメント（値域つき）・metric view 16・ドメイン1＋サブドメイン3・資産59へタグ・認定10・<strong>Page 22本</strong></td></tr>
+  <tr><td><strong>Lakebase</strong></td><td>衝突の承認/却下/正本選択を永続化。9表＋1ビュー。<strong>却下ペアを次回検出の制約として読み戻す</strong></td></tr>
+  <tr><td><strong>ML / GenAI</strong></td><td>同名列82グループの順位付け。<strong>PR-AUC 0.955 / 上位16件の適合率100%</strong>。UC登録・serving 稼働</td></tr>
+  <tr><td><strong>Genie Agent</strong></td><td>部門別4本（営業30表 / 財務15 / マーケ15 / 横断18）</td></tr>
+  <tr><td><strong>Databricks App</strong></td><td>3画面（ペルソナ別の問い / 衝突レビュー / 統治効果 before-after）React+Vite+FastAPI</td></tr></table>
+  <p style="margin-top:18px">＋ AI/BI ダッシュボード3本。存在自体が Genie One の推論コンテキストへの入力になる。</p>
+  </div>
+  <div class="foot"><span>5. 実装</span><span>必須6要件の充当</span></div>
+</section>
+
+<section class="slide">
+  <h2>デモ① 部署が違う3人が、違う言葉で聞いて同じ数字</h2>
+  <div class="sub2">2026-11-07 実測。Page 22本を公開した後</div>
+  <div class="body">
+  <div class="code">営業部長  「今期の売上は？」          → 1,286億円
+財務部長  「当期の純売上はいくら？」   → 1,286億円
+マーケ部長「全社の売上実績を教えて」   → 1,286億円</div>
+  <p style="margin-top:26px">3問とも引用元は<em>我々の Page『売上（Brickshouse 全社定義）』1件のみ</em>。
+  他人の Page には引かれていない。</p>
+  <p>しかも<strong>聞き返さずに5つの「売上」を出所つきで並べ、正本を明示</strong>する。
+  うち2問は Genie One が<strong>自分で部門の Agent に裏を取り</strong>、値の一致を報告した。</p>
+  </div>
+  <div class="foot"><span>6. デモ①</span><span>同じ数字が返る</span></div>
+</section>
+
+<section class="slide">
+  <h2>デモ② 足せないものを、足さずに断る</h2>
+  <div class="sub2">失敗の実演ではなく、能力の実演</div>
+  <div class="body">
+  <div class="code">「販促精算額はいくら？」
+  → 107億円「これは販促の精算額で、売上には含まれません」
+
+「マーケ投下額と販促費を足して」
+  → 通貨が違う（USD / JPY）。換算レートを明示して答える</div>
+  <h2 style="font-size:28px;margin-top:34px">デモ③ 人が決めて、AI が従う</h2>
+  <p style="margin-top:12px">App のレビュー画面で衝突を1件選び、正本を決定 →
+  <strong>Lakebase に書き込み</strong> → もう一度 Genie に聞くと<em>その決定が反映されている</em>。</p>
+  <p>AI が答えを決めるのではなく、<strong>人の決定を AI が守る</strong>ことを見せる。</p>
+  </div>
+  <div class="foot"><span>7. デモ②③</span><span>区別する／人が決める</span></div>
+</section>
+
+<section class="slide">
+  <h2>効果を測った — 同じ49問を、統治前と統治後に</h2>
+  <div class="sub2">部門別の質問49問。正答・正本参照・罠・聞き返しを機械採点</div>
+  <div class="body">
+  <table><tr><th></th><th>統治前</th><th>統治後</th><th>差</th></tr>
+  <tr><td>全体 正答率</td><td class="num">31/49 (63%)</td><td class="num"><strong>41/49 (84%)</strong></td><td class="num"><strong>+21 pt</strong></td></tr>
+  <tr><td>正本参照率</td><td class="num">55%</td><td class="num"><strong>73%</strong></td><td class="num">+18 pt</td></tr>
+  <tr><td><strong>定義が割れる21問</strong></td><td class="num"><strong>38%</strong></td><td class="num"><strong>86%</strong></td><td class="num"><strong>+48 pt</strong></td></tr>
+  <tr><td><strong>割れない28問</strong></td><td class="num"><strong>82%</strong></td><td class="num"><strong>82%</strong></td><td class="num"><strong>±0</strong></td></tr>
+  <tr><td>罠を踏んだ / 聞き返し</td><td class="num">2件 / 5件</td><td class="num"><strong>0件 / 0件</strong></td><td class="num">−7</td></tr></table>
+  <div class="callout" style="margin-top:26px">主張の核は<em>「割れない28問が1問も動かなかった」</em>こと。
+  「全体的に良くなった」ではなく<strong>「狙ったものだけが直った」</strong>ことの証明になる。</div>
+  </div>
+  <div class="foot"><span>8. 測定</span><span>49問 × 統治 ON/OFF</span></div>
+</section>
+
+<section class="slide">
+  <h2>その差は誤差ではない</h2>
+  <div class="sub2">統治後の同じ状態で、同じ49問を3回測った</div>
+  <div class="body">
+  <div class="kpis">
+    <div class="kpi"><div class="label">同じ状態での揺れ</div><div class="val">0.0〜3.7<span class="unit"> pt</span></div>
+      <div class="note">3回: −3.7 / ±0.0 / +2.0</div></div>
+    <div class="kpi"><div class="label">統治の差（全体）</div><div class="val">+21<span class="unit"> pt</span></div>
+      <div class="note">揺れの 5.7倍</div></div>
+    <div class="kpi"><div class="label">統治の差（衝突あり）</div><div class="val">+48<span class="unit"> pt</span></div>
+      <div class="note">揺れの 13倍</div></div>
+  </div>
+  <p style="margin-top:26px">2回目は6問の判定が変わったが<strong>3問が正解に・3問が不正解に動いて相殺</strong>し、正答率は不動だった。
+  3回目は<strong>正本参照率が 36/49 → 36/49 で完全一致</strong>した。</p>
+  <p><em>測定器のバグは before 側も after 側も両方向に直した</em>（boolean が拒否と否定を混同していた欠陥を直し、
+  before 32→31・after 39→41）。<strong>曖昧だと分かっている2問は、差が大きく見えるように書き換えなかった。</strong></p>
+  </div>
+  <div class="foot"><span>9. 測定の信頼性</span><span>再現測定 3回</span></div>
+</section>
+
+<section class="slide">
+  <h2>衝突の発見を機械に任せる</h2>
+  <div class="sub2">同名の数値列は82グループ・201列。全部を人が見るのは無理</div>
+  <div class="body">
+  <table><tr><th>並べ方</th><th>PR-AUC</th><th>上位16件の適合率</th></tr>
+  <tr><td>ランダム</td><td class="num">0.498</td><td class="num">56%</td></tr>
+  <tr><td>max_over_min 降順</td><td class="num">0.675</td><td class="num">69%</td></tr>
+  <tr><td>ロジスティック回帰</td><td class="num">0.806</td><td class="num">88%</td></tr>
+  <tr><td><strong>勾配ブースティング</strong></td><td class="num"><strong>0.955</strong></td><td class="num"><strong>100%</strong></td></tr></table>
+  <p style="margin-top:22px"><em>上位16件（全体の2割）が全部本物の衝突。</em>
+  「82件を全部見る代わりに上位16件を見る」が言える。ベースラインを先に測ったので、勝てなければ
+  「モデルは不要」と言えた。</p>
+  <p style="font-size:19px"><strong>ラベルは構築者がスチュワード役として付けたもので、実在の担当者の合議ではない。</strong>
+  方針を先に LABELING_POLICY.md に書いてから1件ずつ付けた。言えるのは「保留した判断を再現できる」までである。</p>
+  </div>
+  <div class="foot"><span>10. ML</span><span>ベースラインと比べて初めて価値が言える</span></div>
+</section>
+
+<section class="slide">
+  <h2>作って分かったこと — 欠陥は3件とも同じ型だった</h2>
+  <div class="sub2">正しい表を指していても、答えは安定しない</div>
+  <div class="body">
+  <table><tr><th>起きたこと</th><th>書いていなかったもの</th></tr>
+  <tr><td>月次の照合で得意先別の行が返った</td><td><strong>粒度</strong>（表は 月×得意先×請求ステータス）</td></tr>
+  <tr><td>事業別の構成比が104%になった</td><td><strong>分母</strong>（brand_sales_jpy の総計を使う）</td></tr>
+  <tr><td>純売上に11月分が13億円混ざった</td><td><strong>表ごとの鮮度差</strong>（請求だけ3週間先まで伸びる）</td></tr></table>
+  <div class="callout" style="margin-top:28px"><em>「どの表を使うか」を書くのは出発点にすぎない。</em>
+  <strong>粒度・分母・期間まで書いて初めて答えが安定する。</strong>
+  用語集を作って終わりにする取り組みが効かない理由がこれである。</div>
+  </div>
+  <div class="foot"><span>11. 学んだこと ①</span><span>統治の中身の欠陥 3件</span></div>
+</section>
+
+<section class="slide">
+  <h2>学んだこと ② 用語集に金額を書いてはいけない</h2>
+  <div class="sub2">Genie は正直なので、用語集の嘘を顧客の前で報告する</div>
+  <div class="body">
+  <div class="code">Page: 「純売上は約1,274.7億円」
+Genie: 「用語集では約1,274.7億円ですが、今回の集計とは約11億円ずれています」</div>
+  <p style="margin-top:26px">データを更新するたびに用語集が嘘になり、<em>統治されているはずの用語集が信頼を落とす</em>。</p>
+  <div class="two" style="margin-top:20px">
+    <div><h2 style="font-size:24px;color:var(--lava)">腐るもの（書かない）</h2>
+      <ul style="font-size:19px;margin-top:12px"><li>純売上 1,274.7億円</li><li>マーケ投下額 $54.2M</li><li>受注は22%大きい</li></ul></div>
+    <div><h2 style="font-size:24px;color:var(--green)">腐らないもの（書く）</h2>
+      <ul style="font-size:19px;margin-top:12px"><li>原価率 = 発注 ÷ 純売上（約47%）</li><li>調査費は投下額の約5%</li><li>媒体費は投下額の約70%</li></ul></div>
+  </div>
+  <p style="margin-top:14px;font-size:19px">実測で比率は4つすべて生きており、腐っていたのは絶対額だけだった。
+  <strong>用語集の仕事は「どの列が正本か」を決めることで、「いくらか」を答えることではない。</strong></p>
+  </div>
+  <div class="foot"><span>11. 学んだこと ②</span><span>絶対額は腐る・比率は腐らない</span></div>
+</section>
+
+<section class="slide">
+  <h2>証跡と再現手順</h2>
+  <div class="sub2">SEED 固定で決定的に再生成できる</div>
+  <div class="body">
+  <div class="code" style="font-size:15px">python3 01_model/extract_model.py        # ECM から30表・FK・metric view を抽出
+python3 02_data/generate.py              # 206,028行（SEED=20261025・決定的）
+python3 tools/sync_value_domains.py      # 列コメントの値域を実データに合わせる
+python3 03_lakeflow/gen_pipeline.py      # SDP 定義を生成 → パイプライン更新
+python3 05_governance/04_asset_domain_tags.py   # 資産59へタグ（スキーマから継承されない）
+python3 10_detect/detect_conflicts.py && python3 06_genie/create_agents.py
+python3 04_eval/run_eval.py --route --label before    # 統治OFF で49問
+python3 06_genie/apply_instructions.py                # 統治ON
+python3 04_eval/run_eval.py --route --label after     # 統治ON で49問
+python3 04_eval/variance.py after after3              # ばらつき</div>
+  <p style="margin-top:22px">FK は親の PK 確立後にしか張れないため、パイプラインは収束まで繰り返す（実測3〜4パス）。</p>
+  <p><span class="tag">evidence/</span>49問の生ログ（before / after / 3回目）・ML の学習出力・App・ダッシュボード検証
+  　<span class="tag">BUILD_LOG.md</span>全工程とハマりどころ35件</p>
+  </div>
+  <div class="foot"><span>12. 証跡</span><span>github.com/yrz-tokyo/cpg-demo</span></div>
+</section>
+
+</body></html>

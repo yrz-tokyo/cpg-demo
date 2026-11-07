@@ -13,3 +13,6 @@ __pycache__/
 02_data/landing/
 
 *.bak
+
+# デッキの PDF は deck/build.sh で2秒で再生成できる（4MBのバイナリ）
+deck/deck.pdf
