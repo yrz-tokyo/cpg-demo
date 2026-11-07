@@ -6,21 +6,25 @@ Rongzi Yan / Solutions Architect, Field Engineering Japan
 データはすべて合成 github.com/yrz-tokyo/cpg-demo
 CPG          の各部門は、別の数字を「売上」と呼ぶ
 同じ会社・同じ年・5つの答え。最大15倍違う
-     部門が言う「売上」      実体                                     2026   年
-     財務「純売上」        ar_invoice.net_amount                                  1,286億円（正本）
-     営業「売上」         order.total_net_amount （受注）                                  1,573億円
+     「売上」として出てくる数字   metric view   の measure                                  2026    年
+     財務 純売上          finance_ar_invoice.total_net_amount                              1,286億円（正本）
+     営業 受注           sales_order.total_net_amount                                           1,573億円
 
-     調達「売上」         purchase_order.net_amount（発注）                                  598億円
+     調達 発注           procurement_purchase_order.total_net_amount                              598億円
 
-     販促「売上」         settlement.net_amount（精算）                                      107億円
+     財務 買掛           finance_ap_invoice.total_net_amount                                      530億円
 
-     マーケ「売上」        pos_transaction.dollar_sales（POS）                               33億円
+     販促 精算           trade_settlement.total_net_amount                                        107億円
 
 
-業界標準データモデル(ECM)の metric view は、この5つすべてに同じ名前の measure    total_net_amount   を持つ。名前では
-区別できない。
+業界標準データモデル(ECM)の metric view は、この5つすべてに同じ名前の measure               total_net_amount   を持つ。名前では
+区別できない。 マーケが言う「売上」は店頭実売               で、こちらは別系統の衝突。
+                                    dollar_sales
 
-1.   顧客の課題                                                            Brickshouse Food and Beverage
+
+
+
+1.   顧客の課題                                                                       Brickshouse Food and Beverage
 放置して AI を入れたら、実機で最悪のケースが起きた
 2026-10-26    実測。Genie One に「売上」と1語だけ入れた
 
@@ -91,7 +95,7 @@ Rongzi Yan / Solutions Architect, Field Engineering Japan
 
 
 
-6.   デモ①                                                  同じ数字が返る
+5.   デモ①                                                  同じ数字が返る
 デモ② 足せないものを、足さずに断る
 失敗の実演ではなく、能力の実演
 
@@ -113,7 +117,7 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
 
 
 
-7.   デモ②③                                                 区別する／人が決める
+6.   デモ②③                                                 区別する／人が決める
 効果を測った — 同じ49問を、統治前と統治後に
 部門別の質問49問。正答・正本参照・罠・聞き返しを機械採点
                          統治前                  統治後                 差
@@ -131,7 +135,7 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
 
      主張の核は「割れない28問が1問も動かなかった」こと。 「全体的に良くなった」ではなく「狙ったものだけが
      直った」ことの証明になる。
-8.   測定                                                                問 × 統治 ON/OFF
+7.   測定                                                                問 × 統治 ON/OFF
                                                                       49
 6    コンポーネントの実装
 すべて実機で稼働。証跡はリポジトリにテキストで committed
@@ -150,7 +154,7 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
      ＋ AI/BI ダッシュボー   営業 / 財務 / マーケの3本。存在自体が Genie One の推論コンテキストへの入力になる
      ド
 
-5.   実装                                                                                              必須6要件の充当
+8.   実装                                                                                              必須6要件の充当
 付録 — 聞かれたときに出す
 本線はここまで。以下は質問に応じて開く
 衝突の内訳 ／ ばらつきの測定 ／ ML の詳細 ／ 学んだこと ／ 再現手順
@@ -169,7 +173,7 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
 
 
 
-付録 — 1. 顧客の課題                                            つの定義衝突
+付録 — 衝突の全体                                               つの定義衝突
                                                          4
 その差は誤差ではない
 統治後の同じ状態で、同じ49問を3回測った
@@ -186,7 +190,7 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
 32→31・after 39→41）。曖昧だと分かっている2問は、差が大きく見えるように書き換えなかった。
 
 
-付録 — 9. 測定の信頼性                                                 再現測定 3回
+付録 — 測定の信頼性                                                    再現測定 3回
 衝突の発見を機械に任せる
 同名の数値列は82グループ・201列。全部を人が見るのは無理
  並べ方                         PR-AUC            上位16件の適合率
@@ -204,7 +208,7 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
 に測ったので、勝てなければ 「モデルは不要」と言えた。
 ラベルは構築者がスチュワード役として付けたもので、実在の担当者の合議ではない。 方針を先に LABELING_POLICY.md に書い
 てから1件ずつ付けた。言えるのは「保留した判断を再現できる」までである。
-付録 — 10. ML                                            ベースラインと比べて初めて価値が言える
+付録 — ML                                                ベースラインと比べて初めて価値が言える
 作って分かったこと — 欠陥は3件とも同じ型だった
 正しい表を指していても、答えは安定しない
  起きたこと                  書いていなかったもの
@@ -217,7 +221,7 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
 
 
 
-付録 — 11. 学んだこと ①                                     統治の中身の欠陥 3件
+付録 — 学んだこと ①                                         統治の中身の欠陥 3件
 学んだこと ② 用語集に金額を書いてはいけない
 Genie   は正直なので、用語集の嘘を顧客の前で報告する
 
@@ -234,26 +238,26 @@ Genie   は正直なので、用語集の嘘を顧客の前で報告する
 実測で比率は4つすべて生きており、腐っていたのは絶対額だけだった。 用語集の仕事は「どの列が正本か」を決めることで、「い
 くらか」を答えることではない。
 
-付録 — 11. 学んだこと ②                                                絶対額は腐る・比率は腐らない
+付録 — 学んだこと ②                                                    絶対額は腐る・比率は腐らない
 証跡と再現手順
-SEED    固定で決定的に再生成できる
-   python3 01_model/extract_model.py          # ECM から30表・FK・metric view を抽出
-   python3 02_data/generate.py                # 206,028行（SEED=20261025・決定的）
-   python3 tools/sync_value_domains.py        # 列コメントの値域を実データに合わせる
-   python3 03_lakeflow/gen_pipeline.py        # SDP 定義を生成 → パイプライン更新
-   python3 05_governance/04_asset_domain_tags.py    # 資産59へタグ（スキーマから継承されない）
-   python3 10_detect/detect_conflicts.py && python3 06_genie/create_agents.py
-   python3 04_eval/run_eval.py --route --label before    # 統治OFF で49問
-   python3 06_genie/apply_instructions.py                # 統治ON
-   python3 04_eval/run_eval.py --route --label after     # 統治ON で49問
-   python3 04_eval/variance.py after after3              # ばらつき
+SEED   固定で決定的に再生成できる
+  python3 01_model/extract_model.py          # ECM から30表・FK・metric view を抽出
+  python3 02_data/generate.py                # 206,028行（SEED=20261025・決定的）
+  python3 tools/sync_value_domains.py        # 列コメントの値域を実データに合わせる
+  python3 03_lakeflow/gen_pipeline.py        # SDP 定義を生成 → パイプライン更新
+  python3 05_governance/04_asset_domain_tags.py    # 資産59へタグ（スキーマから継承されない）
+  python3 10_detect/detect_conflicts.py && python3 06_genie/create_agents.py
+  python3 04_eval/run_eval.py --route --label before    # 統治OFF で49問
+  python3 06_genie/apply_instructions.py                # 統治ON
+  python3 04_eval/run_eval.py --route --label after     # 統治ON で49問
+  python3 04_eval/variance.py after after3              # ばらつき
 
 
 
 
 FKは親の PK 確立後にしか張れないため、パイプラインは収束まで繰り返す（実測3〜4パス）。
      49問の生ログ（before / after / 3回目）
- evidence/                       ・ML の学習出力・App・ダッシュボード検証                        BUILD_LOG.md   全工程と
+evidence/                        ・ML の学習出力・App・ダッシュボード検証                       BUILD_LOG.md   全工程と
 ハマりどころ35件
-付録 — 12. 証跡                                                                     github.com/yrz-tokyo/cpg-demo
+付録 — 証跡                                                                        github.com/yrz-tokyo/cpg-demo
 

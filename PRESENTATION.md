@@ -10,16 +10,17 @@ Rongzi Yan / Solutions Architect, Field Engineering Japan
 
 CPG の営業・財務・販促・マーケ・調達は、**別の数字を「売上」と呼ぶ**。
 
-| 部門が言う「売上」 | 実体 | 2026年 |
+| 「売上」として出てくる数字 | metric view の measure | 2026年 |
 |---|---|---|
-| 財務「純売上」 | `ar_invoice.net_amount` | **1,286億円**（正本） |
-| 営業「売上」 | 受注 `order.total_net_amount` | 1,573億円 |
-| 調達「売上」 | 発注 `purchase_order.net_amount` | 598億円 |
-| 販促「売上」 | 精算 `settlement.net_amount` | 107億円 |
-| マーケ「売上」 | POS投影値 `pos_transaction.dollar_sales` | 33億円 |
+| 財務 **純売上** | `finance_ar_invoice.total_net_amount` | **1,286億円**（正本） |
+| 営業 受注 | `sales_order.total_net_amount` | 1,573億円 |
+| 調達 発注 | `procurement_purchase_order.total_net_amount` | 598億円 |
+| 財務 買掛 | `finance_ap_invoice.total_net_amount` | 530億円 |
+| 販促 精算 | `trade_settlement.total_net_amount` | 107億円 |
 
 **最大15倍違う。** しかも業界標準データモデル(ECM)の metric view は、この5つすべてに
 `total_net_amount` という**完全に同じ名前の measure** を持つ。名前では区別できない。
+マーケが言う「売上」は店頭実売 `pos_transaction.dollar_sales`（33億円）で、こちらは別系統の衝突。
 
 衝突は売上だけではない。**投下額**（キャンペーン費/調査費/媒体費/予算が同名）、
 **通貨**（マーケは USD・他は JPY で150倍）、**`dollar_sales`**（自社POS と市場全体で約550倍）。
