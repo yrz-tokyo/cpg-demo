@@ -89,6 +89,12 @@ pos_transaction は投影値なので、当社の売上と**絶対額で比較�
   - 「売上」の5つの数字を並べる → {C}.xdept_mart.mart_revenue_definitions
   - 「マーケに使ったお金」を並べる → {C}.xdept_mart.mart_spend_definitions
   - 得意先を軸に部門を横断     → {C}.xdept_mart.mart_customer_360
+  - 事業（ビール類/清涼飲料/健康食品）別の構成比 →
+    {C}.xdept_mart.mart_brand_investment_return の brand_category で集計し、
+    **分母は同じ表の brand_sales_jpy の総計**にする（合計が100%になる）。
+    avg_dollar_share_pct を平均したり市場合計を分母にすると合計が100%を超える。
+    純売上(ar_invoice)は事業に紐づかないので、事業別は必ずこの推計を使い、
+    「店頭小売価格ベースの推計で、構成比の目安」と明示する。
 
 【その他の用語】
 - 原価率 = 発注(procurement_purchase_order.total_net_amount) ÷ 純売上。2026年は約47%。
