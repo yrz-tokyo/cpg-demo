@@ -20,15 +20,15 @@ SELECT c.conflict_id, v.obj, 'METRIC_VIEW', v.dept, v.expr, v.role, v.val, v.not
 FROM semantics.conflict c
 CROSS JOIN (VALUES
   ('rongzi_catalog_dev.finance_mart.finance_ar_invoice', '財務', 'SUM(net_amount)',
-   'authoritative',     127470000000.00, '純売上の正本。請求総額 - 販促値引 - 控除'),
+   'authoritative',     128613230122.32, '純売上の正本。請求総額 - 販促値引 - 控除'),
   ('rongzi_catalog_dev.sales_mart.sales_order', '営業', 'SUM(total_net_amount)',
-   'variant',           158850000000.00, '受注。一部出荷・値引・控除の前。純売上より約25%大きい'),
+   'variant',           157253032520.84, '受注。一部出荷・値引・控除の前なので純売上より大きい'),
   ('rongzi_catalog_dev.procure_mart.procurement_purchase_order', '調達', 'SUM(net_amount)',
-   'not_this_concept',   60100000000.00, '発注＝仕入。売上ではない'),
+   'not_this_concept',  59831718576.37, '発注＝仕入。売上ではない'),
   ('rongzi_catalog_dev.finance_mart.finance_ap_invoice', '財務', 'SUM(net_amount)',
-   'not_this_concept',   53230000000.00, '買掛＝仕入。売上ではない'),
+   'not_this_concept',  53008284375.74, '買掛＝仕入。売上ではない'),
   ('rongzi_catalog_dev.trade_mart.trade_settlement', '販促', 'SUM(net_amount)',
-   'not_this_concept',   10700000000.00, '販促精算＝得意先への支払い。売上ではない')
+   'not_this_concept',  10645420612.49, '販促精算＝得意先への支払い。売上ではない')
 ) AS v(obj, dept, expr, role, val, note)
 WHERE c.term_normalized = 'uriage'
 ON CONFLICT (conflict_id, object_name) DO NOTHING;
@@ -65,11 +65,14 @@ ON CONFLICT DO NOTHING;
 INSERT INTO semantics.page_draft
   (conflict_id, title, synonyms, definition_md, business_use_md, related_assets, source_assets, generated_by)
 SELECT conflict_id, '売上（Brickshouse 全社定義）',
-  ARRAY['売上','純売上','計上売上','売上高','revenue','net revenue','受注金額','受注高','店頭消化','sell-out'],
+  ARRAY['売上','Brickshouse の売上','Brickshouse の純売上','純売上','計上売上',
+        '認識売上','売上高','財務の売上','Brickshouse revenue',
+        'Brickshouse net sales','トップライン'],
   'Brickshouse の「売上」の正本は finance_mart.finance_ar_invoice の total_net_amount（純売上）。'
-  '計算式は 請求総額 - 販促値引(trade_discount_amount) - 控除(deduction_amount)。2026年は約1,274.7億円。',
+  '計算式は 請求総額 - 販促値引(trade_discount_amount) - 控除(deduction_amount)。'
+  '金額は Genie が毎回集計する（用語集に固定で書かない）。',
   '社内には「売上」と呼ばれる数字が5つある。問いが「会社の売上」なら必ず純売上を使う。'
-  '受注(1,588.5億)・発注(601.0億)・買掛(532.3億)・販促精算(107.0億)は売上ではない。',
+  '受注・発注・買掛・販促精算・店頭実売は売上ではない。',
   ARRAY['rongzi_catalog_dev.finance_mart.finance_ar_invoice',
         'rongzi_catalog_dev.xdept_mart.mart_revenue_definitions'],
   ARRAY['rongzi_catalog_dev.finance_core.ar_invoice'],

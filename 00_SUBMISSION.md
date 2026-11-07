@@ -15,7 +15,7 @@
 | # | 同じ名前 | 片方 | もう片方 | 倍率 |
 |---|---|---|---|---|
 | ① | `total_net_amount` | `ar_invoice` 純売上 **1,286億円（正本）** | 受注1,573億 / 発注598億 / 買掛530億 / 販促精算107億 | **15倍** |
-| ② | `total_actual_spend_usd` | `campaign` マーケ投下額 **$54.2M** | `consumer_insight` 調査費 $2.9M | **18倍** |
+| ② | `total_actual_spend_usd` | `campaign` マーケ投下額 **$53.7M** | `consumer_insight` 調査費 $2.9M | **18倍** |
 | ③ | （金額一般） | マーケ = **USD** | 営業・財務・販促 = **JPY** | **150倍** |
 | ④ | `dollar_sales` | `pos_transaction` 自社店頭実売 33.0億円 | `syndicated_market_data` 市場全体 $121億 | **550倍** |
 
