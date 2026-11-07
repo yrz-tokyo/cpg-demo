@@ -1,4 +1,4 @@
-# 部門で「売上」が3つある会社に、Genie One を全社展開する
+# 部門で「売上」が5つある会社に、Genie One を全社展開する
 
 **Brickshouse Food and Beverage**（架空の日本の CPG・ビール類/清涼飲料/健康食品）
 Rongzi Yan / Solutions Architect, Field Engineering Japan

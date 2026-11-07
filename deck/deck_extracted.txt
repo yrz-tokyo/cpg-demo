@@ -1,4 +1,4 @@
-部門で「売上」が3つある会社に、
+部門で「売上」が5つある会社に、
 Genie One を全社展開する
 定義の衝突を測って、統治して、もう一度測った
 Brickshouse Food and Beverage   （架空・日本の CPG）
@@ -135,22 +135,22 @@ AI が答えを決めるのではなく、人の決定を AI が守ることを�
                                                                       49
 6    コンポーネントの実装
 すべて実機で稼働。証跡はリポジトリにテキストで committed
-     必須              実装
-                     SDP 3 層。ST 30 → silver MV 30 → mart MV 13。PK 30 / FK 78 / expectations 43 をパイプライン定義で宣
-     Lakeflow
-                     言
-                            列に業務コメント（値域つき）・metric view 16・ドメイン1＋サブドメイン3・資産59へタグ・認
-                     silver 1,190
+     必須               実装
+     Lakeflow         SDP 3  層。ST 30 → silver MV 30 → mart MV 13。PK 30 / FK 78 / expectations 43 をパイプライン定義で宣言
+                      silver 1,190列に業務コメント（値域つき）           ・metric view 16・ドメイン1＋サブドメイン3・資産59へタグ・認定10・
+                      Page 22本
      Unity Catalog
-                     定10・Page 22本
-     Lakebase        衝突の承認/却下/正本選択を永続化。9表＋1ビュー。却下ペアを次回検出の制約として読み戻す
-     ML / GenAI      同名列82グループの順位付け。PR-AUC 0.955 / 上位16件の適合率100%。UC登録・serving 稼働
-     Genie Agent     部門別4本（営業30表 / 財務15 / マーケ15 / 横断18）
-     Databricks
-     App
-                     3画面（ペルソナ別の問い / 衝突レビュー / 統治効果 before-after）React+Vite+FastAPI
-5.   実装                                                                                           必須6要件の充当
-＋ AI/BI ダッシュボード3本。存在自体が Genie One の推論コンテキストへの入力になる。
+
+
+     Lakebase         衝突の承認/却下/正本選択を永続化。9表＋1ビュー。却下ペアを次回検出の制約として読み戻す
+     ML / GenAI       同名列82グループの順位付け。PR-AUC 0.955 / 上位16件の適合率100%。UC登録・serving 稼働
+     Genie Agent      部門別4本（営業30表 / 財務15 / マーケ15 / 横断18）
+     Databricks App   3画面（ペルソナ別の問い / 衝突レビュー / 統治効果 before-after）React+Vite+FastAPI
+
+     ＋ AI/BI ダッシュボー   営業 / 財務 / マーケの3本。存在自体が Genie One の推論コンテキストへの入力になる
+     ド
+
+5.   実装                                                                                              必須6要件の充当
 付録 — 聞かれたときに出す
 本線はここまで。以下は質問に応じて開く
 衝突の内訳 ／ ばらつきの測定 ／ ML の詳細 ／ 学んだこと ／ 再現手順

@@ -1,9 +1,9 @@
 <!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
-<title>部門で「売上」が3つある会社に、Genie One を全社展開する</title>
+<title>部門で「売上」が5つある会社に、Genie One を全社展開する</title>
 <link rel="stylesheet" href="style.css"></head><body>
 
 <section class="slide cover">
-  <h1>部門で「売上」が3つある会社に、<br>Genie One を全社展開する</h1>
+  <h1>部門で「売上」が5つある会社に、<br>Genie One を全社展開する</h1>
   <div class="sub">定義の衝突を測って、統治して、もう一度測った</div>
   <div class="meta">Brickshouse Food and Beverage（架空・日本の CPG）<br>
   Rongzi Yan / Solutions Architect, Field Engineering Japan<br>
@@ -132,6 +132,7 @@
 
 <section class="slide">
   <h2>6コンポーネントの実装</h2>
+  <style>.slide:nth-of-type(9) table{font-size:17px} .slide:nth-of-type(9) td,.slide:nth-of-type(9) th{padding:9px 13px}</style>
   <div class="sub2">すべて実機で稼働。証跡はリポジトリにテキストで committed</div>
   <div class="body">
   <table><tr><th>必須</th><th>実装</th></tr>
@@ -140,8 +141,8 @@
   <tr><td><strong>Lakebase</strong></td><td>衝突の承認/却下/正本選択を永続化。9表＋1ビュー。<strong>却下ペアを次回検出の制約として読み戻す</strong></td></tr>
   <tr><td><strong>ML / GenAI</strong></td><td>同名列82グループの順位付け。<strong>PR-AUC 0.955 / 上位16件の適合率100%</strong>。UC登録・serving 稼働</td></tr>
   <tr><td><strong>Genie Agent</strong></td><td>部門別4本（営業30表 / 財務15 / マーケ15 / 横断18）</td></tr>
-  <tr><td><strong>Databricks App</strong></td><td>3画面（ペルソナ別の問い / 衝突レビュー / 統治効果 before-after）React+Vite+FastAPI</td></tr></table>
-  <p style="margin-top:18px">＋ AI/BI ダッシュボード3本。存在自体が Genie One の推論コンテキストへの入力になる。</p>
+  <tr><td><strong>Databricks App</strong></td><td>3画面（ペルソナ別の問い / 衝突レビュー / 統治効果 before-after）React+Vite+FastAPI</td></tr>
+  <tr><td>＋ AI/BI ダッシュボード</td><td>営業 / 財務 / マーケの3本。存在自体が Genie One の推論コンテキストへの入力になる</td></tr></table>
   </div>
   <div class="foot"><span>5. 実装</span><span>必須6要件の充当</span></div>
 </section>
