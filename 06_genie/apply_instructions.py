@@ -57,7 +57,7 @@ COMMON = f"""Brickshouse Food and Beverage（ビール類・清涼飲料・健�
 【衝突2: 「マーケ投下額」の正本】
 「マーケ投下額」「広宣費」「マーケに使ったお金」を聞かれたら、必ず
   {C}.marketing_mart.marketing_campaign_performance の total_actual_spend_usd
-を使う。2026年は約 $54.2M。以下は**同じ名前の measure を持つが投下額ではない**。
+を使う。以下は**同じ名前の measure を持つが投下額ではない**。
   - {C}.marketing_mart.marketing_consumer_insight.total_actual_spend_usd = 消費者調査の費用。投下額の約5%（約18分の1）
   - {C}.marketing_mart.marketing_media_spend.total_actual_spend_amount   = 媒体費。投下額の約70%で全部ではない
   - {C}.marketing_core.brand.annual_marketing_budget                     = 予算。実績ではない

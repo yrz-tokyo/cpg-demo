@@ -9,6 +9,8 @@
   python3 12_ml/serve.py query          # 実際に1件推論して疎通を確認
   python3 12_ml/serve.py delete
 """
+
+from __future__ import annotations
 import json
 import subprocess
 import sys
