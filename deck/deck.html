@@ -27,21 +27,6 @@
 </section>
 
 <section class="slide">
-  <h2>衝突は売上だけではない — 4つある</h2>
-  <div class="sub2">どれも ECM に素で存在する。作った問題ではない</div>
-  <div class="body">
-  <table><tr><th>衝突</th><th>何が同名か</th><th>間違えたときのズレ</th></tr>
-  <tr><td><strong>売上</strong></td><td>5つの表が total_net_amount を持つ</td><td class="num">最大 15倍</td></tr>
-  <tr><td><strong>マーケ投下額</strong></td><td>キャンペーン費・調査費・媒体費・予算</td><td class="num">最大 18倍</td></tr>
-  <tr><td><strong>通貨</strong></td><td>マーケは USD・他部門は JPY</td><td class="num">150倍</td></tr>
-  <tr><td><strong>dollar_sales</strong></td><td>自社POS と 市場全体（競合込み）</td><td class="num">約 550倍</td></tr></table>
-  <div class="callout" style="margin-top:26px">通貨が一番危ない。<em>換算せずに足すと150倍ずれ、ROI の分母に使うと150倍良く見える。</em>
-  桁が2つ違っても、CPG の金額感では気づけない。</div>
-  </div>
-  <div class="foot"><span>1. 顧客の課題</span><span>4つの定義衝突</span></div>
-</section>
-
-<section class="slide">
   <h2>放置して AI を入れたら、実機で最悪のケースが起きた</h2>
   <div class="sub2">2026-10-26 実測。Genie One に「売上」と1語だけ入れた</div>
   <div class="body">
@@ -98,22 +83,6 @@
 </section>
 
 <section class="slide">
-  <h2>6コンポーネントの実装</h2>
-  <div class="sub2">すべて実機で稼働。証跡はリポジトリにテキストで committed</div>
-  <div class="body">
-  <table><tr><th>必須</th><th>実装</th></tr>
-  <tr><td><strong>Lakeflow</strong></td><td>SDP 3層。ST 30 → silver MV 30 → mart MV 13。<strong>PK 30 / FK 78 / expectations 43 をパイプライン定義で宣言</strong></td></tr>
-  <tr><td><strong>Unity Catalog</strong></td><td>silver <strong>1,190列</strong>に業務コメント（値域つき）・metric view 16・ドメイン1＋サブドメイン3・資産59へタグ・認定10・<strong>Page 22本</strong></td></tr>
-  <tr><td><strong>Lakebase</strong></td><td>衝突の承認/却下/正本選択を永続化。9表＋1ビュー。<strong>却下ペアを次回検出の制約として読み戻す</strong></td></tr>
-  <tr><td><strong>ML / GenAI</strong></td><td>同名列82グループの順位付け。<strong>PR-AUC 0.955 / 上位16件の適合率100%</strong>。UC登録・serving 稼働</td></tr>
-  <tr><td><strong>Genie Agent</strong></td><td>部門別4本（営業30表 / 財務15 / マーケ15 / 横断18）</td></tr>
-  <tr><td><strong>Databricks App</strong></td><td>3画面（ペルソナ別の問い / 衝突レビュー / 統治効果 before-after）React+Vite+FastAPI</td></tr></table>
-  <p style="margin-top:18px">＋ AI/BI ダッシュボード3本。存在自体が Genie One の推論コンテキストへの入力になる。</p>
-  </div>
-  <div class="foot"><span>5. 実装</span><span>必須6要件の充当</span></div>
-</section>
-
-<section class="slide">
   <h2>デモ① 部署が違う3人が、違う言葉で聞いて同じ数字</h2>
   <div class="sub2">2026-11-07 実測。Page 22本を公開した後</div>
   <div class="body">
@@ -162,6 +131,43 @@
 </section>
 
 <section class="slide">
+  <h2>6コンポーネントの実装</h2>
+  <div class="sub2">すべて実機で稼働。証跡はリポジトリにテキストで committed</div>
+  <div class="body">
+  <table><tr><th>必須</th><th>実装</th></tr>
+  <tr><td><strong>Lakeflow</strong></td><td>SDP 3層。ST 30 → silver MV 30 → mart MV 13。<strong>PK 30 / FK 78 / expectations 43 をパイプライン定義で宣言</strong></td></tr>
+  <tr><td><strong>Unity Catalog</strong></td><td>silver <strong>1,190列</strong>に業務コメント（値域つき）・metric view 16・ドメイン1＋サブドメイン3・資産59へタグ・認定10・<strong>Page 22本</strong></td></tr>
+  <tr><td><strong>Lakebase</strong></td><td>衝突の承認/却下/正本選択を永続化。9表＋1ビュー。<strong>却下ペアを次回検出の制約として読み戻す</strong></td></tr>
+  <tr><td><strong>ML / GenAI</strong></td><td>同名列82グループの順位付け。<strong>PR-AUC 0.955 / 上位16件の適合率100%</strong>。UC登録・serving 稼働</td></tr>
+  <tr><td><strong>Genie Agent</strong></td><td>部門別4本（営業30表 / 財務15 / マーケ15 / 横断18）</td></tr>
+  <tr><td><strong>Databricks App</strong></td><td>3画面（ペルソナ別の問い / 衝突レビュー / 統治効果 before-after）React+Vite+FastAPI</td></tr></table>
+  <p style="margin-top:18px">＋ AI/BI ダッシュボード3本。存在自体が Genie One の推論コンテキストへの入力になる。</p>
+  </div>
+  <div class="foot"><span>5. 実装</span><span>必須6要件の充当</span></div>
+</section>
+
+<section class="slide cover" style="justify-content:center">
+  <h1 style="font-size:46px">付録 — 聞かれたときに出す</h1>
+  <div class="sub">本線はここまで。以下は質問に応じて開く</div>
+  <div class="meta">衝突の内訳 ／ ばらつきの測定 ／ ML の詳細 ／ 学んだこと ／ 再現手順</div>
+</section>
+
+<section class="slide">
+  <h2>衝突は売上だけではない — 4つある</h2>
+  <div class="sub2">どれも ECM に素で存在する。作った問題ではない</div>
+  <div class="body">
+  <table><tr><th>衝突</th><th>何が同名か</th><th>間違えたときのズレ</th></tr>
+  <tr><td><strong>売上</strong></td><td>5つの表が total_net_amount を持つ</td><td class="num">最大 15倍</td></tr>
+  <tr><td><strong>マーケ投下額</strong></td><td>キャンペーン費・調査費・媒体費・予算</td><td class="num">最大 18倍</td></tr>
+  <tr><td><strong>通貨</strong></td><td>マーケは USD・他部門は JPY</td><td class="num">150倍</td></tr>
+  <tr><td><strong>dollar_sales</strong></td><td>自社POS と 市場全体（競合込み）</td><td class="num">約 550倍</td></tr></table>
+  <div class="callout" style="margin-top:26px">通貨が一番危ない。<em>換算せずに足すと150倍ずれ、ROI の分母に使うと150倍良く見える。</em>
+  桁が2つ違っても、CPG の金額感では気づけない。</div>
+  </div>
+  <div class="foot"><span>付録 — 1. 顧客の課題</span><span>4つの定義衝突</span></div>
+</section>
+
+<section class="slide">
   <h2>その差は誤差ではない</h2>
   <div class="sub2">統治後の同じ状態で、同じ49問を3回測った</div>
   <div class="body">
@@ -178,7 +184,7 @@
   <p><em>測定器のバグは before 側も after 側も両方向に直した</em>（boolean が拒否と否定を混同していた欠陥を直し、
   before 32→31・after 39→41）。<strong>曖昧だと分かっている2問は、差が大きく見えるように書き換えなかった。</strong></p>
   </div>
-  <div class="foot"><span>9. 測定の信頼性</span><span>再現測定 3回</span></div>
+  <div class="foot"><span>付録 — 9. 測定の信頼性</span><span>再現測定 3回</span></div>
 </section>
 
 <section class="slide">
@@ -196,7 +202,7 @@
   <p style="font-size:19px"><strong>ラベルは構築者がスチュワード役として付けたもので、実在の担当者の合議ではない。</strong>
   方針を先に LABELING_POLICY.md に書いてから1件ずつ付けた。言えるのは「保留した判断を再現できる」までである。</p>
   </div>
-  <div class="foot"><span>10. ML</span><span>ベースラインと比べて初めて価値が言える</span></div>
+  <div class="foot"><span>付録 — 10. ML</span><span>ベースラインと比べて初めて価値が言える</span></div>
 </section>
 
 <section class="slide">
@@ -211,7 +217,7 @@
   <strong>粒度・分母・期間まで書いて初めて答えが安定する。</strong>
   用語集を作って終わりにする取り組みが効かない理由がこれである。</div>
   </div>
-  <div class="foot"><span>11. 学んだこと ①</span><span>統治の中身の欠陥 3件</span></div>
+  <div class="foot"><span>付録 — 11. 学んだこと ①</span><span>統治の中身の欠陥 3件</span></div>
 </section>
 
 <section class="slide">
@@ -230,7 +236,7 @@ Genie: 「用語集では約1,274.7億円ですが、今回の集計とは約11�
   <p style="margin-top:14px;font-size:19px">実測で比率は4つすべて生きており、腐っていたのは絶対額だけだった。
   <strong>用語集の仕事は「どの列が正本か」を決めることで、「いくらか」を答えることではない。</strong></p>
   </div>
-  <div class="foot"><span>11. 学んだこと ②</span><span>絶対額は腐る・比率は腐らない</span></div>
+  <div class="foot"><span>付録 — 11. 学んだこと ②</span><span>絶対額は腐る・比率は腐らない</span></div>
 </section>
 
 <section class="slide">
@@ -251,7 +257,7 @@ python3 04_eval/variance.py after after3              # ばらつき</div>
   <p><span class="tag">evidence/</span>49問の生ログ（before / after / 3回目）・ML の学習出力・App・ダッシュボード検証
   　<span class="tag">BUILD_LOG.md</span>全工程とハマりどころ35件</p>
   </div>
-  <div class="foot"><span>12. 証跡</span><span>github.com/yrz-tokyo/cpg-demo</span></div>
+  <div class="foot"><span>付録 — 12. 証跡</span><span>github.com/yrz-tokyo/cpg-demo</span></div>
 </section>
 
 </body></html>

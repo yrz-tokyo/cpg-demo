@@ -12,6 +12,6 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
   --print-to-pdf="$HERE/deck.pdf" "file://$HERE/deck.html" 2>/dev/null
 
 pdftotext -layout "$HERE/deck.pdf" "$HERE/deck_extracted.txt"
-echo "ページ数: $(mdls -name kMDItemNumberOfPages -raw "$HERE/deck.pdf")"
-echo "用紙:     $(mdls -name kMDItemPageWidth -raw "$HERE/deck.pdf") x $(mdls -name kMDItemPageHeight -raw "$HERE/deck.pdf") pt（960x540 = 16:9）"
+# mdls は Spotlight のキャッシュを返し、上書き直後は古い値が出る。pdfinfo を使う。
+pdfinfo "$HERE/deck.pdf" | grep -E "^Pages|^Page size"
 echo "抽出:     $(wc -c < "$HERE/deck_extracted.txt") バイト"
