@@ -791,7 +791,7 @@ FROM system.access.audit
 WHERE action_name = 'deleteDomain' AND to_json(request_params) LIKE '%<親のid>%'
 ```
 
-> `2026-10-27T00:40:47Z  leandro.gomes@databricks.com  {"name":"domains/3793bb10-..."}  200`
+> `2026-10-27T00:40:47Z  <別のFEのメール（本人の氏名は伏せる）>  {"name":"domains/3793bb10-..."}  200`
 
 **他のFEが 00:33〜00:41 UTC の8分間に17件まとめて削除し、その1件が我々の親ドメイン**だった
 （10件が 200 で成功、7件が 500 で失敗）。親を消せば子も落ちるので、サブドメインも道連れ。
