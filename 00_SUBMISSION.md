@@ -63,7 +63,7 @@ metric view の YAML / 列コメント / データの実測値
 | # | 必須 | 実装 | 証跡 |
 |---|---|---|---|
 | 1 | **Lakeflow** | SDP 3層。`ops_landing` **30 STREAMING TABLE**（`read_files`・ソースシステム単位）→ `*_core` **30 MATERIALIZED VIEW**（**PK 30 / FK 78 / expectations 40 をパイプライン定義で宣言**）→ `*_mart` / `xdept_mart` **13 MV** | [`02_lakeflow.md`](evidence/02_lakeflow.md) |
-| 2 | **Unity Catalog** | **1,190列**の業務コメント（ECM由来・値域つき）・PK/FK・**ドメイン1＋subdomain 2**（営業/財務）・資産59個へのドメインタグ・認定・**metric view 16** | [`03_unity_catalog.md`](evidence/03_unity_catalog.md) |
+| 2 | **Unity Catalog** | **1,190列**の業務コメント（ECM由来・値域つき）・PK/FK・**ドメイン1＋subdomain 3**（営業/財務/マーケティング）・資産59個へのドメインタグ・認定10件・**metric view 16** | [`03_unity_catalog.md`](evidence/03_unity_catalog.md) |
 | 3 | **Lakebase** | 衝突の承認/却下/正本選択を永続化。**却下ペアを次回検出の制約として読み戻す**（ループの折り返し点）。9テーブル＋1ビュー | [`06_lakebase.md`](evidence/06_lakebase.md) |
 | 4 | **ML / GenAI** | **GenAI** = 衝突に業務語と根拠文を付ける（`ai_query`）。**ML** = 82グループのレビュー行列のランキング。**交差検証 PR-AUC 0.955 / 上位16件の適合率100%**（母比率33%・ベースライン最良0.675）。UC 登録済 | [`07_ml.md`](evidence/07_ml.md) |
 | 5 | **Genie Agent** | 部門別4本（営業30表（販促含む） / 財務15 / マーケ15 / 横断18）。**統治OFF では横断マートを外す** | `06_genie/` |
